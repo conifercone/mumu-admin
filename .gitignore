@@ -18,6 +18,7 @@ dist/
 .sass-cache
 
 # Project files
+.idea
 !/.idea/icon.png
 nbproject
 nbproject/private
