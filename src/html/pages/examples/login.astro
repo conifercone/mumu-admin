@@ -25,15 +25,16 @@ const htmlPath = "..";
         <div class="card-body login-card-body">
           <p class="login-box-msg">Sign in to start your session</p>
 
-          <form action={htmlPath + "/index3.html"} method="post">
+          <form action="#" method="post">
             <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Username or Email" />
+              <input id="username" type="text" class="form-control" placeholder="Username or Email" />
               <div class="input-group-text">
                 <span class="bi bi-envelope"></span>
               </div>
             </div>
             <div class="input-group mb-3">
               <input
+                id="password"
                 type="password"
                 class="form-control"
                 placeholder="Password"
