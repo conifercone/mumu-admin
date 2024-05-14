@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import node from "@astrojs/node";
+import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,7 +18,7 @@ export default defineConfig({
   adapter: node({
     mode: "standalone"
   }),
-  integrations: [mdx()],
+  integrations: [mdx(),preact()],
   srcDir: './src/html',
   cacheDir: './dist/pages',
   outDir: './dist/pages'
