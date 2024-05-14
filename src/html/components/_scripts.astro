@@ -16,8 +16,8 @@ const adminlteJsUrl = path + "/js/adminlte.js";
 <script>
   import {ACCESS_TOKEN} from "../../ts/config/constants";
   let url = new URL(window.location.href);
-  if (localStorage.getItem(ACCESS_TOKEN) == null && url.pathname != '/examples/login') {
-    window.location.href = '/examples/login';
+  if (localStorage.getItem(ACCESS_TOKEN) == null && url.pathname != '/auth/login') {
+    window.location.href = '/auth/login';
   }
 </script>
 <script is:inline>
