@@ -13,7 +13,15 @@ const adminlteJsUrl = path + "/js/adminlte.js";
 <script src={adminlteJsUrl} is:inline></script>
 <!--end::Required Plugin(AdminLTE)-->
 <!--begin::OverlayScrollbars Configure-->
+<script>
+  import {ACCESS_TOKEN} from "../../ts/config/constants";
+  let url = new URL(window.location.href);
+  if (localStorage.getItem(ACCESS_TOKEN) == null && url.pathname != '/examples/login') {
+    window.location.href = '/examples/login';
+  }
+</script>
 <script is:inline>
+
   const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
   const Default = {
     scrollbarTheme: "os-theme-light",
@@ -21,6 +29,7 @@ const adminlteJsUrl = path + "/js/adminlte.js";
     scrollbarClickScroll: true,
   };
   document.addEventListener("DOMContentLoaded", function () {
+
     const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
     if (
       sidebarWrapper &&
