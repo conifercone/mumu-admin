@@ -19,6 +19,20 @@
         // override/add rules settings here, such as:
         // "astro/no-set-html-directive": "error"
       }
+    },{
+      // Define the configuration for `.astro` file.
+      "files": ["*.jsx"],
+      "parserOptions": {
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "ecmaVersion": 12,
+        "sourceType": "module"
+      },
+      "rules": {
+        // override/add rules settings here, such as:
+        // "astro/no-set-html-directive": "error"
+      }
     }
   ]
 }

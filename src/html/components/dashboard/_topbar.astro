@@ -1,4 +1,5 @@
 ---
+import Username from "../account/username.jsx"
 const { path } = Astro.props;
 const distPath = path;
 ---
@@ -171,7 +172,7 @@ const distPath = path;
             class="user-image rounded-circle shadow"
             alt="User Image"
           />
-          <span class="d-none d-md-inline">Alexander Pierce</span>
+          <span class="d-none d-md-inline"><Username client:load></Username></span>
         </a>
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
           <!--begin::User Image-->
@@ -182,8 +183,7 @@ const distPath = path;
               alt="User Image"
             />
             <p>
-              Alexander Pierce - Web Developer
-              <small>Member since Nov. 2023</small>
+              <Username client:load></Username>
             </p>
           </li>
           <!--end::User Image-->
