@@ -9,6 +9,7 @@ import {
   REFRESH_TOKEN,
   EXPIRES_IN
 } from '../config/constants'
+import { type ResponseResult } from './response-result'
 
 export type Token = {
   access_token: string;
@@ -39,7 +40,9 @@ export async function singIn(e: Event) {
     localStorage.setItem(REFRESH_TOKEN, token.refresh_token)
     localStorage.setItem(EXPIRES_IN, String(token.expires_in))
     window.location.href = '/index.html'
-  } else {
-    window.location.href = '/auth/login'
+    return ''
   }
+
+  const responseResult = await response.json() as ResponseResult
+  return responseResult.message
 }

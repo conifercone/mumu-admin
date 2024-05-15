@@ -76,6 +76,8 @@ const htmlPath = "..";
           Register a new membership
         </a>
       </p>
+      <div id="check-alert" class="alert alert-warning" role="alert">
+      </div>
     </div>
     <!-- /.login-card-body -->
   </div>
@@ -84,11 +86,18 @@ const htmlPath = "..";
   import {singIn} from "../../ts/api/login"
   import {ACCESS_TOKEN} from "../../ts/config/constants";
 
+  document.getElementById("check-alert").style.display="none";
   if (localStorage.getItem(ACCESS_TOKEN) != null) {
     window.location.href = '/index.html';
   }
   const loginForm = document.querySelector('#login-form');
-  loginForm.addEventListener('submit', (submit) => {
-    singIn(submit)
+  loginForm.addEventListener('submit', async (submit) => {
+    let promise = singIn(submit);
+    let errorMessage = await promise;
+    if (errorMessage !== '') {
+      document.getElementById("check-alert").style.display = "block";
+      document.getElementById("check-alert").innerText = errorMessage
+    }
+
   });
 </script>
