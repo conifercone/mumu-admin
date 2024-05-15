@@ -32,12 +32,14 @@ export async function singIn(e: Event) {
     method: 'POST',
     body: formData
   })
-  const token = await response.json() as Token
-  localStorage.setItem(ACCESS_TOKEN, token.access_token)
-  localStorage.setItem(ID_TOKEN, token.id_token)
-  localStorage.setItem(REFRESH_TOKEN, token.refresh_token)
-  localStorage.setItem(EXPIRES_IN, String(token.expires_in))
   if (response.ok) {
+    const token = await response.json() as Token
+    localStorage.setItem(ACCESS_TOKEN, token.access_token)
+    localStorage.setItem(ID_TOKEN, token.id_token)
+    localStorage.setItem(REFRESH_TOKEN, token.refresh_token)
+    localStorage.setItem(EXPIRES_IN, String(token.expires_in))
     window.location.href = '/index.html'
+  } else {
+    window.location.href = '/auth/login'
   }
 }
