@@ -1,7 +1,7 @@
 import {
   ACCESS_TOKEN,
   CLIENT_ID,
-  CLIENT_PASSWORD, EXPIRES_IN, GRANT_TYPE_REQUEST_HEADER, REFRESH_TOKEN,
+  CLIENT_PASSWORD, EXPIRES_IN, GRANT_TYPE_REQUEST_HEADER, ID_TOKEN, REFRESH_TOKEN,
   SERVER_URL
 } from '../config/constants'
 
@@ -27,6 +27,10 @@ export async function refreshAccessToken(refreshToken: string): Promise<Token> {
   })
 
   if (!response.ok) {
+    localStorage.removeItem(ACCESS_TOKEN)
+    localStorage.removeItem(REFRESH_TOKEN)
+    localStorage.removeItem(EXPIRES_IN)
+    localStorage.removeItem(ID_TOKEN)
     throw new Error('Failed to refresh token')
   }
 
