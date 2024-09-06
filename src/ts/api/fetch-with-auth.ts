@@ -18,7 +18,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<Token> {
   const formData = new FormData()
   formData.set(GRANT_TYPE_REQUEST_HEADER, 'refresh_token')
   formData.set('refresh_token', refreshToken)
-  const response = await fetch(`${SERVER_URL}/api/centaur/authentication/oauth2/token`, {
+  const response = await fetch(`${SERVER_URL}/api/mumu/authentication/oauth2/token`, {
     method: 'POST',
     headers: {
       Authorization: `Basic ${encodedCredentials}`

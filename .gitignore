@@ -19,7 +19,7 @@ dist/
 
 # Project files
 .idea
-!/.idea/icon.png
+!/.idea/icon.svg
 nbproject
 nbproject/private
 .vscode/

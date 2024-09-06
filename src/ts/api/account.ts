@@ -12,7 +12,7 @@ export type Account = {
 }
 
 export async function queryCurrentLoginAccount(): Promise<Account> {
-  const response = await fetchWithAuth(`${SERVER_URL}/api/centaur/authentication/account/currentLoginAccount`, {
+  const response = await fetchWithAuth(`${SERVER_URL}/api/mumu/authentication/account/currentLoginAccount`, {
     method: 'GET'
   })
   const result = await response.json() as ResponseResult

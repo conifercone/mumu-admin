@@ -26,7 +26,7 @@ export async function singIn(e: Event) {
   formData.set(GRANT_TYPE_REQUEST_HEADER, AUTHORIZATION_PASSWORD_GRANT_TYPE)
   const auth = `${CLIENT_ID}:${CLIENT_PASSWORD}`
   const encodedCredentials = btoa(auth)
-  const response = await fetch(`${SERVER_URL}/api/centaur/authentication/oauth2/token`, {
+  const response = await fetch(`${SERVER_URL}/api/mumu/authentication/oauth2/token`, {
     headers: {
       Authorization: `Basic ${encodedCredentials}`
     },

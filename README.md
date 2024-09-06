@@ -1,2 +1,2 @@
-# [Centaur](https://adminlte.io)
+# [MuMu](https://adminlte.io)
 
