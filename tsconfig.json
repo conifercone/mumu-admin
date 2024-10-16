@@ -1,31 +1,23 @@
 {
-  "root": true,
   "compilerOptions": {
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noImplicitAny": true,
-    "module": "esnext",
-    "alwaysStrict": true,
+    "baseUrl": "./",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "strict": true,
-    "strictNullChecks": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
-    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@components/*": ["src/html/components/*"],
-    },
-    /* Language and Environment */
-    "target": "es6",
-    "lib": ["es2018", "DOM"],
+      "@/*": ["./src/*"],
+      "@@/*": ["./src/.umi/*"],
+      "@@test/*": ["./src/.umi-test/*"]
+    }
   },
-  "include": [
-    "src/ts/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-  ]
+  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx"]
 }

@@ -1,7 +1,8 @@
-**/*.min.js
-**/plugins/
-/.temp/
-/dist/
-/docs/
-/docs_html/
-**/env.d.ts
+/lambda/
+/scripts
+/config
+.history
+public
+dist
+.umi
+mock
