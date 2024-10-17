@@ -56,7 +56,7 @@ export default {
   'pages.searchTable.titleOption': '操作',
   'pages.searchTable.config': '配置',
   'pages.searchTable.subscribeAlert': '订阅警报',
-  'pages.searchTable.title': '查询表格',
+  'pages.searchTable.title': '用户管理',
   'pages.searchTable.new': '新建',
   'pages.searchTable.chosen': '已选择',
   'pages.searchTable.item': '项',

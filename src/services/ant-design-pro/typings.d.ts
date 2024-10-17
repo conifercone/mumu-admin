@@ -38,25 +38,28 @@ declare namespace API {
   };
 
   type RuleListItem = {
-    key?: number;
+    id?: number;
     disabled?: boolean;
     href?: string;
     avatar?: string;
-    name?: string;
+    username?: string;
     owner?: string;
     desc?: string;
     callNo?: number;
-    status?: number;
+    email?: string;
     updatedAt?: string;
-    createdAt?: string;
-    progress?: number;
+    creationTime?: string;
+    phone?: string;
+  };
+
+  type RuleListRes = {
+    data?: RuleList;
   };
 
   type RuleList = {
-    data?: RuleListItem[];
+    content?: RuleListItem[];
     /** 列表的内容总数 */
-    total?: number;
-    success?: boolean;
+    totalElements?: number;
   };
 
   type FakeCaptcha = {

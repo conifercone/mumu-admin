@@ -34,7 +34,7 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
   const formData = new FormData();
   formData.append('username', body.username);
   formData.append('password', body.password);
-  formData.append(REFRESH_TOKEN_GRANT_TYPE, AUTHORIZATION_PASSWORD_GRANT_TYPE);
+  formData.append(GRANT_TYPE_REQUEST_HEADER, AUTHORIZATION_PASSWORD_GRANT_TYPE);
   const encodedCredentials = btoa(`${CLIENT_ID}:${CLIENT_PASSWORD}`);
   return request<API.LoginResult>('/api/authentication/oauth2/token', {
     method: 'POST',
@@ -73,17 +73,9 @@ export async function getNotices(options?: { [key: string]: any }) {
 }
 
 /** 获取规则列表 GET /api/rule */
-export async function rule(
-  params: {
-    // query
-    /** 当前的页码 */
-    current?: number;
-    /** 页面的容量 */
-    pageSize?: number;
-  },
-  options?: { [key: string]: any },
-) {
-  return request<API.RuleList>('/api/rule', {
+export async function rule(params, options?: { [p: string]: any }) {
+  params.current = params.current - 1;
+  return request<API.RuleListRes>('/api/authentication/account/findAll', {
     method: 'GET',
     params: {
       ...params,

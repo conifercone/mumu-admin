@@ -58,7 +58,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     >
       <StepsForm.StepForm
         initialValues={{
-          name: props.values.name,
+          name: props.values.username,
           desc: props.values.desc,
         }}
         title={intl.formatMessage({
