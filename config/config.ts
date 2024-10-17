@@ -3,37 +3,32 @@ import { defineConfig } from '@umijs/max';
 import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 import routes from './routes';
 
 const { REACT_APP_ENV = 'dev' } = process.env;
 
 export default defineConfig({
   /**
-   * @name 开启 hash 模式
-   * @description 让 build 之后的产物包含 hash 后缀。通常用于增量发布和避免浏览器加载缓存。
+   * @description 开启 hash 模式让 build 之后的产物包含 hash 后缀。通常用于增量发布和避免浏览器加载缓存。
    * @doc https://umijs.org/docs/api/config#hash
    */
   hash: true,
 
   /**
-   * @name 兼容性设置
-   * @description 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖
+   * @description 兼容性设置 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖
    * @doc https://umijs.org/docs/api/config#targets
    */
   // targets: {
   //   ie: 11,
   // },
   /**
-   * @name 路由的配置，不在路由中引入的文件不会编译
-   * @description 只支持 path，component，routes，redirect，wrappers，title 的配置
+   * @description 路由的配置，不在路由中引入的文件不会编译 只支持 path，component，routes，redirect，wrappers，title 的配置
    * @doc https://umijs.org/docs/guides/routes
    */
   // umi routes: https://umijs.org/docs/routing
   routes,
   /**
-   * @name 主题的配置
-   * @description 虽然叫主题，但是其实只是 less 的变量设置
+   * @description 主题的配置 虽然叫主题，但是其实只是 less 的变量设置
    * @doc antd的主题设置 https://ant.design/docs/react/customize-theme-cn
    * @doc umi 的theme 配置 https://umijs.org/docs/api/config#theme
    */
@@ -49,21 +44,19 @@ export default defineConfig({
    */
   ignoreMomentLocale: true,
   /**
-   * @name 代理配置
-   * @description 可以让你的本地服务器代理到你的服务器上，这样你就可以访问服务器的数据了
+   * @description 代理配置可以让你的本地服务器代理到你的服务器上，这样你就可以访问服务器的数据了
    * @see 要注意以下 代理只能在本地开发时使用，build 之后就无法使用了。
    * @doc 代理介绍 https://umijs.org/docs/guides/proxy
    * @doc 代理配置 https://umijs.org/docs/api/config#proxy
    */
   proxy: proxy[REACT_APP_ENV as keyof typeof proxy],
   /**
-   * @name 快速热更新配置
-   * @description 一个不错的热更新组件，更新时可以保留 state
+   * @description 快速热更新配置 一个不错的热更新组件，更新时可以保留 state
    */
   fastRefresh: true,
   //============== 以下都是max的插件配置 ===============
   /**
-   * @name 数据流插件
+   * @description 数据流插件
    * @@doc https://umijs.org/docs/max/data-flow
    */
   model: {},
@@ -92,7 +85,7 @@ export default defineConfig({
     plugins: ['duration'],
   },
   /**
-   * @name 国际化插件
+   * @description 国际化插件
    * @doc https://umijs.org/docs/max/i18n
    */
   locale: {
@@ -109,14 +102,12 @@ export default defineConfig({
    */
   antd: {},
   /**
-   * @name 网络请求配置
-   * @description 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
+   * @description 网络请求配置 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
    * @doc https://umijs.org/docs/max/request
    */
   request: {},
   /**
-   * @name 权限插件
-   * @description 基于 initialState 的权限插件，必须先打开 initialState
+   * @description 权限插件基于 initialState 的权限插件，必须先打开 initialState
    * @doc https://umijs.org/docs/max/access
    */
   access: {},
@@ -149,9 +140,6 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
-  mock: {
-    include: ['mock/**/*', 'src/pages/**/_mock.ts'],
-  },
   mfsu: {
     strategy: 'normal',
   },
