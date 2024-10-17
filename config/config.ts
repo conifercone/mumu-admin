@@ -38,7 +38,7 @@ export default defineConfig({
     'root-entry-name': 'variable',
   },
   /**
-   * @name moment 的国际化配置
+   * @description moment 的国际化配置
    * @description 如果对国际化没有要求，打开之后能减少js的包大小
    * @doc https://umijs.org/docs/api/config#ignoremomentlocale
    */
