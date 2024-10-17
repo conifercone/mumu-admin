@@ -10,6 +10,7 @@ enum ErrorShowType {
   NOTIFICATION = 3,
   REDIRECT = 9,
 }
+
 // 与后端约定的响应数据格式
 interface ResponseStructure {
   success: boolean;
@@ -20,7 +21,7 @@ interface ResponseStructure {
 }
 
 /**
- * @name 错误处理
+ * @description 错误处理
  * pro 自带的错误处理， 可以在这里做自己的改动
  * @doc https://umijs.org/docs/max/request#配置
  */
