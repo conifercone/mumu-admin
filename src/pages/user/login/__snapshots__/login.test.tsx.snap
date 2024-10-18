@@ -623,7 +623,7 @@ exports[`Login Page should show login form 1`] = `
             >
               <img
                 alt="logo"
-                src="/logo.png"
+                src="/logo.svg"
               />
             </span>
             <span
