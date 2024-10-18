@@ -1,5 +1,5 @@
-// @ts-ignore
 /* eslint-disable */
+// @ts-ignore
 import { request } from '@umijs/max';
 
 export const AUTHORIZATION_PASSWORD_GRANT_TYPE = 'authorization_password';
@@ -72,10 +72,17 @@ export async function getNotices(options?: { [key: string]: any }) {
   });
 }
 
-/** 获取规则列表 GET /api/rule */
-export async function rule(params, options?: { [p: string]: any }) {
-  params.current = params.current - 1;
-  return request<API.RuleListRes>('/api/authentication/account/findAll', {
+/** 获取用户列表 GET /api/authentication/account/findAll */
+export async function accounts(
+  params: {
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  options?: { [p: string]: any },
+) {
+  return request<API.AccountListRes>('/api/authentication/account/findAll', {
     method: 'GET',
     params: {
       ...params,
@@ -86,7 +93,7 @@ export async function rule(params, options?: { [p: string]: any }) {
 
 /** 更新规则 PUT /api/rule */
 export async function updateRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.AccountListItem>('/api/rule', {
     method: 'POST',
     data: {
       method: 'update',
@@ -97,7 +104,7 @@ export async function updateRule(options?: { [key: string]: any }) {
 
 /** 新建规则 POST /api/rule */
 export async function addRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.AccountListItem>('/api/rule', {
     method: 'POST',
     data: {
       method: 'post',

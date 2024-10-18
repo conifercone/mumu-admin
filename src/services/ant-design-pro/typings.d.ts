@@ -37,27 +37,21 @@ declare namespace API {
     pageSize?: number;
   };
 
-  type RuleListItem = {
+  type AccountListItem = {
     id?: number;
-    disabled?: boolean;
-    href?: string;
     avatar?: string;
     username?: string;
-    owner?: string;
-    desc?: string;
-    callNo?: number;
     email?: string;
-    updatedAt?: string;
     creationTime?: string;
     phone?: string;
   };
 
-  type RuleListRes = {
-    data?: RuleList;
+  type AccountListRes = {
+    data?: AccountPage;
   };
 
-  type RuleList = {
-    content?: RuleListItem[];
+  type AccountPage = {
+    content?: AccountListItem[];
     /** 列表的内容总数 */
     totalElements?: number;
   };
