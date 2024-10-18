@@ -24,9 +24,16 @@ export const requestConfig: RequestConfig = {
         getItemWithBigIntExpiry(ACCESS_TOKEN) === null &&
         localStorage.getItem(REFRESH_TOKEN)
       ) {
-        let result = await refreshToken(localStorage.getItem(REFRESH_TOKEN));
-        setItemWithBigIntExpiry(ACCESS_TOKEN, result.access_token, result.expires_in);
-        localStorage.setItem(REFRESH_TOKEN, result.refresh_token);
+        const token = localStorage.getItem(REFRESH_TOKEN);
+        if (token) {
+          let result = await refreshToken(token);
+          if (result.expires_in) {
+            setItemWithBigIntExpiry(ACCESS_TOKEN, result.access_token, result.expires_in);
+          }
+          if (result.refresh_token) {
+            localStorage.setItem(REFRESH_TOKEN, result.refresh_token);
+          }
+        }
       }
       if (url !== '/api/authentication/oauth2/token' && getItemWithBigIntExpiry(ACCESS_TOKEN)) {
         const token = 'Bearer ' + getItemWithBigIntExpiry(ACCESS_TOKEN);

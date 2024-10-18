@@ -63,12 +63,12 @@ const TableList: React.FC = () => {
             ...params,
           });
           return {
-            data: msg.data.content,
+            data: msg.data?.content,
             // success 请返回 true，
             // 不然 table 会停止解析数据，即使有数据
             success: true,
             // 不传会使用 data 的长度，如果是分页一定要传
-            total: msg.data.totalElements,
+            total: msg.data?.totalElements,
           };
         }}
         columns={columns}

@@ -7,6 +7,7 @@ import {
 } from '@/services/ant-design-pro/api';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
+// @ts-ignore
 import { FormattedMessage, Helmet, history, SelectLang, useIntl, useModel } from '@umijs/max';
 import { message, Tabs } from 'antd';
 import { createStyles } from 'antd-style';
@@ -80,8 +81,12 @@ const Login: React.FC = () => {
       defaultMessage: '登录成功！',
     });
     message.success(defaultLoginSuccessMessage);
-    setItemWithBigIntExpiry(ACCESS_TOKEN, result.access_token, result.expires_in);
-    localStorage.setItem(REFRESH_TOKEN, result.refresh_token);
+    if (result.expires_in) {
+      setItemWithBigIntExpiry(ACCESS_TOKEN, result.access_token, result.expires_in);
+    }
+    if (result.refresh_token) {
+      localStorage.setItem(REFRESH_TOKEN, result.refresh_token);
+    }
     await fetchUserInfo();
     const urlParams = new URL(window.location.href).searchParams;
     history.push(urlParams.get('redirect') || '/');
