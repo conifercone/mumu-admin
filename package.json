@@ -2,7 +2,7 @@
   "name": "mumu-admin",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0-dev",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
