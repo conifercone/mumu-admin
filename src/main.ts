@@ -7,11 +7,11 @@
 // Plugins
 import { registerPlugins } from '@/plugins'
 
-// Components
-import App from './App.vue'
-
 // Composables
 import { createApp } from 'vue'
+
+// Components
+import App from './App.vue'
 
 const app = createApp(App)
 
