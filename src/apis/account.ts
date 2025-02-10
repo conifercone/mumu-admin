@@ -1,7 +1,4 @@
-import api from './axios'
-
-// 授权服务地址
-const authenticationServiceUrl = import.meta.env.VITE_AUTHENTICATION_SERVICE_URL
+import authenticationServerApi from './axios'
 
 // 定义账户类型
 export interface Account {
@@ -19,5 +16,5 @@ export interface Token {
 
 // 账户登录获取token
 export async function login(user: Partial<Account>): Promise<Token> {
-  return api.post(`${authenticationServiceUrl}/oauth2/token`, user)
+  return authenticationServerApi.post('/oauth2/token', user)
 }

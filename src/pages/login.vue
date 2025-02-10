@@ -1,5 +1,5 @@
 <script setup>
-import { login } from '@/apis/account.js'
+import { login } from '@/apis/account'
 import { ref } from 'vue'
 
 const visible = ref(false)

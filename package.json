@@ -18,7 +18,9 @@
     "@mdi/font": "7.4.47",
     "axios": "^1.7.9",
     "core-js": "^3.37.1",
+    "crypto-js": "^4.2.0",
     "roboto-fontface": "*",
+    "uuid": "^11.0.5",
     "vue": "^3.4.31",
     "vuetify": "^3.6.14"
   },
@@ -28,6 +30,7 @@
     "@commitlint/config-conventional": "^19.7.1",
     "@eslint/js": "^9.14.0",
     "@tsconfig/node22": "^22.0.0",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^22.9.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/tsconfig": "^0.5.1",
