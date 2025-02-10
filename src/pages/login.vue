@@ -1,4 +1,5 @@
 <script setup>
+import { login } from '@/apis/account.js'
 import { ref } from 'vue'
 
 const visible = ref(false)
@@ -14,23 +15,16 @@ const rules = {
     return pattern.test(value) || 'Invalid e-mail.'
   },
 }
-function onSubmit() {
+async function onSubmit() {
   if (!form.value)
     return
   loading.value = true
-  setTimeout(() => (loading.value = false), 2000)
-}
-</script>
-
-<script>
-export default {
-  data: () => ({
-    form: false,
-    email: null,
-    password: null,
-    loading: false,
-    visible: false,
-  }),
+  try {
+    await login({ email: email.value, password: password.value })
+  }
+  finally {
+    loading.value = false
+  }
 }
 </script>
 
