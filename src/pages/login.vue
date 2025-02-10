@@ -4,23 +4,19 @@ import { ref } from 'vue'
 
 const visible = ref(false)
 const form = ref(false)
-const email = ref('')
+const username = ref('')
 const password = ref('')
 const loading = ref(false)
 // 必填校验
 const rules = {
   required: value => !!value || 'Field is required',
-  email: (value) => {
-    const pattern = /^[\w.%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i
-    return pattern.test(value) || 'Invalid e-mail.'
-  },
 }
 async function onSubmit() {
   if (!form.value)
     return
   loading.value = true
   try {
-    await login({ email: email.value, password: password.value })
+    await login({ username: username.value, password: password.value })
   }
   finally {
     loading.value = false
@@ -52,11 +48,11 @@ async function onSubmit() {
         </div>
 
         <v-text-field
-          v-model="email"
+          v-model="username"
           density="compact"
-          placeholder="Email address"
-          prepend-inner-icon="mdi-email-outline"
-          :rules="[rules.required, rules.email]"
+          placeholder="Enter your username"
+          prepend-inner-icon="mdi-account-circle-outline"
+          :rules="[rules.required]"
           variant="outlined"
           clearable
         />
