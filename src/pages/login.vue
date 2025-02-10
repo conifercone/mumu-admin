@@ -3,8 +3,8 @@ import { ref } from 'vue'
 
 const visible = ref(false)
 const form = ref(false)
-const email = ref(null)
-const password = ref(null)
+const email = ref('')
+const password = ref('')
 const loading = ref(false)
 // 必填校验
 const rules = {
