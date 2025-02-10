@@ -6,8 +6,13 @@ const form = ref(false)
 const email = ref(null)
 const password = ref(null)
 const loading = ref(false)
-function required(v) {
-  return !!v || 'Field is required'
+// 必填校验
+const rules = {
+  required: value => !!value || 'Field is required',
+  email: (value) => {
+    const pattern = /^[\w.%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i
+    return pattern.test(value) || 'Invalid e-mail.'
+  },
 }
 function onSubmit() {
   if (!form.value)
@@ -56,8 +61,9 @@ export default {
           density="compact"
           placeholder="Email address"
           prepend-inner-icon="mdi-email-outline"
-          :rules="[required]"
+          :rules="[rules.required, rules.email]"
           variant="outlined"
+          clearable
         />
 
         <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
@@ -79,8 +85,9 @@ export default {
           density="compact"
           placeholder="Enter your password"
           prepend-inner-icon="mdi-lock-outline"
-          :rules="[required]"
+          :rules="[rules.required]"
           variant="outlined"
+          clearable
           @click:append-inner="visible = !visible"
         />
 
