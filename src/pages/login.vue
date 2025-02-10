@@ -2,11 +2,28 @@
 import { ref } from 'vue'
 
 const visible = ref(false)
+const form = ref(false)
+const email = ref(null)
+const password = ref(null)
+const loading = ref(false)
+function required(v) {
+  return !!v || 'Field is required'
+}
+function onSubmit() {
+  if (!form.value)
+    return
+  loading.value = true
+  setTimeout(() => (loading.value = false), 2000)
+}
 </script>
 
 <script>
 export default {
   data: () => ({
+    form: false,
+    email: null,
+    password: null,
+    loading: false,
     visible: false,
   }),
 }
@@ -26,69 +43,81 @@ export default {
       max-width="448"
       rounded="lg"
     >
-      <div class="text-subtitle-1 text-medium-emphasis">
-        Account
-      </div>
-
-      <v-text-field
-        density="compact"
-        placeholder="Email address"
-        prepend-inner-icon="mdi-email-outline"
-        variant="outlined"
-      />
-
-      <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-        Password
-
-        <a
-          class="text-caption text-decoration-none text-blue"
-          href="#"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Forgot login password?</a>
-      </div>
-
-      <v-text-field
-        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-        :type="visible ? 'text' : 'password'"
-        density="compact"
-        placeholder="Enter your password"
-        prepend-inner-icon="mdi-lock-outline"
-        variant="outlined"
-        @click:append-inner="visible = !visible"
-      />
-
-      <v-card
-        class="mb-12"
-        color="surface-variant"
-        variant="tonal"
+      <v-form
+        v-model="form"
+        @submit.prevent="onSubmit"
       >
-        <v-card-text class="text-medium-emphasis text-caption">
-          Warning: After 3 consecutive failed login attempts, you account will be temporarily locked for three hours. If you must login now, you can also click "Forgot login password?" below to reset the login password.
+        <div class="text-subtitle-1 text-medium-emphasis">
+          Account
+        </div>
+
+        <v-text-field
+          v-model="email"
+          density="compact"
+          placeholder="Email address"
+          prepend-inner-icon="mdi-email-outline"
+          :rules="[required]"
+          variant="outlined"
+        />
+
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+          Password
+
+          <a
+            class="text-caption text-decoration-none text-blue"
+            href="#"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Forgot login password?</a>
+        </div>
+
+        <v-text-field
+          v-model="password"
+          :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+          :type="visible ? 'text' : 'password'"
+          density="compact"
+          placeholder="Enter your password"
+          prepend-inner-icon="mdi-lock-outline"
+          :rules="[required]"
+          variant="outlined"
+          @click:append-inner="visible = !visible"
+        />
+
+        <v-card
+          class="mb-12"
+          color="surface-variant"
+          variant="tonal"
+        >
+          <v-card-text class="text-medium-emphasis text-caption">
+            Warning: After 3 consecutive failed login attempts, you account will be temporarily locked for three hours. If you must login now, you can also click "Forgot login password?" below to reset the login password.
+          </v-card-text>
+        </v-card>
+
+        <v-btn
+          :loading="loading"
+          class="mb-8"
+          color="blue"
+          size="large"
+          variant="tonal"
+          type="submit"
+          :disabled="!form"
+          block
+        >
+          Log In
+        </v-btn>
+
+        <v-card-text class="text-center">
+          <a
+            class="text-blue text-decoration-none"
+            href="/register"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Sign up now <v-icon icon="mdi-chevron-right" />
+          </a>
         </v-card-text>
-      </v-card>
-
-      <v-btn
-        class="mb-8"
-        color="blue"
-        size="large"
-        variant="tonal"
-        block
-      >
-        Log In
-      </v-btn>
-
-      <v-card-text class="text-center">
-        <a
-          class="text-blue text-decoration-none"
-          href="/register"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Sign up now <v-icon icon="mdi-chevron-right" />
-        </a>
-      </v-card-text>
+      </v-form>
     </v-card>
   </div>
 </template>
