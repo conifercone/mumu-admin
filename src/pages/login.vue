@@ -50,6 +50,7 @@ export default {
     >
       <v-form
         v-model="form"
+        fast-fail
         @submit.prevent="onSubmit"
       >
         <div class="text-subtitle-1 text-medium-emphasis">
