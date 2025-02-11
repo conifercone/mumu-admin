@@ -18,15 +18,14 @@ export interface Token {
 
 // 账户登录获取token
 export async function passwordLogin(accountPasswordLogin: Partial<AccountPasswordLogin>): Promise<Token> {
-  const response = await authenticationServerApi.post('/oauth2/token', accountPasswordLogin, {
+  return authenticationServerApi.post('/oauth2/token', accountPasswordLogin, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
+    skipTransformResponse: true,
     auth: {
       username: import.meta.env.VITE_CLIENT_ID,
       password: import.meta.env.VITE_CLIENT_SECRET,
     },
   })
-
-  return response.data
 }

@@ -15,12 +15,14 @@ async function onSubmit() {
   if (!form.value)
     return
   loading.value = true
-  try {
-    await passwordLogin({ username: username.value, password: password.value, grant_type: 'password' })
-  }
-  finally {
-    loading.value = false
-  }
+  passwordLogin({ username: username.value, password: password.value, grant_type: 'password' })
+    .then((token) => {
+      localStorage.setItem('access_token', token.access_token)
+      localStorage.setItem('refresh_token', token.refresh_token)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
 
