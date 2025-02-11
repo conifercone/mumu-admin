@@ -1,5 +1,6 @@
 <script setup>
 import { passwordLogin } from '@/apis/account'
+import router from '@/router/index'
 import { ref } from 'vue'
 
 const visible = ref(false)
@@ -19,6 +20,7 @@ async function onSubmit() {
     .then((token) => {
       localStorage.setItem('access_token', token.access_token)
       localStorage.setItem('refresh_token', token.refresh_token)
+      router.push('/about')
     })
     .finally(() => {
       loading.value = false
