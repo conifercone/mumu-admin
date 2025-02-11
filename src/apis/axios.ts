@@ -7,6 +7,10 @@ const authenticationServerApi = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  auth: {
+    username: import.meta.env.VITE_CLIENT_ID,
+    password: import.meta.env.VITE_CLIENT_SECRET,
+  },
 })
 
 // 请求拦截器（可选：添加 Token）

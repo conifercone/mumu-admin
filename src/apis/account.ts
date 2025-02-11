@@ -15,6 +15,6 @@ export interface Token {
 }
 
 // 账户登录获取token
-export async function login(user: Partial<Account>): Promise<Token> {
-  return authenticationServerApi.post('/oauth2/token', user)
+export async function login(account: Partial<Account>): Promise<Token> {
+  return authenticationServerApi.post('/oauth2/token', account)
 }
