@@ -49,7 +49,14 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 3000,
+    port: 56389,
+    proxy: {
+      '/api/mumu': {
+        target: 'http://localhost:9080', // 目标后端服务器地址
+        changeOrigin: true, // 修改请求头中的 Origin 字段
+        secure: false, // 如果目标服务器是 https，可以设置为 true
+      },
+    },
   },
   css: {
     preprocessorOptions: {

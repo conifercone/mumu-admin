@@ -2,14 +2,10 @@ import { generateCommonHeaders } from '@/apis/headers'
 import axios from 'axios'
 
 const authenticationServerApi = axios.create({
-  baseURL: import.meta.env.VITE_APISIX + import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
+  baseURL: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
   timeout: 10000, // 超时时间
   headers: {
     'Content-Type': 'application/json',
-  },
-  auth: {
-    username: import.meta.env.VITE_CLIENT_ID,
-    password: import.meta.env.VITE_CLIENT_SECRET,
   },
 })
 

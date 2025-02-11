@@ -1,5 +1,5 @@
 <script setup>
-import { login } from '@/apis/account'
+import { passwordLogin } from '@/apis/account'
 import { ref } from 'vue'
 
 const visible = ref(false)
@@ -16,7 +16,7 @@ async function onSubmit() {
     return
   loading.value = true
   try {
-    await login({ username: username.value, password: password.value })
+    await passwordLogin({ username: username.value, password: password.value, grant_type: 'password' })
   }
   finally {
     loading.value = false
