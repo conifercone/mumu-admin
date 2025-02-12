@@ -131,7 +131,7 @@ async function responseErrorInterceptor(error: any) {
           console.error('Refresh token failed:', refreshError)
           localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY)
           localStorage.removeItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY)
-          await router.push('/login')
+          await router.replace('/login')
         }
         finally {
           isRefreshing = false
@@ -139,7 +139,7 @@ async function responseErrorInterceptor(error: any) {
       }
       else {
         // 没有刷新token跳转登录页
-        await router.push('/login')
+        await router.replace('/login')
       }
     }
     else {
