@@ -16,10 +16,10 @@ async function onSubmit() {
   if (!form.value)
     return
   loading.value = true
-  passwordLogin({ username: username.value, password: password.value, grant_type: 'password' })
+  passwordLogin({ username: username.value, password: password.value, grant_type: import.meta.env.VITE_PASSWORD_GRANT_TYPE })
     .then((token) => {
-      localStorage.setItem('access_token', token.access_token)
-      localStorage.setItem('refresh_token', token.refresh_token)
+      localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_LOCAL_STORAGE_KEY, token.access_token)
+      localStorage.setItem(import.meta.env.VITE_REFRESH_TOKEN_LOCAL_STORAGE_KEY, token.refresh_token)
       router.push('/about')
     })
     .finally(() => {

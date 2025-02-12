@@ -1,13 +1,22 @@
-import authenticationServerApi from './axios'
+import serverApi from './axios'
 
-// 定义账户类型
-export interface AccountPasswordLogin {
+// 账户密码登录表单数据
+export interface AccountPasswordLoginFormData {
   username: string
   password: string
   grant_type: string
 }
 
-// 定义token实体
+// 当前登录账户信息
+export interface CurrentLoginAccount {
+  id: string
+  username: string
+  avatarUrl: string
+  phone: string
+  email: string
+}
+
+// token实体
 export interface Token {
   refresh_token: string
   access_token: string
@@ -16,16 +25,21 @@ export interface Token {
   scope: string
 }
 
-// 账户登录获取token
-export async function passwordLogin(accountPasswordLogin: Partial<AccountPasswordLogin>): Promise<Token> {
-  return authenticationServerApi.post('/oauth2/token', accountPasswordLogin, {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    },
+// 账户密码登录
+export async function passwordLogin(accountPasswordLoginFormData: Partial<AccountPasswordLoginFormData>): Promise<Token> {
+  return serverApi.postForm(`${import.meta.env.VITE_AUTHENTICATION_SERVICE_URL}/oauth2/token`, accountPasswordLoginFormData, {
     skipTransformResponse: true,
+    serverUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
     auth: {
       username: import.meta.env.VITE_CLIENT_ID,
       password: import.meta.env.VITE_CLIENT_SECRET,
     },
+  })
+}
+
+// 获取当前登录账户信息
+export async function queryCurrentLoginAccount(): Promise<CurrentLoginAccount> {
+  return serverApi.get(`${import.meta.env.VITE_AUTHENTICATION_SERVICE_URL}/account/currentLoginAccount`, {
+    serverUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
   })
 }
