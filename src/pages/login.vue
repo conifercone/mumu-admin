@@ -16,15 +16,19 @@ async function onSubmit() {
   if (!form.value)
     return
   loading.value = true
-  passwordLogin({ username: username.value, password: password.value, grant_type: import.meta.env.VITE_PASSWORD_GRANT_TYPE })
-    .then((token) => {
-      localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_LOCAL_STORAGE_KEY, token.access_token)
-      localStorage.setItem(import.meta.env.VITE_REFRESH_TOKEN_LOCAL_STORAGE_KEY, token.refresh_token)
-      router.replace('/about')
+  try {
+    const token = await passwordLogin({
+      username: username.value,
+      password: password.value,
+      grant_type: import.meta.env.VITE_PASSWORD_GRANT_TYPE,
     })
-    .finally(() => {
-      loading.value = false
-    })
+    localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_LOCAL_STORAGE_KEY, token.access_token)
+    localStorage.setItem(import.meta.env.VITE_REFRESH_TOKEN_LOCAL_STORAGE_KEY, token.refresh_token)
+    await router.replace('/about')
+  }
+  finally {
+    loading.value = false
+  }
 }
 </script>
 
