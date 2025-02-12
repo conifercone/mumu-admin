@@ -14,6 +14,7 @@ export interface CurrentLoginAccount {
   avatarUrl: string
   phone: string
   email: string
+  bio: string
 }
 
 // token实体
