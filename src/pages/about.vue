@@ -15,20 +15,66 @@ async function fetchCurrentLoginAccount() {
 </script>
 
 <template>
-  <v-card
-    class="mx-auto"
-    :subtitle="currentLoginAccount?.email"
-    :title="currentLoginAccount?.username"
-  >
-    <template #prepend>
-      <v-avatar size="24">
-        <v-img
-          :alt="currentLoginAccount?.username"
-          :src="currentLoginAccount?.avatarUrl"
-        />
-      </v-avatar>
-    </template>
-  </v-card>
+  <v-container class="pa-5">
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+        <!-- Account card -->
+        <v-card elevation="4" class="pa-5">
+          <!-- Avatar and User Info -->
+          <v-row align="center" justify="center">
+            <v-col cols="auto">
+              <v-avatar size="100">
+                <v-img :src="currentLoginAccount?.avatarUrl" />
+              </v-avatar>
+            </v-col>
+            <v-col>
+              <div class="text-h5">
+                {{ currentLoginAccount?.username }}
+              </div>
+              <div class="text-subtitle-2 text--secondary">
+                {{ currentLoginAccount?.email }}
+              </div>
+            </v-col>
+          </v-row>
+
+          <!-- About Section -->
+          <v-divider class="my-4" />
+
+          <div class="text-h6">
+            About Me
+          </div>
+          <v-row>
+            <v-col>
+              <p>
+                {{ currentLoginAccount?.bio }}
+              </p>
+            </v-col>
+          </v-row>
+
+          <!-- Social Media Links -->
+          <v-divider class="my-4" />
+
+          <v-row justify="space-between">
+            <v-col cols="auto">
+              <v-btn icon>
+                <v-icon icon="mdi-facebook" />
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn icon>
+                <v-icon icon="mdi-twitter" />
+              </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn icon>
+                <v-icon icon="mdi-linkedin" />
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style scoped>
