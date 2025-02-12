@@ -5,25 +5,36 @@ import axios from 'axios'
 // 扩展 AxiosRequestConfig 类型
 declare module 'axios' {
   interface AxiosRequestConfig {
-    skipTransformResponse?: boolean // 添加 skipTransformResponse 属性
+    // 跳过响应转换
+    skipTransformResponse?: boolean
   }
 }
 
 export interface ResponseWrapper<T = any> {
+  // 请求是否成功
   success: boolean
+  // 响应编码
   code: string
+  // 响应消息
   message: string
+  // 时间戳
   timestamp: string
+  // 响应数据
   data: T
+  // 追踪ID
   traceId: string
 }
 
 // 公共请求拦截逻辑
 function requestInterceptor(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
   const commonHeaders = generateCommonHeaders(config)
+  // 附加请求ID
   config.headers['X-Request-ID'] = commonHeaders.requestId
+  // 附加请求签名
   config.headers['X-Signature'] = commonHeaders.signature
+  // 附加请求时间戳
   config.headers['X-Timestamp'] = commonHeaders.timestamp
+  // 如果token存在附加token
   const accessToken = localStorage.getItem('access_token')
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`
@@ -62,7 +73,8 @@ function requestErrorInterceptor(error: any) {
 
 const authenticationServerApi = axios.create({
   baseURL: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
-  timeout: 10000, // 超时时间
+  // 超时时间
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
