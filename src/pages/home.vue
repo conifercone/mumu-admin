@@ -42,7 +42,7 @@ const links = [
 
         <v-btn
           v-for="link in links"
-          :key="link"
+          :key="link.href"
           :text="link.title"
           variant="text"
           @click="() => router.push(link.href)"
