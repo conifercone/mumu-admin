@@ -9,6 +9,7 @@ declare module 'axios' {
   interface AxiosRequestConfig {
     // 跳过响应转换
     skipTransformResponse?: boolean
+    isRefreshToken?: boolean
     serverUrl?: string
   }
 }
@@ -96,6 +97,7 @@ async function refreshToken(): Promise<RefreshToken> {
     grant_type: import.meta.env.VITE_REFRESH_TOKEN_GRANT_TYPE,
   }, {
     skipTransformResponse: true,
+    isRefreshToken: true,
     serverUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
     auth: {
       username: import.meta.env.VITE_CLIENT_ID,
@@ -110,6 +112,9 @@ async function responseErrorInterceptor(error: any) {
 
   // 如果响应状态码是 401，并且没有正在刷新 token
   if (error.response?.status === 401) {
+    if (error.config.isRefreshToken) {
+      await router.push('/login')
+    }
     if (!isRefreshing) {
       // 没有正在刷新 token
       if (localStorage.getItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY)) {
@@ -132,7 +137,7 @@ async function responseErrorInterceptor(error: any) {
           console.error('Refresh token failed:', refreshError)
           localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY)
           localStorage.removeItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY)
-          await router.replace('/login')
+          await router.push('/login')
         }
         finally {
           isRefreshing = false
@@ -140,7 +145,7 @@ async function responseErrorInterceptor(error: any) {
       }
       else {
         // 没有刷新token跳转登录页
-        await router.replace('/login')
+        await router.push('/login')
       }
     }
     else {
@@ -160,7 +165,7 @@ async function responseErrorInterceptor(error: any) {
     }
   }
   // 通过事件总线触发 Snackbar 显示
-  snackbarMessagesEventBus.showSnackbar(error.response?.data?.message || `An unexpected error occurred${snackbarMessagesEventBus.snackbarTrigger}`, 'error')
+  snackbarMessagesEventBus.showSnackbar(error.response?.data?.message || 'An unexpected error occurred', 'error')
   return Promise.reject(error)
 }
 

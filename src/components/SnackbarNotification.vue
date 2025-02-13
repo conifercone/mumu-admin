@@ -57,6 +57,7 @@ function getSnackbarStyle(index: number) {
     :color="snackbarColors[index]"
     :style="getSnackbarStyle(index)"
     timeout="3000"
+    multi-line
     @after-leave="removeSnackbar(index)"
   >
     {{ message }}

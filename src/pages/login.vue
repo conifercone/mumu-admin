@@ -24,7 +24,10 @@ async function onSubmit() {
     })
     localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_LOCAL_STORAGE_KEY, token.access_token)
     localStorage.setItem(import.meta.env.VITE_REFRESH_TOKEN_LOCAL_STORAGE_KEY, token.refresh_token)
-    await router.replace('/about')
+    await router.push('/about')
+  }
+  catch (err) {
+    console.error(err)
   }
   finally {
     loading.value = false
