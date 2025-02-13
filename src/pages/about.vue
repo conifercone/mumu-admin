@@ -15,7 +15,10 @@ async function fetchCurrentLoginAccount() {
 </script>
 
 <template>
-  <v-container class="pa-5">
+  <v-container
+    class="d-flex justify-center align-center fill-height"
+    fluid
+  >
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6">
         <!-- Account card -->
@@ -54,21 +57,15 @@ async function fetchCurrentLoginAccount() {
           <!-- Social Media Links -->
           <v-divider class="my-4" />
 
-          <v-row justify="space-between">
+          <v-row align="center" justify="center">
             <v-col cols="auto">
-              <v-btn icon>
-                <v-icon icon="mdi-facebook" />
-              </v-btn>
+              <v-btn density="default" variant="plain" icon="mdi-facebook" />
             </v-col>
             <v-col cols="auto">
-              <v-btn icon>
-                <v-icon icon="mdi-twitter" />
-              </v-btn>
+              <v-btn density="default" variant="plain" icon="mdi-twitter" />
             </v-col>
             <v-col cols="auto">
-              <v-btn icon>
-                <v-icon icon="mdi-linkedin" />
-              </v-btn>
+              <v-btn density="default" variant="plain" icon="mdi-linkedin" />
             </v-col>
           </v-row>
         </v-card>
