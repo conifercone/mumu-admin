@@ -24,7 +24,7 @@ async function onSubmit() {
     })
     localStorage.setItem(import.meta.env.VITE_ACCESS_TOKEN_LOCAL_STORAGE_KEY, token.access_token)
     localStorage.setItem(import.meta.env.VITE_REFRESH_TOKEN_LOCAL_STORAGE_KEY, token.refresh_token)
-    await router.push('/home')
+    await router.push('/')
   }
   catch (err) {
     console.error(err)
