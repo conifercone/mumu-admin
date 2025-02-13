@@ -49,6 +49,7 @@ async function onSubmit() {
         class="mx-auto pa-12 pb-8"
         elevation="8"
         max-width="448"
+        min-width="400"
         rounded="lg"
       >
         <v-img
@@ -99,16 +100,6 @@ async function onSubmit() {
             clearable
             @click:append-inner="visible = !visible"
           />
-
-          <v-card
-            class="mb-12"
-            color="surface-variant"
-            variant="tonal"
-          >
-            <v-card-text class="text-medium-emphasis text-caption">
-              Warning: After 3 consecutive failed login attempts, you account will be temporarily locked for three hours. If you must login now, you can also click "Forgot login password?" below to reset the login password.
-            </v-card-text>
-          </v-card>
 
           <v-btn
             :loading="loading"
