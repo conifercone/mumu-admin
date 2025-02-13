@@ -112,6 +112,7 @@ async function responseErrorInterceptor(error: any) {
 
   // 如果响应状态码是 401，并且没有正在刷新 token
   if (error.response?.status === 401) {
+    // 如果是刷新token接口401，跳转至登录页，防止无效请求
     if (error.config.isRefreshToken) {
       await router.push('/login')
     }
