@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { generateCommonHeaders } from '@/apis/headers'
 import router from '@/router/index'
+import snackbarMessagesEventBus from '@/snackbar-messages-event-bus'
 import axios from 'axios'
 
 // 扩展 AxiosRequestConfig 类型
@@ -158,6 +159,9 @@ async function responseErrorInterceptor(error: any) {
       })
     }
   }
+  // 通过事件总线触发 Snackbar 显示
+  snackbarMessagesEventBus.showSnackbar(error.response?.data?.message || `An unexpected error occurred${snackbarMessagesEventBus.snackbarTrigger}`, 'error')
+  return Promise.reject(error)
 }
 
 // 公共请求错误拦截逻辑
