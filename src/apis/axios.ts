@@ -167,7 +167,6 @@ async function responseErrorInterceptor(error: any) {
   }
   // 通过事件总线触发 Snackbar 显示
   snackbarMessagesEventBus.showSnackbar(error.response?.data?.message || 'An unexpected error occurred', 'error')
-  return Promise.reject(error)
 }
 
 // 公共请求错误拦截逻辑
