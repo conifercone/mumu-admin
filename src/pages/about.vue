@@ -32,7 +32,7 @@ async function fetchCurrentLoginAccount() {
             </v-col>
             <v-col>
               <div class="text-h5">
-                {{ currentLoginAccount?.username }}
+                {{ currentLoginAccount?.nickName }}
               </div>
               <div class="text-subtitle-2 text--secondary">
                 {{ currentLoginAccount?.email }}

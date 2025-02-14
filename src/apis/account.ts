@@ -11,6 +11,7 @@ export interface AccountPasswordLoginFormData {
 export interface CurrentLoginAccount {
   id: string
   username: string
+  nickName: string
   avatarUrl: string
   phone: string
   email: string
