@@ -62,9 +62,7 @@ function getSnackbarStyle(index: number) {
   >
     {{ message }}
     <template #actions>
-      <v-btn icon @click="closeSnackbar(index)">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
+      <v-btn icon="mdi-close" @click="closeSnackbar(index)" />
     </template>
   </v-snackbar>
 </template>
