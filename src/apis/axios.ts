@@ -80,10 +80,6 @@ function requestInterceptor(config: InternalAxiosRequestConfig): InternalAxiosRe
   else if (!config.requiresNoAuth) {
     router.push('/login').then(() => console.warn('Not logged in'))
   }
-  if (config.serverBaseUrl && !config.url?.startsWith(config.serverBaseUrl)) {
-    config.url = config.serverBaseUrl + config.url
-  }
-
   return config
 }
 
@@ -117,7 +113,7 @@ function onRefreshed(token: string) {
 
 // 刷新token
 async function refreshToken(): Promise<RefreshToken> {
-  return serverApi.postForm('/oauth2/token', {
+  return serverApi.postForm(`${import.meta.env.VITE_AUTHENTICATION_SERVICE_URL}/oauth2/token`, {
     refresh_token: localStorage.getItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY),
     grant_type: import.meta.env.VITE_REFRESH_TOKEN_GRANT_TYPE,
   }, {
