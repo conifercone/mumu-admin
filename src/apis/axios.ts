@@ -80,7 +80,7 @@ function requestInterceptor(config: InternalAxiosRequestConfig): InternalAxiosRe
   else if (!config.requiresNoAuth) {
     router.push('/login').then(() => console.warn('Not logged in'))
   }
-  if (config.serverBaseUrl) {
+  if (config.serverBaseUrl && !config.url?.startsWith(config.serverBaseUrl)) {
     config.url = config.serverBaseUrl + config.url
   }
 
