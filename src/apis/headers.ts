@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 export function generateCommonHeaders(config: InternalAxiosRequestConfig) {
   const requestIdString = uuidv4()
   const timestampString = Date.now().toString()
-  const requestPath = removePrefix(config.url, config.serverUrl)
+  const requestPath = removePrefix(config.url, config.serverBaseUrl)
   const requestBody = config.data == null
     ? ''
     : config.data

@@ -4,13 +4,31 @@ import router from '@/router/index'
 import snackbarMessagesEventBus from '@/snackbar-messages-event-bus'
 import axios from 'axios'
 
-// 扩展 AxiosRequestConfig 类型
+// 扩展 AxiosRequestConfig 接口
 declare module 'axios' {
   interface AxiosRequestConfig {
-    // 跳过响应转换
-    skipTransformResponse?: boolean
-    isRefreshToken?: boolean
-    serverUrl?: string
+    /**
+     * 是否跳过响应数据转换
+     * @default false
+     */
+    skipResponseTransform?: boolean
+
+    /**
+     * 标记请求是否为刷新 token 的请求
+     * @default false
+     */
+    isRefreshTokenRequest?: boolean
+
+    /**
+     * 自定义服务器 URL
+     */
+    serverBaseUrl?: string
+
+    /**
+     * 是否无需身份验证
+     * @default false
+     */
+    requiresNoAuth?: boolean
   }
 }
 const REFRESH_TOKEN_LOCAL_STORAGE_KEY: string = import.meta.env.VITE_REFRESH_TOKEN_LOCAL_STORAGE_KEY
@@ -59,6 +77,9 @@ function requestInterceptor(config: InternalAxiosRequestConfig): InternalAxiosRe
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`
   }
+  else if (!config.requiresNoAuth) {
+    router.push('/login').then(() => console.warn('Not logged in'))
+  }
   return config
 }
 
@@ -96,9 +117,9 @@ async function refreshToken(): Promise<RefreshToken> {
     refresh_token: localStorage.getItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY),
     grant_type: import.meta.env.VITE_REFRESH_TOKEN_GRANT_TYPE,
   }, {
-    skipTransformResponse: true,
-    isRefreshToken: true,
-    serverUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
+    skipResponseTransform: true,
+    isRefreshTokenRequest: true,
+    serverBaseUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
     auth: {
       username: import.meta.env.VITE_CLIENT_ID,
       password: import.meta.env.VITE_CLIENT_SECRET,

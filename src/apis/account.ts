@@ -30,8 +30,8 @@ export interface Token {
 // 账户密码登录
 export async function passwordLogin(accountPasswordLoginFormData: Partial<AccountPasswordLoginFormData>): Promise<Token> {
   return serverApi.postForm(`${import.meta.env.VITE_AUTHENTICATION_SERVICE_URL}/oauth2/token`, accountPasswordLoginFormData, {
-    skipTransformResponse: true,
-    serverUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
+    skipResponseTransform: true,
+    serverBaseUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
     auth: {
       username: import.meta.env.VITE_CLIENT_ID,
       password: import.meta.env.VITE_CLIENT_SECRET,
@@ -42,6 +42,6 @@ export async function passwordLogin(accountPasswordLoginFormData: Partial<Accoun
 // 获取当前登录账户信息
 export async function queryCurrentLoginAccount(): Promise<CurrentLoginAccount> {
   return serverApi.get(`${import.meta.env.VITE_AUTHENTICATION_SERVICE_URL}/account/currentLoginAccount`, {
-    serverUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
+    serverBaseUrl: import.meta.env.VITE_AUTHENTICATION_SERVICE_URL,
   })
 }
