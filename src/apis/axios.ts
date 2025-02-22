@@ -80,16 +80,20 @@ function requestInterceptor(config: InternalAxiosRequestConfig): InternalAxiosRe
   else if (!config.requiresNoAuth) {
     router.push('/login').then(() => console.warn('Not logged in'))
   }
+  if (config.serverBaseUrl) {
+    config.url = config.serverBaseUrl + config.url
+  }
+
   return config
 }
 
 // 公共响应拦截逻辑
 function responseInterceptor(response: AxiosResponse<ResponseWrapper>) {
-  const config = response.config as AxiosRequestConfig & { skipTransformResponse?: boolean }
+  const config = response.config as AxiosRequestConfig
   const res = response.data
 
-  // 如果配置了 skipTransformResponse，直接返回原始响应
-  if (config.skipTransformResponse) {
+  // 如果配置了 skipResponseTransform，直接返回原始响应
+  if (config.skipResponseTransform) {
     return res
   }
 
@@ -113,7 +117,7 @@ function onRefreshed(token: string) {
 
 // 刷新token
 async function refreshToken(): Promise<RefreshToken> {
-  return serverApi.postForm(`${import.meta.env.VITE_AUTHENTICATION_SERVICE_URL}/oauth2/token`, {
+  return serverApi.postForm('/oauth2/token', {
     refresh_token: localStorage.getItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY),
     grant_type: import.meta.env.VITE_REFRESH_TOKEN_GRANT_TYPE,
   }, {
@@ -134,7 +138,7 @@ async function responseErrorInterceptor(error: any) {
   // 如果响应状态码是 401，并且没有正在刷新 token
   if (error.response?.status === 401) {
     // 如果是刷新token接口401，跳转至登录页，防止无效请求
-    if (error.config.isRefreshToken) {
+    if (error.config.isRefreshTokenRequest) {
       await router.push('/login')
     }
     if (!isRefreshing) {
