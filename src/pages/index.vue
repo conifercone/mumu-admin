@@ -31,7 +31,7 @@ function handleMenuClick(itemHref: string) {
 }
 
 // 定义组件映射的类型
-interface ComponentMap {
+interface PageMap {
   [key: string]: Component
   dashboard: Component
   messages: Component
@@ -39,7 +39,7 @@ interface ComponentMap {
 }
 
 // 动态组件映射
-const contentComponents: ComponentMap = {
+const contentPages: PageMap = {
   dashboard: defineAsyncComponent(() => import('@/pages/about.vue')),
   messages: defineAsyncComponent(() => import('@/pages/about.vue')),
   about: defineAsyncComponent(() => import('@/pages/about.vue')),
@@ -111,8 +111,8 @@ const contentComponents: ComponentMap = {
               >
                 <!-- 动态加载组件 -->
                 <component
-                  :is="contentComponents[selectedItem as keyof ComponentMap]"
-                  v-if="contentComponents[selectedItem as keyof ComponentMap]"
+                  :is="contentPages[selectedItem as keyof PageMap]"
+                  v-if="contentPages[selectedItem as keyof PageMap]"
                 />
                 <!-- 默认内容 -->
                 <div v-else>
