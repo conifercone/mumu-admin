@@ -5,7 +5,7 @@ import snackbarMessagesEventBus from '../snackbar-messages-event-bus' // 导入�
 const snackbarMessages = ref<string[]>([]) // 用于存储多个 snackbar 消息
 const snackbarColors = ref<string[]>([]) // 用于存储多个 snackbar 颜色
 const showSnackbars = ref<boolean[]>([]) // 用于控制多个 snackbar 显示与隐藏状态
-// 最大同时显示 3 个 Snackbar
+// 最多同时显示 3 个 Snackbar
 const MAX_SNACKBARS = 3
 
 // 使用 watchEffect 监听 snackbarMessages 和 snackbarTrigger 的变化
@@ -51,13 +51,8 @@ function getSnackbarStyle(index: number) {
 
 <template>
   <v-snackbar
-    v-for="(message, index) in snackbarMessages"
-    :key="index"
-    v-model="showSnackbars[index]"
-    :color="snackbarColors[index]"
-    :style="getSnackbarStyle(index)"
-    timeout="3000"
-    multi-line
+    v-for="(message, index) in snackbarMessages" :key="index" v-model="showSnackbars[index]"
+    :color="snackbarColors[index]" :style="getSnackbarStyle(index)" timeout="3000" multi-line
     @after-leave="removeSnackbar(index)"
   >
     {{ message }}
