@@ -30,6 +30,7 @@ function removeSnackbar(index: number) {
     showSnackbars.value[index] = false
   }, 500) // 500ms 后隐藏
 }
+
 // 关闭 Snackbar 的方法
 function closeSnackbar(index: number) {
   // 手动将 snackbar 隐藏
@@ -37,6 +38,7 @@ function closeSnackbar(index: number) {
   // 从队列中移除该 snackbar
   removeSnackbar(index)
 }
+
 // 动态计算每个 Snackbar 的样式，避免重叠
 function getSnackbarStyle(index: number) {
   return {
