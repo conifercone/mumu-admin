@@ -1,18 +1,20 @@
-import { fileURLToPath, URL } from 'node:url'
-import Vue from '@vitejs/plugin-vue'
-import ViteFonts from 'unplugin-fonts/vite'
 // Plugins
 import Components from 'unplugin-vue-components/vite'
+import Vue from '@vitejs/plugin-vue'
+import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import Fonts from 'unplugin-fonts/vite'
 import VueRouter from 'unplugin-vue-router/vite'
 
 // Utilities
 import { defineConfig } from 'vite'
-import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    VueRouter(),
+    VueRouter({
+      dts: 'src/typed-router.d.ts',
+    }),
     Vue({
       template: { transformAssetUrls },
     }),
@@ -23,20 +25,34 @@ export default defineConfig({
         configFile: 'src/styles/settings.scss',
       },
     }),
-    Components(),
-    ViteFonts({
-      google: {
-        families: [{
-          name: 'Roboto',
-          styles: 'wght@100;300;400;500;700;900',
-        }],
+    Components({
+      dts: 'src/components.d.ts',
+    }),
+    Fonts({
+      fontsource: {
+        families: [
+          {
+            name: 'Roboto',
+            weights: [100, 300, 400, 500, 700, 900],
+            styles: ['normal', 'italic'],
+          },
+        ],
       },
     }),
   ],
+  optimizeDeps: {
+    exclude: [
+      'vuetify',
+      'vue-router',
+      'unplugin-vue-router/runtime',
+      'unplugin-vue-router/data-loaders',
+      'unplugin-vue-router/data-loaders/basic',
+    ],
+  },
   define: { 'process.env': {} },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('src', import.meta.url)),
     },
     extensions: [
       '.js',
@@ -49,13 +65,7 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 6073,
-    proxy: {
-      '/api/mumu': {
-        target: 'http://localhost:9080', // 目标后端服务器地址
-        changeOrigin: true, // 修改请求头中的 Origin 字段
-        secure: false, // 如果目标服务器是 https，可以设置为 true
-      },
-    },
+    host: '0.0.0.0',
+    port: 3000,
   },
 })
