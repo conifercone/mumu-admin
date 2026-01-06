@@ -17,12 +17,12 @@
   "dependencies": {
     "@mdi/font": "7.4.47",
     "axios": "^1.12.0",
-    "core-js": "^3.37.1",
+    "core-js": "^3.47.0",
     "crypto-js": "^4.2.0",
     "roboto-fontface": "*",
     "uuid": "^11.0.5",
     "vue": "^3.5.25",
-    "vuetify": "^3.11.3"
+    "vuetify": "^3.11.6"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.1.1",
@@ -40,12 +40,12 @@
     "sass": "1.77.8",
     "sass-embedded": "^1.77.8",
     "typescript": "~5.6.3",
-    "unplugin-fonts": "^1.1.1",
-    "unplugin-vue-components": "^0.27.2",
-    "unplugin-vue-router": "^0.10.0",
+    "unplugin-fonts": "^1.4.0",
+    "unplugin-vue-components": "^30.0.0",
+    "unplugin-vue-router": "^0.19.2",
     "vite": "^7.1.11",
     "vite-plugin-vuetify": "^2.1.2",
-    "vue-router": "^4.4.0",
-    "vue-tsc": "^2.1.10"
+    "vue-router": "^4.6.4",
+    "vue-tsc": "^3.2.2"
   }
 }

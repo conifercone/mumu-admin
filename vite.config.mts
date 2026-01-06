@@ -49,7 +49,7 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 0,
+    port: 6073,
     proxy: {
       '/api/mumu': {
         target: 'http://localhost:9080', // 目标后端服务器地址
