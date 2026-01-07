@@ -1,0 +1,31 @@
+{
+  "vue.hover.rich": true,
+
+  // 开启eslint检查
+  "eslint.enable": true,
+  
+  // 保存时自动修复
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // 默认格式化工具
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // 保存时格式化
+  "editor.formatOnSave": true,
+
+  // ESLint 校验语言
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue"
+  ],
+
+  // 禁用 VSCode 自带格式化，避免冲突
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
+}
