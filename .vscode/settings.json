@@ -3,7 +3,7 @@
 
   // 开启eslint检查
   "eslint.enable": true,
-  
+
   // 保存时自动修复
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
