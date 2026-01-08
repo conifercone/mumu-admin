@@ -22,3 +22,4 @@ pnpm-debug.log*
 *.sw?
 !.vscode/settings.json
 !.vscode/extensions.json
+!.vscode/launch.json
