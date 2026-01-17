@@ -34,6 +34,7 @@
                 variant="outlined"
                 color="primary"
                 density="comfortable"
+                prepend-inner-icon="mdi-account-outline"
               />
             </v-col>
 
@@ -46,6 +47,7 @@
                 variant="outlined"
                 color="primary"
                 density="comfortable"
+                prepend-inner-icon="mdi-lock-outline"
                 :type="isPasswordVisible ? 'text' : 'password'"
                 :append-inner-icon="
                   isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
