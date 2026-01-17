@@ -26,7 +26,7 @@
         <v-form @submit.prevent="() => {}">
           <v-row>
             <!-- email -->
-            <v-col cols="12">
+            <v-col cols="12" class="pb-0">
               <v-text-field
                 v-model="form.email"
                 :label="$t('auth.usernameOrEmail')"

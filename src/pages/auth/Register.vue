@@ -26,7 +26,7 @@
         <v-form @submit.prevent="() => {}">
           <v-row>
             <!-- Username -->
-            <v-col cols="12">
+            <v-col cols="12" class="pb-0">
               <v-text-field
                 v-model="form.username"
                 :label="$t('auth.username')"
@@ -38,7 +38,7 @@
             </v-col>
 
             <!-- Email -->
-            <v-col cols="12">
+            <v-col cols="12" class="pb-0">
               <v-text-field
                 v-model="form.email"
                 :label="$t('auth.email')"
