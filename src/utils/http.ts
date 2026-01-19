@@ -5,6 +5,7 @@ import type {
   InternalAxiosRequestConfig,
 } from 'axios';
 import axios from 'axios';
+import { message as globalMessage } from './message';
 
 /**
  * 后端服务前缀枚举
@@ -72,51 +73,56 @@ http.interceptors.response.use(
     if (res.successful) {
       return response; // 返回完整 response，方便在业务层处理 header 或 traceId
     } else {
-      // 业务错误处理（可以在此处添加全局消息提示，如：ElMessage.error(res.message)）
+      // 业务错误处理
+      const errorMsg = res.message || '系统错误';
       console.error(
-        `[API 业务错误] 代码: ${res.code}, 消息: ${res.message}, TraceId: ${res.traceId}`,
+        `[API 业务错误] 代码: ${res.code}, 消息: ${errorMsg}, TraceId: ${res.traceId}`,
       );
-      return Promise.reject(new Error(res.message || 'System Error'));
+      // 显示全局错误提示
+      globalMessage.error(errorMsg);
+      return Promise.reject(new Error(errorMsg));
     }
   },
   (error: AxiosError) => {
     // HTTP 网络层错误处理
-    let message = '未知错误';
+    let messageStr = '未知错误';
     if (error.response) {
       const status = error.response.status;
       switch (status) {
         case 400: {
-          message = '请求参数错误 (400)';
+          messageStr = '请求参数错误 (400)';
           break;
         }
         case 401: {
-          message = '未授权，请重新登录 (401)';
+          messageStr = '未授权，请重新登录 (401)';
           // 此处可执行退出登录逻辑
           break;
         }
         case 403: {
-          message = '拒绝访问 (403)';
+          messageStr = '拒绝访问 (403)';
           break;
         }
         case 404: {
-          message = '资源未找到 (404)';
+          messageStr = '资源未找到 (404)';
           break;
         }
         case 500: {
-          message = '服务器内部错误 (500)';
+          messageStr = '服务器内部错误 (500)';
           break;
         }
         default: {
-          message = `网络异常: ${status}`;
+          messageStr = `网络异常: ${status}`;
         }
       }
     } else if (error.message.includes('timeout')) {
-      message = '请求超时，请稍后重试';
+      messageStr = '请求超时，请稍后重试';
     } else {
-      message = '网络连接异常';
+      messageStr = '网络连接异常';
     }
 
-    console.error(`[HTTP 错误] ${message}`, error);
+    // 显示全局错误提示
+    globalMessage.error(messageStr);
+    console.error(`[HTTP 错误] ${messageStr}`, error);
     return Promise.reject(error);
   },
 );
