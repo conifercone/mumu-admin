@@ -23,7 +23,7 @@
       </v-card-text>
 
       <v-card-text>
-        <v-form @submit.prevent="() => {}">
+        <v-form @submit.prevent="handleLogin">
           <v-row>
             <!-- email -->
             <v-col class="pb-0" cols="12">
@@ -73,7 +73,13 @@
               </div>
 
               <!-- login button -->
-              <v-btn block color="primary" size="large" type="submit">
+              <v-btn
+                block
+                color="primary"
+                :loading="isLoading"
+                size="large"
+                type="submit"
+              >
                 {{ $t('auth.login') }}
               </v-btn>
             </v-col>
@@ -122,15 +128,71 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { login } from '@/api/auth';
 import logo from '@/assets/logo.svg';
+import { message } from '@/utils/message';
+
+const router = useRouter();
 
 const form = reactive({
-  email: '',
+  email: '', // This maps to username in OAuth2
   password: '',
   remember: false,
 });
 
 const isPasswordVisible = ref(false);
+const isLoading = ref(false);
+
+async function handleLogin() {
+  if (!form.email || !form.password) {
+    message.warning('请输入用户名和密码');
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    const res = await login({
+      username: form.email,
+      password: form.password,
+    });
+
+    // Check if the response is wrapped (ResponseWrapper) or direct
+    // Our http.ts returns res.data if successful, but the type is ResponseWrapper.
+    // However, if the OAuth endpoint returns standard JSON directly (not wrapped in code/msg/data),
+    // our interceptor might confuse it unless successful=true is present.
+    // If standard OAuth response: { access_token: ..., expires_in: ... }
+    // It lacks "successful" field.
+    // The interceptor: if (res.successful) return response; else reject.
+    // This is a potential issue if /oauth2/token returns standard OAuth JSON.
+    // But user said "Backend Unified Response Format is ResponseWrapper".
+    // So I assume the OAuth response IS wrapped inside "data".
+
+    // Access the data from the ResponseWrapper (which is returned as response.data by axios,
+    // but our interceptor might return the full response object).
+    // Interceptor: return response;
+    // So here `res` is AxiosResponse. `res.data` is ResponseWrapper.
+    // `res.data.data` is the TokenResponse.
+
+    const responseData = res.data;
+    // @ts-ignore
+    const tokenInfo = responseData.data || responseData;
+    // Fallback if not wrapped, but likely wrapped based on user input.
+
+    if (tokenInfo && tokenInfo.access_token) {
+      localStorage.setItem('token', tokenInfo.access_token);
+      message.success('登录成功');
+      router.push('/');
+    } else {
+      message.error('登录失败: 未获取到令牌');
+    }
+  } catch (error) {
+    // Error is already handled by interceptor (message.error)
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+}
 </script>
 
 <style lang="scss">

@@ -108,18 +108,26 @@ http.interceptors.response.use(
       return response;
     }
 
-    const res = response.data as ResponseWrapper;
+    const res = response.data;
 
-    if (res.successful) {
-      return response;
-    } else {
-      const errorMsg = res.message || '系统错误';
-      console.error(
-        `[API 业务错误] 代码: ${res.code}, 消息: ${errorMsg}, TraceId: ${res.traceId}`,
-      );
-      globalMessage.error(errorMsg);
-      return Promise.reject(new Error(errorMsg));
+    // 判断是否为统一包装格式：检查是否存在 successful 字段
+    if (res && typeof res === 'object' && Object.prototype.hasOwnProperty.call(res, 'successful')) {
+      if (res.successful) {
+        return response;
+      } else {
+        // 业务错误处理
+        const errorMsg = res.message || '系统错误';
+        console.error(
+          `[API 业务错误] 代码: ${res.code}, 消息: ${errorMsg}, TraceId: ${res.traceId}`,
+        );
+        // 显示全局错误提示
+        globalMessage.error(errorMsg);
+        return Promise.reject(new Error(errorMsg));
+      }
     }
+
+    // 如果没有 successful 字段，则视为非包装响应（如 OAuth2 Token），直接返回
+    return response;
   },
   (error: AxiosError) => {
     let messageStr = '未知错误';
