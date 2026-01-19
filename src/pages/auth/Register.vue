@@ -1,10 +1,10 @@
 <template>
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <v-card class="auth-card pa-sm-8 pa-5" max-width="448" elevation="10">
+    <v-card class="auth-card pa-sm-8 pa-5" elevation="10" max-width="448">
       <v-card-item class="justify-center">
         <template #prepend>
           <div class="d-flex">
-            <v-img :src="logo" width="32" height="32" class="me-2" />
+            <v-img class="me-2" height="32" :src="logo" width="32" />
           </div>
         </template>
 
@@ -26,28 +26,28 @@
         <v-form @submit.prevent="() => {}">
           <v-row>
             <!-- Username -->
-            <v-col cols="12" class="pb-0">
+            <v-col class="pb-0" cols="12">
               <v-text-field
                 v-model="form.username"
-                :label="$t('auth.username')"
-                placeholder="johndoe"
-                variant="outlined"
                 color="primary"
                 density="comfortable"
+                :label="$t('auth.username')"
+                placeholder="johndoe"
                 prepend-inner-icon="mdi-account-outline"
+                variant="outlined"
               />
             </v-col>
 
             <!-- Email -->
-            <v-col cols="12" class="pb-0">
+            <v-col class="pb-0" cols="12">
               <v-text-field
                 v-model="form.email"
-                :label="$t('auth.email')"
-                placeholder="johndoe@email.com"
-                variant="outlined"
                 color="primary"
                 density="comfortable"
+                :label="$t('auth.email')"
+                placeholder="johndoe@email.com"
                 prepend-inner-icon="mdi-email-outline"
+                variant="outlined"
               />
             </v-col>
 
@@ -55,16 +55,16 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.password"
-                :label="$t('auth.password')"
-                placeholder="············"
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-                prepend-inner-icon="mdi-lock-outline"
-                :type="isPasswordVisible ? 'text' : 'password'"
                 :append-inner-icon="
                   isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
                 "
+                color="primary"
+                density="comfortable"
+                :label="$t('auth.password')"
+                placeholder="············"
+                prepend-inner-icon="mdi-lock-outline"
+                :type="isPasswordVisible ? 'text' : 'password'"
+                variant="outlined"
                 @click:append-inner="isPasswordVisible = !isPasswordVisible"
               />
 
@@ -72,14 +72,14 @@
               <div class="d-flex align-center mt-1 mb-4">
                 <v-checkbox
                   v-model="form.privacyPolicies"
+                  class="me-3"
+                  density="compact"
                   hide-details
                   inline
-                  density="compact"
-                  class="me-3"
                 >
                   <template #label>
                     <span class="me-1">{{ $t('auth.agree') }}</span>
-                    <a href="javascript:void(0)" class="text-primary">
+                    <a class="text-primary" href="javascript:void(0)">
                       {{ $t('auth.privacy') }}
                     </a>
                   </template>
@@ -87,45 +87,45 @@
               </div>
 
               <!-- Signup Button -->
-              <v-btn block color="primary" type="submit" size="large">
+              <v-btn block color="primary" size="large" type="submit">
                 {{ $t('auth.signup') }}
               </v-btn>
             </v-col>
 
             <!-- Login Link -->
-            <v-col cols="12" class="text-center text-base">
+            <v-col class="text-center text-base" cols="12">
               <span>{{ $t('auth.alreadyUser') }}</span>
               <router-link class="text-primary ms-2" to="/auth/login">
                 {{ $t('auth.signIn') }}
               </router-link>
             </v-col>
 
-            <v-col cols="12" class="d-flex align-center">
+            <v-col class="d-flex align-center" cols="12">
               <v-divider />
               <span class="mx-4 text-high-emphasis">{{ $t('auth.or') }}</span>
               <v-divider />
             </v-col>
 
-            <v-col cols="12" class="text-center">
+            <v-col class="text-center" cols="12">
               <v-btn
+                class="me-2"
+                color="#4267b2"
                 icon="mdi-facebook"
                 variant="text"
-                color="#4267b2"
-                class="me-2"
               />
               <v-btn
+                class="me-2"
+                color="#1da1f2"
                 icon="mdi-twitter"
                 variant="text"
-                color="#1da1f2"
-                class="me-2"
               />
               <v-btn
+                class="me-2"
+                color="#272727"
                 icon="mdi-github"
                 variant="text"
-                color="#272727"
-                class="me-2"
               />
-              <v-btn icon="mdi-google" variant="text" color="#db4437" />
+              <v-btn color="#db4437" icon="mdi-google" variant="text" />
             </v-col>
           </v-row>
         </v-form>
@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import logo from '@/assets/logo.svg';
 
 const form = reactive({
