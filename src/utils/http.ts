@@ -5,16 +5,18 @@ import type {
   InternalAxiosRequestConfig,
 } from 'axios';
 import axios from 'axios';
+import HmacSHA256 from 'crypto-js/hmac-sha256';
+import { v4 as uuidv4 } from 'uuid';
 import { message as globalMessage } from './message';
 
 /**
- * 后端服务前缀枚举
+ * 后端服务前缀枚举 (相对于 baseURL: /api/mumu)
  */
 export enum ServicePrefix {
-  IAM = '/mumu/iam',
-  STORAGE = '/mumu/storage',
-  GENIX = '/mumu/genix',
-  LOG = '/mumu/log',
+  IAM = '/iam',
+  STORAGE = '/storage',
+  GENIX = '/genix',
+  LOG = '/log',
 }
 
 /**
@@ -32,7 +34,7 @@ export interface ResponseWrapper<T = any> {
 
 // 创建 Axios 实例
 const http: AxiosInstance = axios.create({
-  baseURL: '/api', // 对应 vite proxy 配置
+  baseURL: '/api/mumu', // 统一前缀
   timeout: 15_000,
   headers: {
     'Content-Type': 'application/json',
@@ -42,11 +44,51 @@ const http: AxiosInstance = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 从 localStorage 获取 token（根据实际存储位置调整）
+    // 1. 添加 Token
     const token = localStorage.getItem('token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 2. 接口签名逻辑
+    const timestamp = Date.now().toString();
+    const requestId = uuidv4();
+
+    // 获取签名路径
+    // config.url 通常就是我们传入的相对路径 (e.g. /iam/login)
+    // 它默认不包含 baseURL (/api/mumu)，这正好符合我们的签名要求
+    let signaturePath = config.url || '';
+
+    // 确保 path 以 / 开头
+    if (!signaturePath.startsWith('/')) {
+      signaturePath = '/' + signaturePath;
+    }
+
+    // 如果有参数拼接在 URL 上 (axios paramsSerializer 之前)，这里需要注意
+    // 但通常 config.url 在拦截器阶段还未包含查询参数字符串，所以这里取到的是纯 path
+
+    // 获取 compactJsonString
+    const compactJsonString = config.data
+      ? typeof config.data === 'string'
+        ? config.data
+        : JSON.stringify(config.data)
+      : '';
+
+    // 拼接待签名字符串
+    // timestampString + requestIdString + requestPath + compactJsonString
+    const signaturePayload = `${timestamp}${requestId}${signaturePath}${compactJsonString}`;
+
+    // 计算 HMAC-SHA256 签名
+    const secretKey = 'mumu';
+    const signature = HmacSHA256(signaturePayload, secretKey).toString();
+
+    // 设置请求头
+    if (config.headers) {
+      config.headers['X-Timestamp'] = timestamp;
+      config.headers['X-Request-ID'] = requestId;
+      config.headers['X-Signature'] = signature;
+    }
+
     return config;
   },
   (error: AxiosError) => {
@@ -57,7 +99,6 @@ http.interceptors.request.use(
 // 响应拦截器
 http.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 处理二进制流或非 JSON 响应（如文件下载）
     const contentType = response.headers['content-type'];
     if (
       response.config.responseType === 'blob' ||
@@ -69,22 +110,18 @@ http.interceptors.response.use(
 
     const res = response.data as ResponseWrapper;
 
-    // 根据后端 successful 字段判断业务逻辑是否成功
     if (res.successful) {
-      return response; // 返回完整 response，方便在业务层处理 header 或 traceId
+      return response;
     } else {
-      // 业务错误处理
       const errorMsg = res.message || '系统错误';
       console.error(
         `[API 业务错误] 代码: ${res.code}, 消息: ${errorMsg}, TraceId: ${res.traceId}`,
       );
-      // 显示全局错误提示
       globalMessage.error(errorMsg);
       return Promise.reject(new Error(errorMsg));
     }
   },
   (error: AxiosError) => {
-    // HTTP 网络层错误处理
     let messageStr = '未知错误';
     if (error.response) {
       const status = error.response.status;
@@ -95,7 +132,6 @@ http.interceptors.response.use(
         }
         case 401: {
           messageStr = '未授权，请重新登录 (401)';
-          // 此处可执行退出登录逻辑
           break;
         }
         case 403: {
@@ -120,7 +156,6 @@ http.interceptors.response.use(
       messageStr = '网络连接异常';
     }
 
-    // 显示全局错误提示
     globalMessage.error(messageStr);
     console.error(`[HTTP 错误] ${messageStr}`, error);
     return Promise.reject(error);
