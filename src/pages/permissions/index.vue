@@ -13,7 +13,6 @@
               :label="$t('permission.code')"
               prepend-inner-icon="mdi-code-braces"
               variant="outlined"
-              @update:model-value="refresh"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="4">
@@ -25,7 +24,6 @@
               :label="$t('permission.name')"
               prepend-inner-icon="mdi-tag-text-outline"
               variant="outlined"
-              @update:model-value="refresh"
             ></v-text-field>
           </v-col>
           <v-col class="d-flex align-center" cols="12" md="4">
