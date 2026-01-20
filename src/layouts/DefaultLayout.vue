@@ -106,7 +106,12 @@
     <!-- Footer -->
     <v-footer app border>
       <div class="text-center w-100">
-        {{ new Date().getFullYear() }} —
+        2024{{
+          new Date().getFullYear() > 2024
+            ? ` - ${new Date().getFullYear()}`
+            : ''
+        }}
+        —
         <strong>{{ $t('layout.footer') }}</strong>
       </div>
     </v-footer>
