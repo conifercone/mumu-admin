@@ -46,3 +46,10 @@ export function login(params: LoginParams) {
     },
   );
 }
+
+/**
+ * Logout
+ */
+export function logout() {
+  return http.post(`${ServicePrefix.IAM}/account/logout`);
+}

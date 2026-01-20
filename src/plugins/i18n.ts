@@ -28,6 +28,12 @@ const messages = {
       dashboard: 'Dashboard',
       accountSettings: 'Account Settings',
     },
+    user: {
+      profile: 'Profile',
+      settings: 'Settings',
+      logout: 'Logout',
+      logoutSuccess: 'Logout Successful',
+    },
     dashboard: {
       welcomeTitle: 'Welcome back, Administrator! 👋',
       welcomeSubtitle: "Here's what's happening with your store today.",
@@ -103,6 +109,12 @@ const messages = {
     menu: {
       dashboard: '仪表盘',
       accountSettings: '账号设置',
+    },
+    user: {
+      profile: '个人信息',
+      settings: '设置',
+      logout: '退出登录',
+      logoutSuccess: '退出登录成功',
     },
     dashboard: {
       welcomeTitle: '欢迎回来, 管理员! 👋',
