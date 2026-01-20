@@ -38,16 +38,21 @@
         <template #activator="{ props }">
           <v-btn class="mx-2" icon v-bind="props">
             <v-avatar color="primary" size="32">
-              <span>A</span>
+              <v-img v-if="user?.avatar?.url" :src="user.avatar.url"></v-img>
+              <span v-else>{{
+                (user?.nickName || user?.username || 'A')
+                  .charAt(0)
+                  .toUpperCase()
+              }}</span>
             </v-avatar>
           </v-btn>
         </template>
         <v-card>
           <v-list>
             <v-list-item
-              prepend-avatar="@/assets/logo.svg"
-              subtitle="admin@mumu.com"
-              title="Administrator"
+              :prepend-avatar="user?.avatar?.url || '/favicon.ico'"
+              :subtitle="user?.email || '...'"
+              :title="user?.nickName || user?.username || '...'"
             ></v-list-item>
           </v-list>
           <v-divider></v-divider>
@@ -94,16 +99,31 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { logout } from '@/api/auth';
+import { getCurrentUser, logout, type UserResponse } from '@/api/auth';
 import { MENU_ITEMS } from '@/config/menu';
 import { message } from '@/utils/message';
 
 const drawer = ref(true);
 const router = useRouter();
 const { t } = useI18n();
+const user = ref<UserResponse | null>(null);
+
+async function fetchUserInfo() {
+  try {
+    const res = await getCurrentUser();
+    const responseData = res as any;
+    user.value = responseData.successful ? responseData.data : responseData;
+  } catch (error) {
+    console.error('Failed to fetch user info', error);
+  }
+}
+
+onMounted(() => {
+  fetchUserInfo();
+});
 
 async function handleLogout() {
   try {

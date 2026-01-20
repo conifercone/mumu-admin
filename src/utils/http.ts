@@ -98,11 +98,11 @@ http.interceptors.request.use(
     let signaturePath = config.url || '';
 
     // 移除服务前缀
-    Object.values(ServicePrefix).forEach((prefix) => {
+    for (const prefix of Object.values(ServicePrefix)) {
       if (signaturePath.startsWith(prefix)) {
         signaturePath = signaturePath.replace(prefix, '');
       }
-    });
+    }
 
     // 确保 path 以 / 开头
     if (!signaturePath.startsWith('/')) {

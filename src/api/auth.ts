@@ -16,6 +16,20 @@ export interface TokenResponse {
   jti: string;
 }
 
+export interface UserResponse {
+  id: number;
+  username: string;
+  nickName: string;
+  email: string;
+  avatar?: {
+    url: string;
+  };
+  roles: Array<{
+    code: string;
+    name: string;
+  }>;
+}
+
 /**
  * OAuth2 Login via IAM Service
  */
@@ -44,6 +58,15 @@ export function login(params: LoginParams) {
         Authorization: `Basic ${basicAuth}`, // Override Bearer token if any
       },
     },
+  );
+}
+
+/**
+ * Get current login account info
+ */
+export function getCurrentUser() {
+  return http.get<UserResponse>(
+    `${ServicePrefix.IAM}/account/currentLoginAccount`,
   );
 }
 
