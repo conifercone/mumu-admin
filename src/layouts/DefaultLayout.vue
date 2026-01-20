@@ -72,15 +72,19 @@
           </v-list>
           <v-divider></v-divider>
           <v-list density="compact">
-            <v-list-item prepend-icon="mdi-account-outline" value="profile">
-              <v-list-item-title>{{ $t('user.profile') }}</v-list-item-title>
-            </v-list-item>
             <v-list-item
-              prepend-icon="mdi-cog-outline"
+              prepend-icon="mdi-account-cog-outline"
               to="/account-settings"
-              value="settings"
+              value="accountSettings"
             >
-              <v-list-item-title>{{ $t('user.settings') }}</v-list-item-title>
+              <v-list-item-title>{{
+                $t('user.personalSettings')
+              }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item prepend-icon="mdi-cog-outline" value="systemSettings">
+              <v-list-item-title>{{
+                $t('user.systemSettings')
+              }}</v-list-item-title>
             </v-list-item>
             <v-divider></v-divider>
             <v-list-item

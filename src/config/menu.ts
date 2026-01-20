@@ -10,9 +10,4 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: 'mdi-view-dashboard-outline',
     to: '/',
   },
-  {
-    title: 'menu.accountSettings',
-    icon: 'mdi-account-cog-outline',
-    to: '/account-settings', // Placeholder
-  },
 ];

@@ -21,12 +21,26 @@ export interface UserResponse {
   username: string;
   nickName: string;
   email: string;
+  phone?: string;
+  phoneCountryCode?: string;
+  gender?: 'MALE' | 'FEMALE' | 'OTHER';
+  birthday?: string;
+  bio?: string;
   avatar?: {
+    id: string;
     url: string;
   };
-  roles: Array<{
+  roles?: Array<{
     code: string;
     name: string;
+  }>;
+  addresses?: Array<{
+    street?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+    country?: string;
+    defaultAddress?: boolean;
   }>;
 }
 
