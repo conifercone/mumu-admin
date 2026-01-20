@@ -1,3 +1,8 @@
+<route lang="yaml">
+meta:
+  layout: blank
+</route>
+
 <template>
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
     <v-card class="auth-card pa-sm-8 pa-5" elevation="10" max-width="448">

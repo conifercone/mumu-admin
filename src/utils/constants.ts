@@ -8,3 +8,5 @@ export const OAUTH2_CONFIG = {
 };
 
 export const PUBLIC_ROUTES = ['/auth/login', '/auth/register'];
+
+export const BLANK_LAYOUT_ROUTES = ['/auth/login', '/auth/register'];

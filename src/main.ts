@@ -19,6 +19,8 @@ import { registerPlugins } from '@/plugins';
 // Components
 import App from './App.vue';
 
+import router from './router';
+
 // Styles
 import 'unfonts.css';
 
@@ -103,4 +105,6 @@ app.use(vuetify);
 
 registerPlugins(app);
 
-app.mount('#app');
+router.isReady().then(() => {
+  app.mount('#app');
+});

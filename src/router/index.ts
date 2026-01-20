@@ -7,7 +7,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router';
 import { routes } from 'vue-router/auto-routes';
-import { PUBLIC_ROUTES } from '@/utils/constants';
+import { BLANK_LAYOUT_ROUTES, PUBLIC_ROUTES } from '@/utils/constants';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +15,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, _from, next) => {
+  // 1. 强制处理布局元数据 (确保解耦且可靠)
+  if (BLANK_LAYOUT_ROUTES.includes(to.path)) {
+    to.meta.layout = 'blank';
+  }
+
+  // 2. 权限判断
   const token = localStorage.getItem('token');
 
   if (PUBLIC_ROUTES.includes(to.path)) {
