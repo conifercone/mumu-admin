@@ -157,27 +157,15 @@ async function handleLogin() {
       password: form.password,
     });
 
-    // Check if the response is wrapped (ResponseWrapper) or direct
-    // Our http.ts returns res.data if successful, but the type is ResponseWrapper.
-    // However, if the OAuth endpoint returns standard JSON directly (not wrapped in code/msg/data),
-    // our interceptor might confuse it unless successful=true is present.
-    // If standard OAuth response: { access_token: ..., expires_in: ... }
-    // It lacks "successful" field.
-    // The interceptor: if (res.successful) return response; else reject.
-    // This is a potential issue if /oauth2/token returns standard OAuth JSON.
-    // But user said "Backend Unified Response Format is ResponseWrapper".
-    // So I assume the OAuth response IS wrapped inside "data".
+    // The http interceptor returns the response body directly now.
+    // It could be a ResponseWrapper (with .successful=true) or a raw object (like TokenResponse).
+    // We cast to any to safely check for the property.
+    const responseData = res as any;
 
-    // Access the data from the ResponseWrapper (which is returned as response.data by axios,
-    // but our interceptor might return the full response object).
-    // Interceptor: return response;
-    // So here `res` is AxiosResponse. `res.data` is ResponseWrapper.
-    // `res.data.data` is the TokenResponse.
-
-    const responseData = res.data;
-    // @ts-ignore
-    const tokenInfo = responseData.data || responseData;
-    // Fallback if not wrapped, but likely wrapped based on user input.
+    // If it's a wrapper, take .data. Otherwise take the object itself.
+    const tokenInfo = responseData.successful
+      ? responseData.data
+      : responseData;
 
     if (tokenInfo && tokenInfo.access_token) {
       localStorage.setItem('token', tokenInfo.access_token);

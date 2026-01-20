@@ -111,14 +111,15 @@ http.interceptors.response.use(
     const res = response.data;
 
     // 判断是否为统一包装格式：检查是否存在 successful 字段
-    if (res && typeof res === 'object' && Object.prototype.hasOwnProperty.call(res, 'successful')) {
-      if (res.successful) {
-        return response;
+    if (res && typeof res === 'object' && 'successful' in res) {
+      const wrapper = res as ResponseWrapper;
+      if (wrapper.successful) {
+        return res;
       } else {
         // 业务错误处理
-        const errorMsg = res.message || '系统错误';
+        const errorMsg = wrapper.message || '系统错误';
         console.error(
-          `[API 业务错误] 代码: ${res.code}, 消息: ${errorMsg}, TraceId: ${res.traceId}`,
+          `[API 业务错误] 代码: ${wrapper.code}, 消息: ${errorMsg}, TraceId: ${wrapper.traceId}`,
         );
         // 显示全局错误提示
         globalMessage.error(errorMsg);
@@ -127,7 +128,7 @@ http.interceptors.response.use(
     }
 
     // 如果没有 successful 字段，则视为非包装响应（如 OAuth2 Token），直接返回
-    return response;
+    return res;
   },
   (error: AxiosError) => {
     let messageStr = '未知错误';
