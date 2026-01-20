@@ -45,7 +45,7 @@ const http: AxiosInstance = axios.create({
 
 // 刷新 Token 相关变量
 let isRefreshing = false;
-let requestsQueue: Array<(token: string) => void> = [];
+let requestsQueue: Array<() => void> = [];
 
 /**
  * 刷新 Token
@@ -76,7 +76,13 @@ async function handleRefreshToken() {
     },
   );
 
-  return response.data; // 返回 TokenResponse
+  // 拦截器已经返回了 response.data (即响应体)
+  const res = response as any;
+  // 如果是统一包装格式，取 .data；否则直接返回
+  if (res && typeof res === 'object' && 'successful' in res) {
+    return res.data;
+  }
+  return res;
 }
 
 // 请求拦截器
@@ -200,9 +206,12 @@ http.interceptors.response.use(
         if (isRefreshing) {
           // 正在刷新，将请求加入队列
           return new Promise((resolve) => {
-            requestsQueue.push((token) => {
+            requestsQueue.push(() => {
               if (config.headers) {
-                config.headers.Authorization = `Bearer ${token}`;
+                delete config.headers.Authorization;
+              }
+              if (config.baseURL && config.url?.startsWith(config.baseURL)) {
+                config.url = config.url.replace(config.baseURL, '');
               }
               resolve(http(config));
             });
@@ -218,15 +227,30 @@ http.interceptors.response.use(
                 localStorage.setItem('refresh_token', tokenInfo.refresh_token);
               }
 
+              // 清理 Authorization 头，让请求拦截器重新添加新 Token
+              const resetConfig = (reqConfig: InternalAxiosRequestConfig) => {
+                if (reqConfig.headers) {
+                  delete reqConfig.headers.Authorization;
+                }
+                // 防止 baseURL 重复拼接
+                if (
+                  reqConfig.baseURL &&
+                  reqConfig.url?.startsWith(reqConfig.baseURL)
+                ) {
+                  reqConfig.url = reqConfig.url.replace(reqConfig.baseURL, '');
+                }
+                return reqConfig;
+              };
+
               // 重试队列中的请求
-              for (const cb of requestsQueue) cb(tokenInfo.access_token);
+              for (const cb of requestsQueue) {
+                // @ts-ignore
+                cb(); // 队列现在的回调不需要 token 参数了，因为我们会 resetConfig
+              }
               requestsQueue = [];
 
               // 重试当前请求
-              if (config.headers) {
-                config.headers.Authorization = `Bearer ${tokenInfo.access_token}`;
-              }
-              return http(config);
+              return http(resetConfig(config));
             }
           } catch (refreshError) {
             console.error('Token refresh failed:', refreshError);
