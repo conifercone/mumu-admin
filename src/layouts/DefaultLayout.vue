@@ -172,6 +172,6 @@ async function handleLogout() {
 
 <style scoped>
 .bg-grey-lighten-4 {
-  background-color: #f5f5f5 !important;
+  background-color: #f4f5fa !important;
 }
 </style>
