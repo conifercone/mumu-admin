@@ -41,24 +41,11 @@ const messages = {
       manageOrders: 'Manage Orders',
       performance: 'Performance',
       weeklyGoal: 'Weekly Goal Achieved',
-      recentTransactions: 'Recent Transactions',
       stats: {
         totalSales: 'Total Sales',
         newUsers: 'New Users',
         orderVolume: 'Order Volume',
         pendingItems: 'Pending Items',
-      },
-      table: {
-        id: 'ID',
-        customer: 'Customer',
-        date: 'Date',
-        amount: 'Amount',
-        status: 'Status',
-      },
-      status: {
-        completed: 'Completed',
-        pending: 'Pending',
-        failed: 'Failed',
       },
     },
     layout: {
@@ -123,24 +110,11 @@ const messages = {
       manageOrders: '管理订单',
       performance: '业绩表现',
       weeklyGoal: '本周目标达成率',
-      recentTransactions: '近期交易',
       stats: {
         totalSales: '总销售额',
         newUsers: '新增用户',
         orderVolume: '订单量',
         pendingItems: '待处理项',
-      },
-      table: {
-        id: 'ID',
-        customer: '客户',
-        date: '日期',
-        amount: '金额',
-        status: '状态',
-      },
-      status: {
-        completed: '已完成',
-        pending: '待处理',
-        failed: '已失败',
       },
     },
     layout: {
