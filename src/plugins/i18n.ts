@@ -62,6 +62,14 @@ const messages = {
     },
     menu: {
       dashboard: 'Dashboard',
+      permissions: 'Permissions',
+    },
+    permission: {
+      title: 'Permission Management',
+      code: 'Permission Code',
+      name: 'Permission Name',
+      description: 'Description',
+      list: 'Permission List',
     },
     user: {
       personalSettings: 'Personal Settings',
@@ -178,6 +186,14 @@ const messages = {
     },
     menu: {
       dashboard: '仪表盘',
+      permissions: '权限管理',
+    },
+    permission: {
+      title: '权限管理',
+      code: '权限编码',
+      name: '权限名称',
+      description: '描述',
+      list: '权限列表',
     },
     user: {
       personalSettings: '个人设置',

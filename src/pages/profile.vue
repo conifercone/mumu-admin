@@ -277,39 +277,49 @@ import { useRouter } from 'vue-router';
 import { getCurrentUser, updateAccount, type UserResponse } from '@/api/auth';
 import { message } from '@/utils/message';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const router = useRouter();
 
 const isSaving = ref(false);
 const userId = ref<number | null>(null);
 
-const countryCodeOptions = computed(() => [
-  { title: `${t('country.china')} (+86)`, value: '+86' },
-  { title: `${t('country.us')} (+1)`, value: '+1' },
-  { title: `${t('country.uk')} (+44)`, value: '+44' },
-  { title: `${t('country.japan')} (+81)`, value: '+81' },
-  { title: `${t('country.france')} (+33)`, value: '+33' },
-  { title: `${t('country.germany')} (+49)`, value: '+49' },
-  { title: `${t('country.canada')} (+1)`, value: '+1' },
-  { title: `${t('country.australia')} (+61)`, value: '+61' },
-  { title: `${t('country.india')} (+91)`, value: '+91' },
-  { title: `${t('country.russia')} (+7)`, value: '+7' },
-  { title: `${t('country.southKorea')} (+82)`, value: '+82' },
-  { title: `${t('country.brazil')} (+55)`, value: '+55' },
-  { title: `${t('country.italy')} (+39)`, value: '+39' },
-  { title: `${t('country.spain')} (+34)`, value: '+34' },
-]);
+const countryCodeOptions = computed(() => {
+  // Force reactivity on locale change
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  locale.value;
+  return [
+    { title: `${t('country.china')} (+86)`, value: '+86' },
+    { title: `${t('country.us')} (+1)`, value: '+1' },
+    { title: `${t('country.uk')} (+44)`, value: '+44' },
+    { title: `${t('country.japan')} (+81)`, value: '+81' },
+    { title: `${t('country.france')} (+33)`, value: '+33' },
+    { title: `${t('country.germany')} (+49)`, value: '+49' },
+    { title: `${t('country.canada')} (+1)`, value: '+1' },
+    { title: `${t('country.australia')} (+61)`, value: '+61' },
+    { title: `${t('country.india')} (+91)`, value: '+91' },
+    { title: `${t('country.russia')} (+7)`, value: '+7' },
+    { title: `${t('country.southKorea')} (+82)`, value: '+82' },
+    { title: `${t('country.brazil')} (+55)`, value: '+55' },
+    { title: `${t('country.italy')} (+39)`, value: '+39' },
+    { title: `${t('country.spain')} (+34)`, value: '+34' },
+  ];
+});
 
-const genderOptions = computed(() => [
-  { title: t('gender.MALE'), value: 'MALE' },
-  { title: t('gender.FEMALE'), value: 'FEMALE' },
-  { title: t('gender.NON_BINARY'), value: 'NON_BINARY' },
-  { title: t('gender.GENDER_QUEER'), value: 'GENDER_QUEER' },
-  { title: t('gender.GENDER_FLUID'), value: 'GENDER_FLUID' },
-  { title: t('gender.AGENDER'), value: 'AGENDER' },
-  { title: t('gender.OTHER'), value: 'OTHER' },
-  { title: t('gender.PREFER_NOT_TO_SAY'), value: 'PREFER_NOT_TO_SAY' },
-]);
+const genderOptions = computed(() => {
+  // Force reactivity on locale change
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  locale.value;
+  return [
+    { title: t('gender.MALE'), value: 'MALE' },
+    { title: t('gender.FEMALE'), value: 'FEMALE' },
+    { title: t('gender.NON_BINARY'), value: 'NON_BINARY' },
+    { title: t('gender.GENDER_QUEER'), value: 'GENDER_QUEER' },
+    { title: t('gender.GENDER_FLUID'), value: 'GENDER_FLUID' },
+    { title: t('gender.AGENDER'), value: 'AGENDER' },
+    { title: t('gender.OTHER'), value: 'OTHER' },
+    { title: t('gender.PREFER_NOT_TO_SAY'), value: 'PREFER_NOT_TO_SAY' },
+  ];
+});
 
 const form = reactive({
   username: '',

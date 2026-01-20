@@ -10,4 +10,9 @@ export const MENU_ITEMS: MenuItem[] = [
     icon: 'mdi-view-dashboard-outline',
     to: '/',
   },
+  {
+    title: 'menu.permissions',
+    icon: 'mdi-shield-lock-outline',
+    to: '/permissions',
+  },
 ];

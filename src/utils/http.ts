@@ -115,6 +115,29 @@ http.interceptors.request.use(
       signaturePath = '/' + signaturePath;
     }
 
+    // 将 query params 拼接到 signaturePath (需排序以保证一致性)
+
+    if (config.params) {
+      // 过滤掉 undefined 和 null，防止被 URLSearchParams 转为字符串 "undefined"
+
+      const params = { ...config.params };
+
+      for (const key of Object.keys(params)) {
+        if (params[key] === undefined || params[key] === null) {
+          delete params[key];
+        }
+      }
+
+      const searchParams = new URLSearchParams(params);
+
+      const queryString = decodeURIComponent(searchParams.toString());
+
+      if (queryString) {
+        signaturePath +=
+          (signaturePath.includes('?') ? '&' : '?') + queryString;
+      }
+    }
+
     // 如果有参数拼接在 URL 上 (axios paramsSerializer 之前)，这里需要注意
     // 但通常 config.url 在拦截器阶段还未包含查询参数字符串，所以这里取到的是纯 path
 
@@ -128,7 +151,6 @@ http.interceptors.request.use(
     // 拼接待签名字符串
     // timestampString + requestIdString + requestPath + compactJsonString
     const signaturePayload = `${timestamp}${requestId}${signaturePath}${compactJsonString}`;
-
     // 计算 HMAC-SHA256 签名
     const secretKey = OAUTH2_CONFIG.clientSecret;
     const signature = HmacSHA256(signaturePayload, secretKey).toString();
