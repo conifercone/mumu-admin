@@ -36,7 +36,7 @@ meta:
                 v-model="form.username"
                 color="primary"
                 density="comfortable"
-                :label="$t('auth.username')"
+                :label="$t('common.username')"
                 placeholder="johndoe"
                 prepend-inner-icon="mdi-account-outline"
                 variant="outlined"
@@ -49,7 +49,7 @@ meta:
                 v-model="form.email"
                 color="primary"
                 density="comfortable"
-                :label="$t('auth.email')"
+                :label="$t('common.email')"
                 placeholder="johndoe@email.com"
                 prepend-inner-icon="mdi-email-outline"
                 variant="outlined"
@@ -65,7 +65,7 @@ meta:
                 "
                 color="primary"
                 density="comfortable"
-                :label="$t('auth.password')"
+                :label="$t('common.password')"
                 placeholder="············"
                 prepend-inner-icon="mdi-lock-outline"
                 :type="isPasswordVisible ? 'text' : 'password'"
@@ -107,7 +107,7 @@ meta:
 
             <v-col class="d-flex align-center" cols="12">
               <v-divider />
-              <span class="mx-4 text-high-emphasis">{{ $t('auth.or') }}</span>
+              <span class="mx-4 text-high-emphasis">{{ $t('common.or') }}</span>
               <v-divider />
             </v-col>
 

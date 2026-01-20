@@ -52,7 +52,7 @@ meta:
                 "
                 color="primary"
                 density="comfortable"
-                :label="$t('auth.password')"
+                :label="$t('common.password')"
                 placeholder="············"
                 prepend-inner-icon="mdi-lock-outline"
                 :type="isPasswordVisible ? 'text' : 'password'"
@@ -99,7 +99,7 @@ meta:
 
             <v-col class="d-flex align-center" cols="12">
               <v-divider />
-              <span class="mx-4 text-high-emphasis">{{ $t('auth.or') }}</span>
+              <span class="mx-4 text-high-emphasis">{{ $t('common.or') }}</span>
               <v-divider />
             </v-col>
 

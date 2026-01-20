@@ -36,7 +36,7 @@
                 color="secondary"
                 variant="outlined"
               >
-                {{ $t('user.reset') }}
+                {{ $t('common.reset') }}
               </v-btn>
             </div>
             <div class="text-caption text-medium-emphasis">
@@ -54,7 +54,7 @@
                 v-model="form.username"
                 color="primary"
                 disabled
-                :label="$t('user.username')"
+                :label="$t('common.username')"
                 readonly
                 variant="outlined"
               ></v-text-field>
@@ -71,7 +71,7 @@
               <v-text-field
                 v-model="form.email"
                 color="primary"
-                :label="$t('user.email')"
+                :label="$t('common.email')"
                 variant="outlined"
               ></v-text-field>
             </v-col>
@@ -79,7 +79,7 @@
               <v-text-field
                 v-model="form.phone"
                 color="primary"
-                :label="$t('user.phone')"
+                :label="$t('common.phone')"
                 variant="outlined"
               ></v-text-field>
             </v-col>
@@ -87,7 +87,7 @@
               <v-text-field
                 v-model="form.birthday"
                 color="primary"
-                :label="$t('user.birthday')"
+                :label="$t('common.birthday')"
                 type="date"
                 variant="outlined"
               ></v-text-field>
@@ -97,7 +97,7 @@
                 v-model="form.gender"
                 color="primary"
                 :items="['MALE', 'FEMALE', 'OTHER']"
-                :label="$t('user.gender')"
+                :label="$t('common.gender')"
                 variant="outlined"
               ></v-select>
             </v-col>
@@ -119,10 +119,10 @@
               elevation="0"
               type="submit"
             >
-              {{ $t('user.saveChanges') }}
+              {{ $t('common.saveChanges') }}
             </v-btn>
             <v-btn class="text-capitalize" color="secondary" variant="outlined">
-              {{ $t('user.cancel') }}
+              {{ $t('common.cancel') }}
             </v-btn>
           </div>
         </v-form>
