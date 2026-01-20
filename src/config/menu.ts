@@ -6,12 +6,12 @@ export interface MenuItem {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
-    title: 'Dashboard',
+    title: 'menu.dashboard',
     icon: 'mdi-view-dashboard-outline',
     to: '/',
   },
   {
-    title: 'Account Settings',
+    title: 'menu.accountSettings',
     icon: 'mdi-account-cog-outline',
     to: '/account-settings', // Placeholder
   },

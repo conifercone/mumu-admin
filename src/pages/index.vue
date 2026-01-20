@@ -5,13 +5,13 @@
       <v-col cols="12" md="8">
         <v-card class="mb-6" color="primary" elevation="2" theme="dark">
           <v-card-item>
-            <v-card-title class="text-h5"> Welcome back, Administrator! 👋 </v-card-title>
-            <v-card-subtitle> Here's what's happening with your store today. </v-card-subtitle>
+            <v-card-title class="text-h5"> {{ $t('dashboard.welcomeTitle') }} </v-card-title>
+            <v-card-subtitle> {{ $t('dashboard.welcomeSubtitle') }} </v-card-subtitle>
           </v-card-item>
           <v-card-text>
             <div class="d-flex align-center mt-2">
-              <v-btn class="me-2" color="white" variant="outlined">View Reports</v-btn>
-              <v-btn color="white" variant="tonal">Manage Orders</v-btn>
+              <v-btn class="me-2" color="white" variant="outlined">{{ $t('dashboard.viewReports') }}</v-btn>
+              <v-btn color="white" variant="tonal">{{ $t('dashboard.manageOrders') }}</v-btn>
             </div>
           </v-card-text>
         </v-card>
@@ -19,9 +19,9 @@
       <v-col cols="12" md="4">
         <v-card class="mb-6 h-100" elevation="2">
           <v-card-item>
-            <v-card-title>Performance</v-card-title>
+            <v-card-title>{{ $t('dashboard.performance') }}</v-card-title>
             <div class="text-h4 font-weight-bold mt-2">82%</div>
-            <div class="text-body-2 text-medium-emphasis">Weekly Goal Achieved</div>
+            <div class="text-body-2 text-medium-emphasis">{{ $t('dashboard.weeklyGoal') }}</div>
             <v-progress-linear class="mt-4" color="success" height="8" model-value="82" rounded></v-progress-linear>
           </v-card-item>
         </v-card>
@@ -42,7 +42,7 @@
               </v-chip>
             </div>
             <div class="text-h5 font-weight-bold mb-1">{{ stat.value }}</div>
-            <div class="text-caption text-medium-emphasis">{{ stat.title }}</div>
+            <div class="text-caption text-medium-emphasis">{{ $t(stat.title) }}</div>
           </v-card-item>
         </v-card>
       </v-col>
@@ -52,18 +52,18 @@
     <v-card elevation="2">
       <v-card-item>
         <div class="d-flex justify-space-between align-center">
-          <v-card-title>Recent Transactions</v-card-title>
+          <v-card-title>{{ $t('dashboard.recentTransactions') }}</v-card-title>
           <v-btn icon="mdi-dots-vertical" variant="text"></v-btn>
         </div>
       </v-card-item>
       <v-table>
         <thead>
           <tr>
-            <th class="text-left">ID</th>
-            <th class="text-left">Customer</th>
-            <th class="text-left">Date</th>
-            <th class="text-left">Amount</th>
-            <th class="text-left">Status</th>
+            <th class="text-left">{{ $t('dashboard.table.id') }}</th>
+            <th class="text-left">{{ $t('dashboard.table.customer') }}</th>
+            <th class="text-left">{{ $t('dashboard.table.date') }}</th>
+            <th class="text-left">{{ $t('dashboard.table.amount') }}</th>
+            <th class="text-left">{{ $t('dashboard.table.status') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -81,7 +81,7 @@
             <td class="font-weight-medium">{{ item.amount }}</td>
             <td>
               <v-chip :color="getStatusColor(item.status)" label size="small">
-                {{ item.status }}
+                {{ getStatusText(item.status) }}
               </v-chip>
             </td>
           </v-tr>
@@ -92,11 +92,15 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 const stats = [
-  { title: 'Total Sales', value: '$24,983', icon: 'mdi-currency-usd', color: 'primary', trend: 12.5 },
-  { title: 'New Users', value: '8,521', icon: 'mdi-account-group-outline', color: 'success', trend: 35.2 },
-  { title: 'Order Volume', value: '1,423', icon: 'mdi-cart-outline', color: 'warning', trend: -2.4 },
-  { title: 'Pending Items', value: '45', icon: 'mdi-package-variant-closed', color: 'info', trend: 0.8 },
+  { title: 'dashboard.stats.totalSales', value: '$24,983', icon: 'mdi-currency-usd', color: 'primary', trend: 12.5 },
+  { title: 'dashboard.stats.newUsers', value: '8,521', icon: 'mdi-account-group-outline', color: 'success', trend: 35.2 },
+  { title: 'dashboard.stats.orderVolume', value: '1,423', icon: 'mdi-cart-outline', color: 'warning', trend: -2.4 },
+  { title: 'dashboard.stats.pendingItems', value: '45', icon: 'mdi-package-variant-closed', color: 'info', trend: 0.8 },
 ];
 
 const transactions = [
@@ -116,6 +120,19 @@ function getStatusColor(status: string) {
     case 'Failed': { return 'error';
     }
     default: { return 'grey';
+    }
+  }
+}
+
+function getStatusText(status: string) {
+  switch (status) {
+    case 'Completed': { return t('dashboard.status.completed');
+    }
+    case 'Pending': { return t('dashboard.status.pending');
+    }
+    case 'Failed': { return t('dashboard.status.failed');
+    }
+    default: { return status;
     }
   }
 }

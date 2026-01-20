@@ -7,6 +7,7 @@ import type {
 import axios from 'axios';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
 import { v4 as uuidv4 } from 'uuid';
+import i18n from '@/plugins/i18n';
 import { OAUTH2_CONFIG } from './constants';
 import { message as globalMessage } from './message';
 
@@ -154,7 +155,7 @@ http.interceptors.response.use(
         return res;
       } else {
         // 业务错误处理
-        const errorMsg = wrapper.message || '系统错误';
+        const errorMsg = wrapper.message || i18n.global.t('http.systemError');
         console.error(
           `[API 业务错误] 代码: ${wrapper.code}, 消息: ${errorMsg}, TraceId: ${wrapper.traceId}`,
         );
@@ -171,7 +172,7 @@ http.interceptors.response.use(
     const config = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
-    let messageStr = '未知错误';
+    let messageStr = i18n.global.t('http.unknownError');
 
     if (error.response) {
       const status = error.response.status;
@@ -233,33 +234,33 @@ http.interceptors.response.use(
 
       switch (status) {
         case 400: {
-          messageStr = '请求参数错误 (400)';
+          messageStr = i18n.global.t('http.badRequest');
           break;
         }
         case 401: {
-          messageStr = '未授权，请重新登录 (401)';
+          messageStr = i18n.global.t('http.unauthorized');
           break;
         }
         case 403: {
-          messageStr = '拒绝访问 (403)';
+          messageStr = i18n.global.t('http.forbidden');
           break;
         }
         case 404: {
-          messageStr = '资源未找到 (404)';
+          messageStr = i18n.global.t('http.notFound');
           break;
         }
         case 500: {
-          messageStr = '服务器内部错误 (500)';
+          messageStr = i18n.global.t('http.internalServerError');
           break;
         }
         default: {
-          messageStr = `网络异常: ${status}`;
+          messageStr = `${i18n.global.t('http.networkError')}: ${status}`;
         }
       }
     } else if (error.message.includes('timeout')) {
-      messageStr = '请求超时，请稍后重试';
+      messageStr = i18n.global.t('http.timeout');
     } else {
-      messageStr = '网络连接异常';
+      messageStr = i18n.global.t('http.connectionError');
     }
 
     // Only show error message if it's NOT a handled 401 (which means we failed to refresh or it's another error)

@@ -21,12 +21,12 @@
         <v-list-item
           v-for="(item, i) in MENU_ITEMS"
           :key="i"
+          :value="item"
+          :to="item.to"
           color="primary"
           :prepend-icon="item.icon"
-          :to="item.to"
-          :value="item"
         >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -34,7 +34,7 @@
     <!-- App Bar -->
     <v-app-bar elevation="1">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>Dashboard</v-app-bar-title>
+      <v-app-bar-title>{{ $t('menu.dashboard') }}</v-app-bar-title>
       <v-spacer></v-spacer>
       <v-btn icon="mdi-magnify"></v-btn>
       <v-btn icon="mdi-bell-outline"></v-btn>
@@ -53,7 +53,7 @@
     <!-- Footer -->
     <v-footer app border>
       <div class="text-center w-100">
-        {{ new Date().getFullYear() }} — <strong>Mumu Admin</strong>
+        {{ new Date().getFullYear() }} — <strong>{{ $t('layout.footer') }}</strong>
       </div>
     </v-footer>
   </v-layout>
