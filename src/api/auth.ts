@@ -93,6 +93,13 @@ export function getCurrentUser() {
 }
 
 /**
+ * Update account info
+ */
+export function updateAccount(data: Partial<UserResponse>) {
+  return http.put(`${ServicePrefix.IAM}/account/updateById`, data);
+}
+
+/**
  * Logout
  */
 export function logout() {

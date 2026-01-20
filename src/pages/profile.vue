@@ -246,6 +246,7 @@
                   color="secondary"
                   size="large"
                   variant="text"
+                  @click="router.back()"
                 >
                   {{ $t('common.cancel') }}
                 </v-btn>
@@ -253,6 +254,7 @@
                   class="text-capitalize px-8"
                   color="primary"
                   elevation="2"
+                  :loading="isSaving"
                   size="large"
                   type="submit"
                 >
@@ -269,12 +271,17 @@
 
 <script lang="ts" setup>
 import MD5 from 'crypto-js/md5';
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { getCurrentUser, type UserResponse } from '@/api/auth';
+import { useRouter } from 'vue-router';
+import { getCurrentUser, updateAccount, type UserResponse } from '@/api/auth';
 import { message } from '@/utils/message';
 
 const { t } = useI18n();
+const router = useRouter();
+
+const isSaving = ref(false);
+const userId = ref<number | null>(null);
 
 const countryCodeOptions = computed(() => [
   { title: `${t('country.china')} (+86)`, value: '+86' },
@@ -338,6 +345,7 @@ async function fetchUserInfo() {
     const userData = responseData.successful ? responseData.data : responseData;
 
     if (userData) {
+      userId.value = userData.id;
       form.username = userData.username;
       form.nickName = userData.nickName;
       form.email = userData.email;
@@ -353,9 +361,27 @@ async function fetchUserInfo() {
   }
 }
 
-function save() {
-  // Placeholder for save logic
-  message.success('Settings saved (Mock)');
+async function save() {
+  if (!userId.value) return;
+
+  try {
+    isSaving.value = true;
+    await updateAccount({
+      id: userId.value,
+      nickName: form.nickName,
+      email: form.email,
+      phone: form.phone,
+      phoneCountryCode: form.phoneCountryCode,
+      gender: form.gender,
+      birthday: form.birthday,
+      bio: form.bio,
+    });
+    message.success(t('user.saveSuccess'));
+  } catch (error) {
+    console.error('Failed to save settings', error);
+  } finally {
+    isSaving.value = false;
+  }
 }
 
 onMounted(() => {
