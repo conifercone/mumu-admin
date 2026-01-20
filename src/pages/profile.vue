@@ -3,47 +3,82 @@
     <v-row>
       <!-- Left Column: Profile Card -->
       <v-col cols="12" md="4">
-        <v-card border class="h-100 text-center" elevation="0" rounded="lg">
-          <v-card-text
-            class="d-flex flex-column align-center justify-center py-10"
-          >
+        <v-card
+          border
+          class="h-100 position-relative"
+          elevation="0"
+          rounded="lg"
+        >
+          <!-- Cover Banner -->
+          <div
+            class="rounded-t-lg"
+            style="
+              height: 140px;
+              background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            "
+          ></div>
+
+          <v-card-text class="d-flex flex-column align-center pt-0">
+            <!-- Avatar with overlapping border -->
             <v-avatar
-              class="mb-4"
-              color="primary"
-              rounded="lg"
+              class="mt-n12 border-4 border-surface elevation-2"
+              color="surface"
               size="120"
-              variant="tonal"
             >
-              <v-img v-if="userAvatar" cover :src="userAvatar"></v-img>
-              <span v-else class="text-h2">{{ initials }}</span>
+              <v-avatar color="primary" size="112" variant="tonal">
+                <v-img v-if="userAvatar" cover :src="userAvatar"></v-img>
+                <span v-else class="text-h2 font-weight-bold">{{
+                  initials
+                }}</span>
+              </v-avatar>
             </v-avatar>
 
-            <h3 class="text-h6 font-weight-bold mb-1">
-              {{ form.nickName || form.username }}
-            </h3>
-            <div class="text-body-2 text-medium-emphasis mb-6">
-              {{ form.email }}
+            <!-- User Info -->
+            <div class="text-center mt-3 w-100">
+              <h3 class="text-h5 font-weight-bold text-high-emphasis">
+                {{ form.nickName || form.username }}
+              </h3>
+              <div class="text-body-2 text-medium-emphasis mb-2">
+                {{ form.email }}
+              </div>
+              <v-chip
+                class="font-weight-medium"
+                color="success"
+                size="small"
+                variant="flat"
+              >
+                {{ $t('user.verified') }}
+              </v-chip>
             </div>
 
-            <div class="d-flex gap-2 justify-center w-100">
+            <v-divider class="w-100 my-6"></v-divider>
+
+            <!-- Actions -->
+            <div class="d-flex flex-column gap-2 w-100 px-2">
               <v-btn
-                class="text-capitalize me-2"
+                block
+                class="text-capitalize mb-2"
                 color="primary"
-                elevation="0"
-                variant="elevated"
+                elevation="1"
+                prepend-icon="mdi-camera-outline"
+                variant="flat"
               >
                 {{ $t('user.uploadAvatar') }}
               </v-btn>
               <v-btn
+                block
                 class="text-capitalize"
                 color="secondary"
+                prepend-icon="mdi-restore"
                 variant="outlined"
               >
                 {{ $t('common.reset') }}
               </v-btn>
             </div>
 
-            <div class="text-caption text-medium-emphasis mt-4">
+            <div
+              class="text-caption text-medium-emphasis mt-4 text-center px-4"
+            >
               {{ $t('user.allowedFormat') }}
             </div>
           </v-card-text>
@@ -53,27 +88,39 @@
       <!-- Right Column: Details Form -->
       <v-col cols="12" md="8">
         <v-card border class="h-100" elevation="0" rounded="lg">
-          <v-card-item>
-            <v-card-title class="text-h6 px-2 pt-2">{{
-              $t('user.profileDetails')
-            }}</v-card-title>
-            <v-card-subtitle class="px-2 pb-2">
-              Update your personal information
+          <v-card-item class="pb-0 pt-6 px-6">
+            <v-card-title class="text-h6 font-weight-bold">
+              {{ $t('user.profileDetails') }}
+            </v-card-title>
+            <v-card-subtitle>
+              {{ $t('user.manageInfo') }}
             </v-card-subtitle>
           </v-card-item>
 
-          <v-divider></v-divider>
-
           <v-card-text class="pa-6">
             <v-form @submit.prevent="save">
-              <v-row dense>
+              <!-- Section: Basic Info -->
+              <h4
+                class="text-subtitle-2 font-weight-bold text-primary mb-4 d-flex align-center"
+              >
+                <v-icon
+                  class="me-2"
+                  icon="mdi-account-box-outline"
+                  size="small"
+                ></v-icon>
+                {{ $t('user.basicInfo') }}
+              </h4>
+
+              <v-row class="mb-2" dense>
                 <v-col cols="12" md="6">
                   <v-text-field
                     v-model="form.username"
+                    bg-color="grey-lighten-5"
                     color="primary"
                     density="comfortable"
                     disabled
                     :label="$t('common.username')"
+                    prepend-inner-icon="mdi-account"
                     readonly
                     variant="outlined"
                   ></v-text-field>
@@ -84,37 +131,11 @@
                     color="primary"
                     density="comfortable"
                     :label="$t('user.nickName')"
+                    prepend-inner-icon="mdi-badge-account-horizontal"
                     variant="outlined"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="form.email"
-                    color="primary"
-                    density="comfortable"
-                    :label="$t('common.email')"
-                    variant="outlined"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="form.phone"
-                    color="primary"
-                    density="comfortable"
-                    :label="$t('common.phone')"
-                    variant="outlined"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="form.birthday"
-                    color="primary"
-                    density="comfortable"
-                    :label="$t('common.birthday')"
-                    type="date"
-                    variant="outlined"
-                  ></v-text-field>
-                </v-col>
+
                 <v-col cols="12" md="6">
                   <v-select
                     v-model="form.gender"
@@ -122,33 +143,117 @@
                     density="comfortable"
                     :items="genderOptions"
                     :label="$t('common.gender')"
+                    prepend-inner-icon="mdi-gender-male-female"
                     variant="outlined"
                   ></v-select>
                 </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.birthday"
+                    color="primary"
+                    density="comfortable"
+                    :label="$t('common.birthday')"
+                    prepend-inner-icon="mdi-calendar"
+                    type="date"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-divider class="mb-6 border-opacity-50"></v-divider>
+
+              <!-- Section: Contact -->
+              <h4
+                class="text-subtitle-2 font-weight-bold text-primary mb-4 d-flex align-center"
+              >
+                <v-icon
+                  class="me-2"
+                  icon="mdi-phone-classic"
+                  size="small"
+                ></v-icon>
+                {{ $t('user.contactInfo') }}
+              </h4>
+
+              <v-row class="mb-2" dense>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.email"
+                    color="primary"
+                    density="comfortable"
+                    :label="$t('common.email')"
+                    prepend-inner-icon="mdi-email-outline"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="2">
+                  <v-select
+                    v-model="form.phoneCountryCode"
+                    color="primary"
+                    density="comfortable"
+                    :items="countryCodeOptions"
+                    :label="$t('common.phoneCode')"
+                    variant="outlined"
+                  >
+                    <template #selection="{ item }">
+                      {{ item.value }}
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.phone"
+                    color="primary"
+                    density="comfortable"
+                    :label="$t('common.phone')"
+                    prepend-inner-icon="mdi-phone"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-divider class="mb-6 border-opacity-50"></v-divider>
+
+              <!-- Section: About -->
+              <h4
+                class="text-subtitle-2 font-weight-bold text-primary mb-4 d-flex align-center"
+              >
+                <v-icon
+                  class="me-2"
+                  icon="mdi-text-box-outline"
+                  size="small"
+                ></v-icon>
+                {{ $t('user.aboutMe') }}
+              </h4>
+
+              <v-row dense>
                 <v-col cols="12">
                   <v-textarea
                     v-model="form.bio"
+                    auto-grow
                     color="primary"
                     density="comfortable"
                     :label="$t('user.bio')"
+                    :placeholder="$t('user.bioPlaceholder')"
                     rows="3"
                     variant="outlined"
                   ></v-textarea>
                 </v-col>
               </v-row>
 
-              <div class="d-flex justify-end mt-4">
+              <div class="d-flex justify-end mt-6">
                 <v-btn
                   class="text-capitalize me-3"
                   color="secondary"
-                  variant="outlined"
+                  size="large"
+                  variant="text"
                 >
                   {{ $t('common.cancel') }}
                 </v-btn>
                 <v-btn
-                  class="text-capitalize"
+                  class="text-capitalize px-8"
                   color="primary"
-                  elevation="0"
+                  elevation="2"
+                  size="large"
                   type="submit"
                 >
                   {{ $t('common.saveChanges') }}
@@ -171,6 +276,23 @@ import { message } from '@/utils/message';
 
 const { t } = useI18n();
 
+const countryCodeOptions = computed(() => [
+  { title: `${t('country.china')} (+86)`, value: '+86' },
+  { title: `${t('country.us')} (+1)`, value: '+1' },
+  { title: `${t('country.uk')} (+44)`, value: '+44' },
+  { title: `${t('country.japan')} (+81)`, value: '+81' },
+  { title: `${t('country.france')} (+33)`, value: '+33' },
+  { title: `${t('country.germany')} (+49)`, value: '+49' },
+  { title: `${t('country.canada')} (+1)`, value: '+1' },
+  { title: `${t('country.australia')} (+61)`, value: '+61' },
+  { title: `${t('country.india')} (+91)`, value: '+91' },
+  { title: `${t('country.russia')} (+7)`, value: '+7' },
+  { title: `${t('country.southKorea')} (+82)`, value: '+82' },
+  { title: `${t('country.brazil')} (+55)`, value: '+55' },
+  { title: `${t('country.italy')} (+39)`, value: '+39' },
+  { title: `${t('country.spain')} (+34)`, value: '+34' },
+]);
+
 const genderOptions = computed(() => [
   { title: t('gender.MALE'), value: 'MALE' },
   { title: t('gender.FEMALE'), value: 'FEMALE' },
@@ -187,6 +309,7 @@ const form = reactive({
   nickName: '',
   email: '',
   phone: '',
+  phoneCountryCode: '+86',
   gender: undefined as UserResponse['gender'],
   birthday: '',
   bio: '',
@@ -219,6 +342,7 @@ async function fetchUserInfo() {
       form.nickName = userData.nickName;
       form.email = userData.email;
       form.phone = userData.phone || '';
+      form.phoneCountryCode = userData.phoneCountryCode || '+86';
       form.gender = userData.gender;
       form.birthday = userData.birthday || '';
       form.bio = userData.bio || '';
@@ -238,3 +362,12 @@ onMounted(() => {
   fetchUserInfo();
 });
 </script>
+
+<style scoped>
+.border-surface {
+  border-color: rgb(var(--v-theme-surface)) !important;
+}
+.border-4 {
+  border-width: 4px !important;
+}
+</style>
