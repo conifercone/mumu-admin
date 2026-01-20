@@ -16,6 +16,16 @@ const messages = {
       gender: 'Gender',
       birthday: 'Birthday',
     },
+    gender: {
+      MALE: 'Male',
+      FEMALE: 'Female',
+      NON_BINARY: 'Non-binary',
+      GENDER_QUEER: 'Gender Queer',
+      GENDER_FLUID: 'Gender Fluid',
+      AGENDER: 'Agender',
+      OTHER: 'Other',
+      PREFER_NOT_TO_SAY: 'Prefer not to say',
+    },
     auth: {
       login: 'Login',
       welcome: 'Welcome to Mumu Admin! 👋🏻',
@@ -97,6 +107,16 @@ const messages = {
       address: '地址',
       gender: '性别',
       birthday: '生日',
+    },
+    gender: {
+      MALE: '男性',
+      FEMALE: '女性',
+      NON_BINARY: '非二元性别',
+      GENDER_QUEER: '性别酷儿',
+      GENDER_FLUID: '性别流动',
+      AGENDER: '无性别',
+      OTHER: '其他',
+      PREFER_NOT_TO_SAY: '不愿透露',
     },
     auth: {
       login: '登录',

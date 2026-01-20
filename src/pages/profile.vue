@@ -96,7 +96,7 @@
               <v-select
                 v-model="form.gender"
                 color="primary"
-                :items="['MALE', 'FEMALE', 'OTHER']"
+                :items="genderOptions"
                 :label="$t('common.gender')"
                 variant="outlined"
               ></v-select>
@@ -134,15 +134,29 @@
 <script lang="ts" setup>
 import MD5 from 'crypto-js/md5';
 import { computed, onMounted, reactive } from 'vue';
-import { getCurrentUser } from '@/api/auth';
+import { useI18n } from 'vue-i18n';
+import { getCurrentUser, type UserResponse } from '@/api/auth';
 import { message } from '@/utils/message';
+
+const { t } = useI18n();
+
+const genderOptions = computed(() => [
+  { title: t('gender.MALE'), value: 'MALE' },
+  { title: t('gender.FEMALE'), value: 'FEMALE' },
+  { title: t('gender.NON_BINARY'), value: 'NON_BINARY' },
+  { title: t('gender.GENDER_QUEER'), value: 'GENDER_QUEER' },
+  { title: t('gender.GENDER_FLUID'), value: 'GENDER_FLUID' },
+  { title: t('gender.AGENDER'), value: 'AGENDER' },
+  { title: t('gender.OTHER'), value: 'OTHER' },
+  { title: t('gender.PREFER_NOT_TO_SAY'), value: 'PREFER_NOT_TO_SAY' },
+]);
 
 const form = reactive({
   username: '',
   nickName: '',
   email: '',
   phone: '',
-  gender: undefined as 'MALE' | 'FEMALE' | 'OTHER' | undefined,
+  gender: undefined as UserResponse['gender'],
   birthday: '',
   bio: '',
   avatarUrl: '',

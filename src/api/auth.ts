@@ -23,7 +23,15 @@ export interface UserResponse {
   email: string;
   phone?: string;
   phoneCountryCode?: string;
-  gender?: 'MALE' | 'FEMALE' | 'OTHER';
+  gender?:
+    | 'MALE'
+    | 'FEMALE'
+    | 'NON_BINARY'
+    | 'GENDER_QUEER'
+    | 'GENDER_FLUID'
+    | 'AGENDER'
+    | 'OTHER'
+    | 'PREFER_NOT_TO_SAY';
   birthday?: string;
   bio?: string;
   avatar?: {

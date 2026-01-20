@@ -74,7 +74,7 @@
           <v-list density="compact">
             <v-list-item
               prepend-icon="mdi-account-cog-outline"
-              to="/account-settings"
+              to="/profile"
               value="accountSettings"
             >
               <v-list-item-title>{{
