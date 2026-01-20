@@ -4,10 +4,13 @@ import { en, zhHans } from 'vuetify/locale';
 const messages = {
   en: {
     common: {
+      search: 'Search',
+      create: 'Create',
       saveChanges: 'Save Changes',
       cancel: 'Cancel',
       reset: 'Reset',
       or: 'or',
+      id: 'ID',
       email: 'Email',
       username: 'Username',
       password: 'Password',
@@ -124,14 +127,26 @@ const messages = {
         rowsPerPageText: 'Items per page:',
         pageText: '{0}-{1} of {2}',
       },
+      dataFooter: {
+        itemsPerPageText: 'Items per page:',
+        itemsPerPageAll: 'All',
+        nextPage: 'Next page',
+        prevPage: 'Previous page',
+        firstPage: 'First page',
+        lastPage: 'Last page',
+        pageText: '{0}-{1} of {2}',
+      },
     },
   },
   zhHans: {
     common: {
+      search: '查询',
+      create: '创建',
       saveChanges: '保存更改',
       cancel: '取消',
       reset: '重置',
       or: '或',
+      id: 'ID',
       email: '邮箱',
       username: '用户名',
       password: '密码',
@@ -246,6 +261,15 @@ const messages = {
       ...zhHans,
       dataIterator: {
         rowsPerPageText: '每页条目数：',
+        pageText: '{0}-{1} 共 {2} 条',
+      },
+      dataFooter: {
+        itemsPerPageText: '每页条目数：',
+        itemsPerPageAll: '全部',
+        nextPage: '下一页',
+        prevPage: '上一页',
+        firstPage: '首页',
+        lastPage: '尾页',
         pageText: '{0}-{1} 共 {2} 条',
       },
     },

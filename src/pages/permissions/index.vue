@@ -1,65 +1,84 @@
 <template>
   <v-container class="pa-6" fluid>
-    <!-- Filter Card -->
-    <v-card border class="mb-6" elevation="0" rounded="lg">
-      <v-card-text>
-        <v-row density="compact">
-          <v-col cols="12" md="4">
+    <v-card border elevation="0" rounded="lg">
+      <!-- Header -->
+      <v-card-title class="d-flex align-center px-6 py-4">
+        <span class="text-h6 font-weight-medium">{{
+          $t('permission.list')
+        }}</span>
+        <v-spacer></v-spacer>
+        <v-btn
+          class="text-capitalize"
+          color="primary"
+          elevation="0"
+          prepend-icon="mdi-plus"
+          variant="elevated"
+        >
+          {{ $t('common.create') }}
+        </v-btn>
+      </v-card-title>
+
+      <v-divider></v-divider>
+
+      <!-- Filters -->
+      <div class="px-6 py-4 bg-surface">
+        <v-row align="center" density="compact">
+          <v-col cols="12" md="3">
             <v-text-field
               v-model="filters.code"
               clearable
-              density="comfortable"
+              density="compact"
               hide-details
               :label="$t('permission.code')"
               prepend-inner-icon="mdi-code-braces"
               variant="outlined"
+              @keyup.enter="refresh"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="3">
             <v-text-field
               v-model="filters.name"
               clearable
-              density="comfortable"
+              density="compact"
               hide-details
               :label="$t('permission.name')"
               prepend-inner-icon="mdi-tag-text-outline"
               variant="outlined"
+              @keyup.enter="refresh"
             ></v-text-field>
           </v-col>
-          <v-col class="d-flex align-center" cols="12" md="4">
-            <v-btn
-              class="text-capitalize"
-              color="primary"
-              elevation="0"
-              prepend-icon="mdi-magnify"
-              variant="elevated"
-              @click="refresh"
-            >
-              {{ $t('common.search') }}
-            </v-btn>
-            <v-btn
-              class="ms-2 text-capitalize"
-              color="secondary"
-              prepend-icon="mdi-refresh"
-              variant="outlined"
-              @click="reset"
-            >
-              {{ $t('common.reset') }}
-            </v-btn>
+          <v-col cols="12" md="6">
+            <div class="d-flex gap-2">
+              <v-btn
+                class="text-capitalize me-2"
+                color="primary"
+                prepend-icon="mdi-magnify"
+                variant="tonal"
+                @click="refresh"
+              >
+                {{ $t('common.search') }}
+              </v-btn>
+              <v-btn
+                class="text-capitalize"
+                color="secondary"
+                prepend-icon="mdi-refresh"
+                variant="tonal"
+                @click="reset"
+              >
+                {{ $t('common.reset') }}
+              </v-btn>
+            </div>
           </v-col>
         </v-row>
-      </v-card-text>
-    </v-card>
+      </div>
 
-    <!-- Data Table -->
-    <v-card border elevation="0" rounded="lg">
-      <v-card-title class="px-6 pt-6">
-        {{ $t('permission.list') }}
-      </v-card-title>
+      <v-divider></v-divider>
+
+      <!-- Data Table -->
       <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         v-model:page="page"
-        class="rounded-lg"
+        density="comfortable"
         :headers="headers"
         hover
         item-value="id"
@@ -69,12 +88,20 @@
         @update:options="loadItems"
       >
         <template #item.actions>
-          <v-btn color="medium-emphasis" icon size="small" variant="text">
-            <v-icon>mdi-pencil-outline</v-icon>
-          </v-btn>
-          <v-btn color="medium-emphasis" icon size="small" variant="text">
-            <v-icon>mdi-delete-outline</v-icon>
-          </v-btn>
+          <div class="d-flex">
+            <v-btn
+              class="me-1"
+              color="medium-emphasis"
+              icon
+              size="small"
+              variant="text"
+            >
+              <v-icon>mdi-pencil-outline</v-icon>
+            </v-btn>
+            <v-btn color="medium-emphasis" icon size="small" variant="text">
+              <v-icon>mdi-delete-outline</v-icon>
+            </v-btn>
+          </div>
         </template>
       </v-data-table-server>
     </v-card>
@@ -100,7 +127,7 @@ const filters = reactive({
 });
 
 const headers = computed(() => [
-  { title: 'ID', key: 'id', align: 'start' as const },
+  { title: t('common.id'), key: 'id', align: 'start' as const },
   { title: t('permission.code'), key: 'code', align: 'start' as const },
   { title: t('permission.name'), key: 'name', align: 'start' as const },
   {
