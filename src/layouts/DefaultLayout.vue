@@ -38,7 +38,7 @@
         <template #activator="{ props }">
           <v-btn class="mx-2" icon v-bind="props">
             <v-avatar color="primary" size="32">
-              <v-img v-if="user?.avatar?.url" :src="user.avatar.url"></v-img>
+              <v-img v-if="userAvatar" :src="userAvatar"></v-img>
               <span v-else>{{
                 (user?.nickName || user?.username || 'A')
                   .charAt(0)
@@ -50,7 +50,7 @@
         <v-card>
           <v-list>
             <v-list-item
-              :prepend-avatar="user?.avatar?.url || '/favicon.ico'"
+              :prepend-avatar="userAvatar || '/favicon.ico'"
               :subtitle="user?.email || '...'"
               :title="user?.nickName || user?.username || '...'"
             ></v-list-item>
@@ -99,7 +99,8 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import MD5 from 'crypto-js/md5';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { getCurrentUser, logout, type UserResponse } from '@/api/auth';
@@ -110,6 +111,17 @@ const drawer = ref(true);
 const router = useRouter();
 const { t } = useI18n();
 const user = ref<UserResponse | null>(null);
+
+const userAvatar = computed(() => {
+  if (user.value?.avatar?.url) {
+    return user.value.avatar.url;
+  }
+  if (user.value?.email) {
+    const hash = MD5(user.value.email.trim().toLowerCase()).toString();
+    return `https://www.gravatar.com/avatar/${hash}?d=mp`;
+  }
+  return '';
+});
 
 async function fetchUserInfo() {
   try {
