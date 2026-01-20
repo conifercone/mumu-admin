@@ -7,6 +7,7 @@ import type {
 import axios from 'axios';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
 import { v4 as uuidv4 } from 'uuid';
+import { OAUTH2_CONFIG } from './constants';
 import { message as globalMessage } from './message';
 
 /**
@@ -41,12 +42,48 @@ const http: AxiosInstance = axios.create({
   },
 });
 
+// 刷新 Token 相关变量
+let isRefreshing = false;
+let requestsQueue: Array<(token: string) => void> = [];
+
+/**
+ * 刷新 Token
+ */
+async function handleRefreshToken() {
+  const refreshToken = localStorage.getItem('refresh_token');
+  if (!refreshToken) {
+    throw new Error('No refresh token available');
+  }
+
+  const { clientId, clientSecret } = OAUTH2_CONFIG;
+  const basicAuth = btoa(`${clientId}:${clientSecret}`);
+
+  const formData = new URLSearchParams();
+  formData.append('grant_type', 'refresh_token');
+  formData.append('refresh_token', refreshToken);
+
+  // 使用 http 实例自身发送请求，以便自动签名
+  // 注意：需要避免死循环，拦截器中需判断是否为刷新请求
+  const response = await http.post(
+    `${ServicePrefix.IAM}/oauth2/token`,
+    formData.toString(),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${basicAuth}`,
+      },
+    },
+  );
+
+  return response.data; // 返回 TokenResponse
+}
+
 // 请求拦截器
 http.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // 1. 添加 Token
     const token = localStorage.getItem('token');
-    if (token && config.headers) {
+    if (token && config.headers && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -79,7 +116,7 @@ http.interceptors.request.use(
     const signaturePayload = `${timestamp}${requestId}${signaturePath}${compactJsonString}`;
 
     // 计算 HMAC-SHA256 签名
-    const secretKey = 'mumu';
+    const secretKey = OAUTH2_CONFIG.clientSecret;
     const signature = HmacSHA256(signaturePayload, secretKey).toString();
 
     // 设置请求头
@@ -130,10 +167,70 @@ http.interceptors.response.use(
     // 如果没有 successful 字段，则视为非包装响应（如 OAuth2 Token），直接返回
     return res;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const config = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
     let messageStr = '未知错误';
+
     if (error.response) {
       const status = error.response.status;
+
+      // 401 处理 (Token 过期刷新)
+      if (status === 401 && config) {
+        // 如果是刷新 Token 的请求本身报错，或者没有 refresh_token，直接登出
+        const isRefreshTokenRequest =
+          config.url?.includes('/oauth2/token') &&
+          config.data?.includes('grant_type=refresh_token');
+
+        if (isRefreshTokenRequest) {
+          localStorage.clear();
+          window.location.href = '/auth/login';
+          throw error;
+        }
+
+        if (isRefreshing) {
+          // 正在刷新，将请求加入队列
+          return new Promise((resolve) => {
+            requestsQueue.push((token) => {
+              if (config.headers) {
+                config.headers.Authorization = `Bearer ${token}`;
+              }
+              resolve(http(config));
+            });
+          });
+        } else {
+          isRefreshing = true;
+
+          try {
+            const tokenInfo = await handleRefreshToken();
+            if (tokenInfo && tokenInfo.access_token) {
+              localStorage.setItem('token', tokenInfo.access_token);
+              if (tokenInfo.refresh_token) {
+                localStorage.setItem('refresh_token', tokenInfo.refresh_token);
+              }
+
+              // 重试队列中的请求
+              for (const cb of requestsQueue) cb(tokenInfo.access_token);
+              requestsQueue = [];
+
+              // 重试当前请求
+              if (config.headers) {
+                config.headers.Authorization = `Bearer ${tokenInfo.access_token}`;
+              }
+              return http(config);
+            }
+          } catch (refreshError) {
+            console.error('Token refresh failed:', refreshError);
+            localStorage.clear();
+            window.location.href = '/auth/login';
+            throw refreshError;
+          } finally {
+            isRefreshing = false;
+          }
+        }
+      }
+
       switch (status) {
         case 400: {
           messageStr = '请求参数错误 (400)';
@@ -165,9 +262,16 @@ http.interceptors.response.use(
       messageStr = '网络连接异常';
     }
 
-    globalMessage.error(messageStr);
+    // Only show error message if it's NOT a handled 401 (which means we failed to refresh or it's another error)
+    // But above logic handles 401 by retrying or redirecting.
+    // If we are here and status is 401, it means we are redirecting (refresh failed) or it fell through (shouldn't happen for normal 401).
+    // Actually, if we reject inside the 401 block, we might still want to avoid showing "Unauthorized" if we are redirecting.
+    if (error.response?.status !== 401) {
+      globalMessage.error(messageStr);
+    }
+
     console.error(`[HTTP 错误] ${messageStr}`, error);
-    return Promise.reject(error);
+    throw error;
   },
 );
 

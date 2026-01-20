@@ -169,6 +169,9 @@ async function handleLogin() {
 
     if (tokenInfo && tokenInfo.access_token) {
       localStorage.setItem('token', tokenInfo.access_token);
+      if (tokenInfo.refresh_token) {
+        localStorage.setItem('refresh_token', tokenInfo.refresh_token);
+      }
       message.success('登录成功');
       router.push('/');
     } else {
