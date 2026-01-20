@@ -1,23 +1,33 @@
 <template>
   <v-layout class="rounded rounded-md">
     <!-- Navigation Drawer -->
-    <v-navigation-drawer v-model="drawer" elevation="2" expand-on-hover rail>
-      <v-list>
+    <v-navigation-drawer
+      v-model="drawer"
+      border="e"
+      class="bg-surface"
+      elevation="0"
+      expand-on-hover
+      rail
+    >
+      <v-list class="pa-2">
         <v-list-item
+          nav
           prepend-avatar="@/assets/logo.svg"
           subtitle="v1.0.0"
           title="MUMU ADMIN"
         ></v-list-item>
       </v-list>
 
-      <v-divider></v-divider>
+      <v-divider class="mb-2"></v-divider>
 
-      <v-list density="compact" nav>
+      <v-list class="pa-2" density="compact" nav>
         <v-list-item
           v-for="(item, i) in MENU_ITEMS"
           :key="i"
-          color="primary"
+          active-class="bg-primary text-white"
+          class="mb-1"
           :prepend-icon="item.icon"
+          rounded="lg"
           :to="item.to"
           :value="item"
         >
@@ -27,9 +37,14 @@
     </v-navigation-drawer>
 
     <!-- App Bar -->
-    <v-app-bar elevation="1">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>{{ $t('menu.dashboard') }}</v-app-bar-title>
+    <v-app-bar border="b" class="px-2" color="surface" elevation="0" flat>
+      <v-app-bar-nav-icon
+        variant="text"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold ps-2">
+        {{ $t('menu.dashboard') }}
+      </v-app-bar-title>
       <v-spacer></v-spacer>
       <v-btn icon="mdi-magnify"></v-btn>
       <v-btn icon="mdi-bell-outline"></v-btn>

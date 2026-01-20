@@ -1,43 +1,70 @@
 <template>
-  <v-container class="pa-0" fluid>
+  <v-container class="pa-6" fluid>
     <!-- Header Section -->
     <v-row>
       <v-col cols="12" md="8">
-        <v-card class="mb-6" color="primary" elevation="2" theme="dark">
+        <v-card
+          class="mb-6 h-100 d-flex flex-column justify-center"
+          elevation="0"
+          rounded="lg"
+          style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+          "
+        >
           <v-card-item>
-            <v-card-title class="text-h5">
+            <v-card-title class="text-h4 font-weight-bold mb-2">
               {{ $t('dashboard.welcomeTitle') }}
             </v-card-title>
-            <v-card-subtitle>
+            <v-card-subtitle
+              class="text-subtitle-1 opacity-90"
+              style="color: white !important"
+            >
               {{ $t('dashboard.welcomeSubtitle') }}
             </v-card-subtitle>
           </v-card-item>
           <v-card-text>
-            <div class="d-flex align-center mt-2">
-              <v-btn class="me-2" color="white" variant="outlined">{{
-                $t('dashboard.viewReports')
-              }}</v-btn>
-              <v-btn color="white" variant="tonal">{{
-                $t('dashboard.manageOrders')
-              }}</v-btn>
+            <div class="d-flex align-center mt-4">
+              <v-btn
+                class="me-3 text-capitalize"
+                color="white"
+                elevation="2"
+                style="color: #764ba2"
+                variant="elevated"
+              >
+                {{ $t('dashboard.viewReports') }}
+              </v-btn>
+              <v-btn class="text-capitalize" color="white" variant="outlined">
+                {{ $t('dashboard.manageOrders') }}
+              </v-btn>
             </div>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="4">
-        <v-card class="mb-6 h-100" elevation="2">
+        <v-card border class="mb-6 h-100" elevation="0" rounded="lg">
           <v-card-item>
-            <v-card-title>{{ $t('dashboard.performance') }}</v-card-title>
-            <div class="text-h4 font-weight-bold mt-2">82%</div>
-            <div class="text-body-2 text-medium-emphasis">
-              {{ $t('dashboard.weeklyGoal') }}
+            <div class="d-flex justify-space-between align-center">
+              <v-card-title class="text-h6">{{
+                $t('dashboard.performance')
+              }}</v-card-title>
+              <v-icon color="grey" icon="mdi-dots-vertical"></v-icon>
             </div>
+
+            <div class="d-flex flex-column align-center justify-center py-4">
+              <div class="text-h3 font-weight-bold text-primary">82%</div>
+              <div class="text-body-2 text-medium-emphasis mt-1">
+                {{ $t('dashboard.weeklyGoal') }}
+              </div>
+            </div>
+
             <v-progress-linear
-              class="mt-4"
-              color="success"
-              height="8"
+              class="mt-2"
+              color="primary"
+              height="10"
               model-value="82"
               rounded
+              striped
             ></v-progress-linear>
           </v-card-item>
         </v-card>
@@ -45,24 +72,41 @@
     </v-row>
 
     <!-- Stats Cards -->
-    <v-row class="mb-6">
-      <v-col cols="12" sm="6" md="3" v-for="(stat, i) in stats" :key="i">
-        <v-card elevation="2">
+    <v-row>
+      <v-col v-for="(stat, i) in stats" :key="i" cols="12" md="3" sm="6">
+        <v-card
+          border
+          class="h-100 transition-swing"
+          elevation="0"
+          rounded="lg"
+        >
           <v-card-item>
-            <div class="d-flex justify-space-between align-center mb-2">
-              <v-avatar :color="stat.color" variant="tonal" rounded>
-                <v-icon :icon="stat.icon"></v-icon>
-              </v-avatar>
-              <v-chip
-                size="x-small"
-                :color="stat.trend > 0 ? 'success' : 'error'"
-                variant="flat"
+            <div class="d-flex justify-space-between align-start mb-4">
+              <v-avatar
+                :color="stat.color"
+                rounded="lg"
+                size="48"
+                variant="tonal"
               >
-                {{ stat.trend > 0 ? '+' : '' }}{{ stat.trend }}%
-              </v-chip>
+                <v-icon :icon="stat.icon" size="24"></v-icon>
+              </v-avatar>
+              <div class="d-flex align-center">
+                <span
+                  class="text-caption font-weight-bold me-1"
+                  :class="stat.trend > 0 ? 'text-success' : 'text-error'"
+                >
+                  {{ stat.trend > 0 ? '+' : '' }}{{ stat.trend }}%
+                </span>
+                <v-icon
+                  :color="stat.trend > 0 ? 'success' : 'error'"
+                  :icon="stat.trend > 0 ? 'mdi-arrow-up' : 'mdi-arrow-down'"
+                  size="small"
+                ></v-icon>
+              </div>
             </div>
+
             <div class="text-h5 font-weight-bold mb-1">{{ stat.value }}</div>
-            <div class="text-caption text-medium-emphasis">
+            <div class="text-body-2 text-medium-emphasis">
               {{ $t(stat.title) }}
             </div>
           </v-card-item>
@@ -73,10 +117,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
-
 const stats = [
   {
     title: 'dashboard.stats.totalSales',
