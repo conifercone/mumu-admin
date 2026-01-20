@@ -94,8 +94,15 @@ http.interceptors.request.use(
 
     // 获取签名路径
     // config.url 通常就是我们传入的相对路径 (e.g. /iam/login)
-    // 它默认不包含 baseURL (/api/mumu)，这正好符合我们的签名要求
+    // 签名路径不应包含服务前缀 (ServicePrefix)
     let signaturePath = config.url || '';
+
+    // 移除服务前缀
+    Object.values(ServicePrefix).forEach((prefix) => {
+      if (signaturePath.startsWith(prefix)) {
+        signaturePath = signaturePath.replace(prefix, '');
+      }
+    });
 
     // 确保 path 以 / 开头
     if (!signaturePath.startsWith('/')) {
