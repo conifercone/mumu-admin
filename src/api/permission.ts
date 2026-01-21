@@ -27,3 +27,10 @@ export function getPermissions(params: PermissionQueryParams) {
     },
   );
 }
+
+/**
+ * Create a new permission
+ */
+export function createPermission(data: Partial<Permission>) {
+  return http.post(`${ServicePrefix.IAM}/permission/add`, data);
+}
