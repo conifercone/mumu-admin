@@ -34,3 +34,10 @@ export function getPermissions(params: PermissionQueryParams) {
 export function createPermission(data: Partial<Permission>) {
   return http.post(`${ServicePrefix.IAM}/permission/add`, data);
 }
+
+/**
+ * Delete a permission by ID
+ */
+export function deletePermission(id: number) {
+  return http.delete(`${ServicePrefix.IAM}/permission/deleteById/${id}`);
+}

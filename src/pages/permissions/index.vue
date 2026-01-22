@@ -174,6 +174,7 @@
                       icon
                       size="small"
                       variant="text"
+                      @click="handleDelete(item.id)"
                     >
                       <v-icon size="20">mdi-delete-outline</v-icon>
                       <v-tooltip activator="parent" location="top">{{
@@ -308,9 +309,11 @@ import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   createPermission,
+  deletePermission,
   getPermissions,
   type Permission,
 } from '@/api/permission';
+import { confirm } from '@/utils/confirm';
 import { message } from '@/utils/message';
 
 const { t } = useI18n();
@@ -430,6 +433,30 @@ async function savePermission() {
     console.error('Failed to save permission', error);
   } finally {
     saving.value = false;
+  }
+}
+
+async function handleDelete(id: number) {
+  const confirmed = await confirm({
+    title: t('common.delete'),
+    content:
+      t('common.deleteConfirm') ||
+      'Are you sure you want to delete this permission?',
+    confirmText: t('common.delete'),
+    color: 'error',
+    icon: 'mdi-alert-circle-outline',
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await deletePermission(id);
+    message.success(
+      t('common.deleteSuccess') || 'Permission deleted successfully',
+    );
+    refresh();
+  } catch (error) {
+    console.error('Failed to delete permission', error);
   }
 }
 </script>

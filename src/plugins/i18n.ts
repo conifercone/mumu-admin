@@ -23,6 +23,8 @@ const messages = {
       birthday: 'Birthday',
       menu: 'Menu',
       adminPanel: 'Admin Panel',
+      deleteConfirm: 'Are you sure you want to delete this item?',
+      deleteSuccess: 'Deleted successfully',
     },
     country: {
       china: 'China',
@@ -167,6 +169,8 @@ const messages = {
       birthday: '生日',
       menu: '菜单',
       adminPanel: '管理后台',
+      deleteConfirm: '确定要删除此项吗？',
+      deleteSuccess: '删除成功',
     },
     country: {
       china: '中国',

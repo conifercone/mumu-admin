@@ -3,16 +3,15 @@
     <!-- Floating Sidebar -->
     <v-navigation-drawer
       v-model="drawer"
-      :class="[
-        'sidebar-container my-4 ms-4 rounded-xl border-0 transition-all',
-        rail ? 'px-1' : '',
-      ]"
+      class="sidebar-container my-4 ms-4 rounded-xl border-0 transition-all"
+      :class="rail ? 'px-1' : ''"
       color="white"
       elevation="0"
       floating
+      :mobile-breakpoint="0"
       :rail="rail"
       rail-width="80"
-      width="280"
+      width="260"
     >
       <!-- Logo Area -->
       <div
@@ -272,19 +271,31 @@
 
 <script lang="ts" setup>
 import MD5 from 'crypto-js/md5';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import { useDisplay } from 'vuetify';
 import { getCurrentUser, logout, type UserResponse } from '@/api/auth';
 import { MENU_ITEMS } from '@/config/menu';
 import { message } from '@/utils/message';
 
+const { mobile } = useDisplay();
 const drawer = ref(true);
-const rail = ref(true);
+const rail = ref(false);
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const user = ref<UserResponse | null>(null);
+
+// Automatically adjust sidebar based on screen size
+watch(
+  mobile,
+  (val) => {
+    rail.value = val; // Mobile -> Rail Mode; Desktop -> Full Mode
+    drawer.value = true; // Always show sidebar
+  },
+  { immediate: true },
+);
 
 const userAvatar = computed(() => {
   if (user.value?.avatar?.url) {
