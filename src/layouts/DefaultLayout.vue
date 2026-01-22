@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="bg-background">
+  <v-layout class="bg-background h-screen overflow-hidden">
     <!-- Floating Sidebar -->
     <v-navigation-drawer
       v-model="drawer"

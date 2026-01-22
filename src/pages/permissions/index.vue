@@ -125,10 +125,7 @@
               <!-- Custom Row -->
               <template #item="{ item }">
                 <tr class="table-row-hover">
-                  <td class="text-caption text-grey font-weight-mono ps-4">
-                    #{{ item.id }}
-                  </td>
-                  <td>
+                  <td class="ps-4">
                     <v-chip
                       class="font-weight-bold letter-spacing-0"
                       color="primary"
@@ -340,7 +337,6 @@ const form = reactive({
 });
 
 const headers = computed(() => [
-  { title: t('common.id'), key: 'id', align: 'start' as const, width: '80px' },
   {
     title: t('permission.code'),
     key: 'code',
