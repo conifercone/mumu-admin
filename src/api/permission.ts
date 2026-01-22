@@ -6,6 +6,8 @@ export interface Permission {
   code: string;
   name: string;
   description: string;
+  parentId?: number;
+  children?: Permission[];
 }
 
 export interface PermissionQueryParams {
@@ -56,4 +58,46 @@ export function downloadAllPermissions() {
   return http.get(`${ServicePrefix.IAM}/permission/downloadAll`, {
     responseType: 'blob',
   });
+}
+
+/**
+ * Find all root permissions
+ */
+export function findRootPermissions() {
+  return http.get<Permission[]>(`${ServicePrefix.IAM}/permission/findRoot`);
+}
+
+/**
+ * Find direct child permissions by parent ID (paginated)
+ */
+export function findDirectPermissions(params: {
+  ancestorId: number;
+  current: number;
+  pageSize: number;
+}) {
+  return http.get<PageResult<Permission>>(
+    `${ServicePrefix.IAM}/permission/findDirect`,
+    {
+      params,
+    },
+  );
+}
+
+/**
+ * Delete a permission relationship path
+ */
+export function deletePermissionPath(ancestorId: number, descendantId: number) {
+  return http.delete(
+    `${ServicePrefix.IAM}/permission/deletePath/${ancestorId}/${descendantId}`,
+  );
+}
+
+/**
+ * Add a permission descendant relationship
+ */
+export function addPermissionDescendant(data: {
+  ancestorId: number;
+  descendantId: number;
+}) {
+  return http.put(`${ServicePrefix.IAM}/permission/addDescendant`, data);
 }

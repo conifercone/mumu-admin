@@ -54,6 +54,7 @@ The project uses a specialized Axios instance located in `src/utils/http.ts`. **
 - **Authentication:** OAuth2 (Bearer Token). Auto-refresh logic is implemented in the response interceptor.
 - **Response Format:**
   All API responses (except specific cases like OAuth token endpoint) follow this wrapper:
+
   ```typescript
   interface ResponseWrapper<T = any> {
     successful: boolean;
@@ -63,6 +64,10 @@ The project uses a specialized Axios instance located in `src/utils/http.ts`. **
     traceId: string;
   }
   ```
+
+- **Special Considerations (Chinese IME & Signing):**
+  - **Signature Consistency:** When calculating `X-Signature`, the query string **must** be processed with `decodeURIComponent(searchParams.toString())`. This ensures the signature is calculated on the decoded characters, which is required for consistency with the backend's verification logic.
+  - **IME Input Handling:** For search fields (e.g., `v-autocomplete`, `v-text-field`), use `compositionstart` and `compositionend` events to track the IME state. Avoid triggering API requests while `isComposing` is true to prevent sending incomplete intermediate characters and triggering signature errors.
 
 ### Routing
 

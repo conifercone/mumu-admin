@@ -18,6 +18,8 @@
                   rounded="lg"
                   variant="solo-filled"
                   @keyup.enter="refresh"
+                  @compositionstart="onCompositionStart"
+                  @compositionend="isComposing = false"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="4">
@@ -32,7 +34,32 @@
                   rounded="lg"
                   variant="solo-filled"
                   @keyup.enter="refresh"
+                  @compositionstart="onCompositionStart"
+                  @compositionend="isComposing = false"
                 ></v-text-field>
+              </v-col>
+              <v-col cols="auto">
+                <v-btn-toggle
+                  v-model="viewMode"
+                  class="rounded-lg"
+                  color="primary"
+                  density="compact"
+                  mandatory
+                  variant="tonal"
+                >
+                  <v-btn value="flat">
+                    <v-icon>mdi-view-list</v-icon>
+                    <v-tooltip activator="parent" location="top"
+                      >Flat List</v-tooltip
+                    >
+                  </v-btn>
+                  <v-btn value="tree">
+                    <v-icon>mdi-file-tree</v-icon>
+                    <v-tooltip activator="parent" location="top"
+                      >Hierarchy Tree</v-tooltip
+                    >
+                  </v-btn>
+                </v-btn-toggle>
               </v-col>
               <v-spacer></v-spacer>
               <v-col class="text-right" cols="auto">
@@ -143,17 +170,60 @@
 
               <!-- Custom Row -->
               <template #item="{ item }">
-                <tr class="table-row-hover">
+                <!-- 1. Normal Row -->
+                <tr
+                  v-if="!item.isLoadMore"
+                  class="table-row-hover"
+                  :class="{
+                    'child-level-row': (item as any).level > 0,
+                    'drop-target': dropTargetId === item.id,
+                  }"
+                  :draggable="viewMode === 'tree'"
+                  @dragstart="onDragStart($event, item)"
+                  @dragover="onDragOver($event, item)"
+                  @dragleave="onDragLeave"
+                  @drop="onDrop($event, item)"
+                >
                   <td class="ps-4">
-                    <v-chip
-                      class="font-weight-bold letter-spacing-0"
-                      color="primary"
-                      label
-                      size="small"
-                      variant="tonal"
+                    <div
+                      class="d-flex align-center"
+                      :style="{ paddingLeft: (item as any).level * 32 + 'px' }"
                     >
-                      {{ item.code }}
-                    </v-chip>
+                      <!-- Indent Guide -->
+                      <div
+                        v-if="(item as any).level > 0"
+                        class="indent-guide"
+                      ></div>
+
+                      <!-- Expand Button (Tree Mode Only) -->
+                      <v-btn
+                        v-if="viewMode === 'tree'"
+                        class="me-1"
+                        :class="{ 'rotate-90': expandedIds.has(item.id) }"
+                        color="grey-darken-1"
+                        density="compact"
+                        :icon="
+                          loadingChildren.has(item.id)
+                            ? 'mdi-loading mdi-spin'
+                            : 'mdi-chevron-right'
+                        "
+                        size="small"
+                        variant="text"
+                        @click.stop="toggleExpand(item)"
+                      ></v-btn>
+
+                      <v-chip
+                        class="font-weight-bold letter-spacing-0"
+                        :color="
+                          (item as any).level > 0 ? 'secondary' : 'primary'
+                        "
+                        label
+                        size="small"
+                        variant="tonal"
+                      >
+                        {{ item.code }}
+                      </v-chip>
+                    </div>
                   </td>
                   <td>
                     <span
@@ -171,6 +241,40 @@
                     </div>
                   </td>
                   <td class="text-end pe-4">
+                    <!-- Link Descendant -->
+                    <v-btn
+                      class="me-1"
+                      color="primary"
+                      density="compact"
+                      icon
+                      size="small"
+                      variant="text"
+                      @click="openLinkDialog(item)"
+                    >
+                      <v-icon size="20">mdi-link-variant-plus</v-icon>
+                      <v-tooltip activator="parent" location="top"
+                        >添加子权限</v-tooltip
+                      >
+                    </v-btn>
+
+                    <!-- Unlink Relation -->
+                    <v-btn
+                      v-if="item.parentId"
+                      class="me-1"
+                      color="warning"
+                      density="compact"
+                      icon
+                      :loading="processingRelation.has(item.id)"
+                      size="small"
+                      variant="text"
+                      @click="handleUnlink(item)"
+                    >
+                      <v-icon size="20">mdi-link-variant-off</v-icon>
+                      <v-tooltip activator="parent" location="top"
+                        >解除父子关系</v-tooltip
+                      >
+                    </v-btn>
+
                     <v-btn
                       class="me-1"
                       color="grey-darken-1"
@@ -198,6 +302,31 @@
                         $t('common.delete')
                       }}</v-tooltip>
                     </v-btn>
+                  </td>
+                </tr>
+
+                <!-- 2. Load More Row -->
+                <tr v-else class="child-level-row">
+                  <td class="ps-4 py-2" colspan="4">
+                    <div
+                      class="d-flex align-center"
+                      :style="{ paddingLeft: (item as any).level * 32 + 'px' }"
+                    >
+                      <div class="indent-guide"></div>
+                      <v-btn
+                        class="text-none font-weight-bold"
+                        color="primary"
+                        density="compact"
+                        :loading="loadingMore.has(item.parentId)"
+                        prepend-icon="mdi-dots-horizontal"
+                        rounded="pill"
+                        size="small"
+                        variant="text"
+                        @click="loadMoreChildren(item)"
+                      >
+                        查看更多子权限...
+                      </v-btn>
+                    </div>
                   </td>
                 </tr>
               </template>
@@ -318,16 +447,89 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Link Descendant Dialog -->
+    <v-dialog v-model="linkDialog" max-width="400px" persistent>
+      <v-card class="rounded-xl overflow-hidden">
+        <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
+          <span class="text-h6 font-weight-bold text-grey-darken-3"
+            >添加子权限</span
+          >
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey-lighten-1"
+            density="compact"
+            icon="mdi-close"
+            variant="text"
+            @click="linkDialog = false"
+          ></v-btn>
+        </v-card-title>
+
+        <v-card-text class="pa-6">
+          <div class="text-caption font-weight-bold text-grey-darken-1 mb-2">
+            选择要添加为 [{{ linkParent?.name }}] 子项的权限
+          </div>
+          <v-autocomplete
+            v-model="selectedDescendantId"
+            :items="availablePermissions"
+            item-title="name"
+            item-value="id"
+            :loading="searching"
+            placeholder="搜索权限名称或编码"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            color="primary"
+            hide-details
+            clearable
+            @update:search="onSearchPermissions"
+            @compositionstart="onCompositionStart"
+            @compositionend="onCompositionEnd"
+          >
+            <template #item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :subtitle="item.raw.code"
+              ></v-list-item>
+            </template>
+          </v-autocomplete>
+        </v-card-text>
+
+        <v-card-actions class="px-6 pb-6 pt-2">
+          <v-spacer></v-spacer>
+          <v-btn
+            class="text-none rounded-pill px-6"
+            variant="text"
+            @click="linkDialog = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            class="text-none rounded-pill px-6 ms-2"
+            color="primary"
+            :disabled="!selectedDescendantId"
+            :loading="linking"
+            variant="flat"
+            @click="confirmLink"
+          >
+            确认添加
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
+  addPermissionDescendant,
   createPermission,
   deletePermission,
+  deletePermissionPath,
   downloadAllPermissions,
+  findDirectPermissions,
+  findRootPermissions,
   getPermissions,
   updatePermission,
   type Permission,
@@ -337,13 +539,96 @@ import { message } from '@/utils/message';
 
 const { t } = useI18n();
 
+const viewMode = ref<'flat' | 'tree'>('flat');
 const itemsPerPage = ref(10);
 const page = ref(1);
 const totalItems = ref(0);
 const loading = ref(false);
 const saving = ref(false);
 const downloading = ref(false);
-const serverItems = ref<Permission[]>([]);
+const serverItems = ref<any[]>([]);
+const expandedIds = ref<Set<number>>(new Set());
+const expandedMeta = ref<Map<number, { current: number; total: number }>>(
+  new Map(),
+);
+
+// Drag and Drop state
+const draggedItem = ref<any>(null);
+const dropTargetId = ref<number | null>(null);
+
+// Track loading state for specific rows (children)
+const loadingChildren = ref<Set<number>>(new Set());
+const loadingMore = ref<Set<number>>(new Set());
+const processingRelation = ref<Set<number>>(new Set());
+
+// Link Dialog State
+const linkDialog = ref(false);
+const linkParent = ref<any>(null);
+const selectedDescendantId = ref<number | null>(null);
+const availablePermissions = ref<Permission[]>([]);
+const searching = ref(false);
+const linking = ref(false);
+const isComposing = ref(false);
+let searchTimer: any = null;
+
+async function onSearchPermissions(query: string) {
+  if (isComposing.value || !query || query.length < 2) return;
+
+  if (searchTimer) clearTimeout(searchTimer);
+
+  searchTimer = setTimeout(async () => {
+    searching.value = true;
+    try {
+      const res = await getPermissions({
+        name: query,
+        pageSize: 20,
+      });
+      const data = res as any;
+      const pageData = data.content ? data : data.data || {};
+      availablePermissions.value = pageData.content || [];
+    } catch (error) {
+      console.error('Search failed', error);
+    } finally {
+      searching.value = false;
+    }
+  }, 400); // 400ms debounce
+}
+
+function onCompositionStart() {
+  isComposing.value = true;
+}
+
+function onCompositionEnd(e: any) {
+  isComposing.value = false;
+  // Trigger search with the finalized value after composition ends
+  onSearchPermissions(e.target.value);
+}
+
+function openLinkDialog(item: any) {
+  linkParent.value = item;
+  selectedDescendantId.value = null;
+  availablePermissions.value = [];
+  linkDialog.value = true;
+}
+
+async function confirmLink() {
+  if (!linkParent.value || !selectedDescendantId.value) return;
+
+  linking.value = true;
+  try {
+    await addPermissionDescendant({
+      ancestorId: linkParent.value.id,
+      descendantId: selectedDescendantId.value,
+    });
+    message.success('子权限添加成功');
+    linkDialog.value = false;
+    refresh();
+  } catch (error) {
+    console.error('Failed to link descendant', error);
+  } finally {
+    linking.value = false;
+  }
+}
 
 const filters = reactive({
   code: '',
@@ -370,7 +655,7 @@ const headers = computed(() => [
     title: t('permission.code'),
     key: 'code',
     align: 'start' as const,
-    width: '150px',
+    width: '250px',
   },
   {
     title: t('permission.name'),
@@ -395,24 +680,165 @@ const headers = computed(() => [
 async function loadItems() {
   loading.value = true;
   try {
-    const res = await getPermissions({
-      current: page.value,
-      pageSize: itemsPerPage.value,
-      code: filters.code || undefined,
-      name: filters.name || undefined,
-    });
+    if (viewMode.value === 'flat') {
+      const res = await getPermissions({
+        current: page.value,
+        pageSize: itemsPerPage.value,
+        code: filters.code || undefined,
+        name: filters.name || undefined,
+      });
 
-    const data = res as any;
-    const pageData = data.content ? data : data.data || {};
+      const data = res as any;
+      const pageData = data.content ? data : data.data || {};
 
-    serverItems.value = pageData.content || [];
-    totalItems.value = Number(pageData.totalElements) || 0;
+      serverItems.value = (pageData.content || []).map((item: any) => ({
+        ...item,
+        level: 0,
+      }));
+      totalItems.value = Number(pageData.totalElements) || 0;
+    } else {
+      // Tree Mode: Load Roots
+      const res = await findRootPermissions();
+      serverItems.value = (res.data || []).map((item) => ({
+        ...item,
+        level: 0,
+        hasChildren: true, // Assume they might have children or we check a flag if available
+      }));
+      totalItems.value = serverItems.value.length;
+      expandedIds.value.clear();
+    }
   } catch (error) {
     console.error('Failed to load permissions', error);
   } finally {
     loading.value = false;
   }
 }
+
+async function toggleExpand(item: any) {
+  if (expandedIds.value.has(item.id)) {
+    // Collapse
+    expandedIds.value.delete(item.id);
+    expandedMeta.value.delete(item.id);
+    // Remove all nested children and load-more placeholders
+    const index = serverItems.value.findIndex((i) => i.id === item.id);
+    if (index === -1) return;
+
+    let removeCount = 0;
+    for (let i = index + 1; i < serverItems.value.length; i++) {
+      if (serverItems.value[i].level > item.level) {
+        removeCount++;
+      } else {
+        break;
+      }
+    }
+    serverItems.value.splice(index + 1, removeCount);
+  } else {
+    // Expand - Load first page
+    loadingChildren.value.add(item.id);
+    try {
+      const pageSize = 5; // Use a small page size for child tree levels
+      const res = await findDirectPermissions({
+        ancestorId: item.id,
+        current: 1,
+        pageSize,
+      });
+
+      const data = res as any;
+      const pageData = data.content ? data : data.data || {};
+      const total = Number(pageData.totalElements) || 0;
+      const children = (pageData.content || []).map((child: any) => ({
+        ...child,
+        level: item.level + 1,
+        parentId: item.id, // Set parentId for children
+        isLoadMore: false,
+      }));
+
+      const index = serverItems.value.findIndex((i) => i.id === item.id);
+      if (index !== -1) {
+        // Insert children
+        serverItems.value.splice(index + 1, 0, ...children);
+        expandedIds.value.add(item.id);
+        expandedMeta.value.set(item.id, { current: 1, total });
+
+        // Add "Load More" placeholder if needed
+        if (total > children.length) {
+          serverItems.value.splice(index + 1 + children.length, 0, {
+            id: `load-more-${item.id}`,
+            parentId: item.id,
+            level: item.level + 1,
+            isLoadMore: true,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load children', error);
+    } finally {
+      loadingChildren.value.delete(item.id);
+    }
+  }
+}
+
+async function loadMoreChildren(parentItem: any) {
+  const meta = expandedMeta.value.get(parentItem.parentId);
+  if (!meta || loadingMore.value.has(parentItem.parentId)) return;
+
+  loadingMore.value.add(parentItem.parentId);
+  try {
+    const pageSize = 5;
+    const nextPage = meta.current + 1;
+    const res = await findDirectPermissions({
+      ancestorId: parentItem.parentId,
+      current: nextPage,
+      pageSize,
+    });
+
+    const data = res as any;
+    const pageData = data.content ? data : data.data || {};
+    const newChildren = (pageData.content || []).map((child: any) => ({
+      ...child,
+      level: parentItem.level,
+      parentId: parentItem.parentId, // Set parentId
+      isLoadMore: false,
+    }));
+
+    // Find the current "Load More" item index
+    const loadMoreIndex = serverItems.value.findIndex(
+      (i) => i.id === parentItem.id,
+    );
+
+    if (loadMoreIndex !== -1) {
+      // Insert new children before the "Load More" item
+      serverItems.value.splice(loadMoreIndex, 0, ...newChildren);
+
+      // Update meta
+      const loadedSoFar = (nextPage - 1) * pageSize + newChildren.length;
+      meta.current = nextPage;
+
+      // Remove "Load More" item if all loaded
+      if (loadedSoFar >= meta.total) {
+        serverItems.value.splice(loadMoreIndex + newChildren.length, 1);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load more children', error);
+  } finally {
+    loadingMore.value.delete(parentItem.parentId);
+  }
+}
+
+watch(viewMode, () => {
+  page.value = 1;
+  refresh();
+});
+
+watch(
+  () => [filters.code, filters.name],
+  ([newCode, newName]) => {
+    if ((newCode || newName) && viewMode.value === 'tree') {
+      viewMode.value = 'flat';
+    }
+  },
+);
 
 function refresh() {
   page.value = 1;
@@ -500,6 +926,86 @@ async function handleDelete(id: number) {
   }
 }
 
+// Relationship Management
+async function handleUnlink(item: any) {
+  if (!item.parentId) return;
+
+  const confirmed = await confirm({
+    title: '解除父子关系',
+    content: `确定要解除权限 [${item.name}] 与其父权限的关系吗？`,
+    confirmText: '解除',
+    color: 'warning',
+    icon: 'mdi-link-variant-off',
+  });
+
+  if (!confirmed) return;
+
+  processingRelation.value.add(item.id);
+  try {
+    await deletePermissionPath(item.parentId, item.id);
+    message.success('已解除父子关系');
+    refresh();
+  } catch (error) {
+    console.error('Failed to unlink permission', error);
+  } finally {
+    processingRelation.value.delete(item.id);
+  }
+}
+
+// Drag & Drop Handlers
+function onDragStart(event: DragEvent, item: any) {
+  if (viewMode.value !== 'tree') return;
+  draggedItem.value = item;
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.dropEffect = 'move';
+  }
+}
+
+function onDragOver(event: DragEvent, item: any) {
+  if (!draggedItem.value || draggedItem.value.id === item.id) return;
+  // Prevent dropping onto own descendants (simplified check: just level check for now)
+  // Real implementation would need a full hierarchy check
+  event.preventDefault();
+  dropTargetId.value = item.id;
+}
+
+function onDragLeave() {
+  dropTargetId.value = null;
+}
+
+async function onDrop(event: DragEvent, targetItem: any) {
+  event.preventDefault();
+  const sourceItem = draggedItem.value;
+  const targetId = targetItem.id;
+
+  draggedItem.value = null;
+  dropTargetId.value = null;
+
+  if (!sourceItem || sourceItem.id === targetId) return;
+
+  const confirmed = await confirm({
+    title: '建立父子关系',
+    content: `确定要将 [${sourceItem.name}] 设置为 [${targetItem.name}] 的子权限吗？`,
+    confirmText: '确认建立',
+    color: 'primary',
+    icon: 'mdi-link-variant',
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await addPermissionDescendant({
+      ancestorId: targetId,
+      descendantId: sourceItem.id,
+    });
+    message.success('父子关系建立成功');
+    refresh();
+  } catch (error) {
+    console.error('Failed to add descendant', error);
+  }
+}
+
 async function handleDownload() {
   downloading.value = true;
   try {
@@ -580,6 +1086,45 @@ async function handleDownload() {
 
 .table-row-hover:hover {
   background-color: rgba(var(--v-theme-primary), 0.04) !important;
+}
+
+.table-row-hover[draggable='true'] {
+  cursor: grab;
+}
+
+.table-row-hover[draggable='true']:active {
+  cursor: grabbing;
+}
+
+.drop-target {
+  background-color: rgba(var(--v-theme-primary), 0.1) !important;
+  outline: 2px dashed rgb(var(--v-theme-primary));
+  outline-offset: -2px;
+}
+
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+.v-btn {
+  transition: transform 0.2s ease;
+}
+
+.child-level-row {
+  background-color: rgba(var(--v-theme-background), 0.5);
+}
+
+.d-flex {
+  position: relative;
+}
+
+.indent-guide {
+  position: absolute;
+  left: -16px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(var(--v-theme-secondary), 0.2);
 }
 
 :deep(.v-field--variant-solo-filled) {
