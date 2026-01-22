@@ -101,3 +101,5 @@ The project follows a custom "Bento" design language characterized by soft color
 - **I18n:** Use `useI18n` composable for text.
 - **Page Naming:** Files in `src/pages/` must use `kebab-case` naming (e.g., `user-profile.vue`).
 - **Shell Commands:** Execute shell commands separately; do not use `&&` chaining (PowerShell environment compatibility).
+- **Git Commit:** Only commit code when explicitly requested. Follow Angular Commits convention. Subject and body must be in Chinese. Scope is mandatory.
+- **Code Comments:** All code comments must be in Chinese.
