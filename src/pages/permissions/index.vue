@@ -473,4 +473,25 @@ async function handleDelete(id: number) {
 :deep(.v-field--variant-solo-filled) {
   box-shadow: none;
 }
+
+/* Pagination Dropdown Styling */
+:deep(.v-data-table-footer .v-select) {
+  width: 110px; /* Give it some breathing room */
+}
+
+:deep(.v-data-table-footer .v-field) {
+  border-radius: 8px !important;
+  background-color: rgb(var(--v-theme-background)) !important;
+  box-shadow: none !important;
+  padding-inline-start: 12px;
+}
+
+:deep(.v-data-table-footer .v-field__outline) {
+  display: none !important;
+}
+
+:deep(.v-data-table-footer .v-select__selection-text) {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
 </style>
