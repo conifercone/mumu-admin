@@ -36,8 +36,24 @@ export function createPermission(data: Partial<Permission>) {
 }
 
 /**
+ * Update a permission by ID
+ */
+export function updatePermission(data: Partial<Permission>) {
+  return http.put(`${ServicePrefix.IAM}/permission/updateById`, data);
+}
+
+/**
  * Delete a permission by ID
  */
 export function deletePermission(id: number) {
   return http.delete(`${ServicePrefix.IAM}/permission/deleteById/${id}`);
+}
+
+/**
+ * Download all permissions as a file
+ */
+export function downloadAllPermissions() {
+  return http.get(`${ServicePrefix.IAM}/permission/downloadAll`, {
+    responseType: 'blob',
+  });
 }
