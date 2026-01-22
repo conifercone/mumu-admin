@@ -4,3 +4,31 @@ body {
   overflow: hidden !important; /* Prevent browser scrollbar */
   height: 100%;
 }
+
+/* Optimize Dropdown Menu Items (SaaS Style) */
+.v-menu .v-list-item {
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  margin: 4px !important;
+  border-radius: 6px !important;
+  font-size: 0.875rem !important;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.v-menu .v-list-item:hover {
+  background-color: rgb(var(--v-theme-primary), 0.08) !important;
+  color: rgb(var(--v-theme-primary)) !important;
+}
+
+.v-menu .v-list-item--active {
+  background-color: rgb(var(--v-theme-primary), 0.12) !important;
+  color: rgb(var(--v-theme-primary)) !important;
+  font-weight: 600 !important;
+}
+
+/* Remove default overlay ripple for cleaner look */
+.v-menu .v-list-item__overlay {
+  display: none !important;
+}

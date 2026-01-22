@@ -52,6 +52,8 @@ export default createVuetify({
       rounded: 'lg',
       hideDetails: 'auto',
       bgColor: 'white',
+      itemColor: 'primary',
+      menuProps: { contentClass: 'rounded-lg elevation-4 mt-2' },
     },
     VNavigationDrawer: {
       elevation: 0,

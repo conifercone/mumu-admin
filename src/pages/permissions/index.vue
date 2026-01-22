@@ -476,14 +476,28 @@ async function handleDelete(id: number) {
 
 /* Pagination Dropdown Styling */
 :deep(.v-data-table-footer .v-select) {
-  width: 110px; /* Give it some breathing room */
+  width: 100px;
+  margin-left: 8px;
+  margin-right: 8px;
 }
 
 :deep(.v-data-table-footer .v-field) {
   border-radius: 8px !important;
   background-color: rgb(var(--v-theme-background)) !important;
   box-shadow: none !important;
-  padding-inline-start: 12px;
+  min-height: 32px;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+:deep(.v-data-table-footer .v-field__input) {
+  min-height: 32px;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
 }
 
 :deep(.v-data-table-footer .v-field__outline) {
@@ -492,6 +506,12 @@ async function handleDelete(id: number) {
 
 :deep(.v-data-table-footer .v-select__selection-text) {
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: rgb(var(--v-theme-primary));
+}
+
+:deep(.v-data-table-footer .v-field__append-inner) {
+  padding-top: 0;
+  align-items: center;
 }
 </style>
