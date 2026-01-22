@@ -211,6 +211,16 @@ http.interceptors.response.use(
 
     if (error.response) {
       const status = error.response.status;
+      const responseData = error.response.data as any;
+
+      // Prioritize backend-provided message from ResponseWrapper or direct message field
+      if (
+        responseData &&
+        typeof responseData === 'object' &&
+        responseData.message
+      ) {
+        messageStr = responseData.message;
+      }
 
       // 401 处理 (Token 过期刷新)
       if (status === 401 && config) {
@@ -285,29 +295,32 @@ http.interceptors.response.use(
         }
       }
 
-      switch (status) {
-        case 400: {
-          messageStr = i18n.global.t('http.badRequest');
-          break;
-        }
-        case 401: {
-          messageStr = i18n.global.t('http.unauthorized');
-          break;
-        }
-        case 403: {
-          messageStr = i18n.global.t('http.forbidden');
-          break;
-        }
-        case 404: {
-          messageStr = i18n.global.t('http.notFound');
-          break;
-        }
-        case 500: {
-          messageStr = i18n.global.t('http.internalServerError');
-          break;
-        }
-        default: {
-          messageStr = `${i18n.global.t('http.networkError')}: ${status}`;
+      // If no backend message, use status-based fallback
+      if (!messageStr || messageStr === i18n.global.t('http.unknownError')) {
+        switch (status) {
+          case 400: {
+            messageStr = i18n.global.t('http.badRequest');
+            break;
+          }
+          case 401: {
+            messageStr = i18n.global.t('http.unauthorized');
+            break;
+          }
+          case 403: {
+            messageStr = i18n.global.t('http.forbidden');
+            break;
+          }
+          case 404: {
+            messageStr = i18n.global.t('http.notFound');
+            break;
+          }
+          case 500: {
+            messageStr = i18n.global.t('http.internalServerError');
+            break;
+          }
+          default: {
+            messageStr = `${i18n.global.t('http.networkError')}: ${status}`;
+          }
         }
       }
     } else if (error.message.includes('timeout')) {

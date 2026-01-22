@@ -4,16 +4,23 @@
       <v-col cols="12">
         <div class="d-flex flex-column h-100 gap-4">
           <!-- 1. Action & Filter Bar -->
-          <v-card class="rounded-xl px-4 py-3" elevation="0" flat>
-            <v-row align="center" dense>
-              <v-col cols="12" md="4">
+          <v-card class="rounded-xl pa-4" elevation="0" flat>
+            <v-row align="center" class="gy-4">
+              <!-- Search Group -->
+              <v-col
+                class="d-flex flex-wrap align-center gap-4"
+                cols="12"
+                md="auto"
+              >
                 <v-text-field
                   v-model="filters.code"
                   bg-color="grey-lighten-5"
-                  density="compact"
+                  class="search-field"
+                  density="comfortable"
                   flat
                   hide-details
                   :label="$t('permission.code')"
+                  min-width="220"
                   prepend-inner-icon="mdi-magnify"
                   rounded="lg"
                   variant="solo-filled"
@@ -21,15 +28,16 @@
                   @compositionstart="onCompositionStart"
                   @compositionend="isComposing = false"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="4">
+
                 <v-text-field
                   v-model="filters.name"
                   bg-color="grey-lighten-5"
-                  density="compact"
+                  class="search-field"
+                  density="comfortable"
                   flat
                   hide-details
                   :label="$t('permission.name')"
+                  min-width="280"
                   prepend-inner-icon="mdi-filter-variant"
                   rounded="lg"
                   variant="solo-filled"
@@ -38,36 +46,43 @@
                   @compositionend="isComposing = false"
                 ></v-text-field>
               </v-col>
-              <v-col cols="auto">
+
+              <!-- View Mode Toggle -->
+              <v-col class="d-flex align-center" cols="auto">
                 <v-btn-toggle
                   v-model="viewMode"
-                  class="rounded-lg"
+                  class="view-mode-toggle rounded-lg bg-grey-lighten-5 pa-1"
                   color="primary"
                   density="compact"
                   mandatory
-                  variant="tonal"
+                  variant="text"
                 >
-                  <v-btn value="flat">
-                    <v-icon>mdi-view-list</v-icon>
+                  <v-btn class="rounded-lg px-4" height="36" value="flat">
+                    <v-icon start size="18">mdi-view-list</v-icon>
+                    <span class="text-button font-weight-bold">列表</span>
                     <v-tooltip activator="parent" location="top"
-                      >Flat List</v-tooltip
+                      >平铺模式</v-tooltip
                     >
                   </v-btn>
-                  <v-btn value="tree">
-                    <v-icon>mdi-file-tree</v-icon>
+                  <v-btn class="rounded-lg px-4" height="36" value="tree">
+                    <v-icon start size="18">mdi-file-tree</v-icon>
+                    <span class="text-button font-weight-bold">树级</span>
                     <v-tooltip activator="parent" location="top"
-                      >Hierarchy Tree</v-tooltip
+                      >层级模式</v-tooltip
                     >
                   </v-btn>
                 </v-btn-toggle>
               </v-col>
-              <v-spacer></v-spacer>
-              <v-col class="text-right" cols="auto">
+
+              <v-spacer class="d-none d-md-flex"></v-spacer>
+
+              <!-- Actions Group -->
+              <v-col class="d-flex align-center gap-3" cols="12" sm="auto">
                 <v-btn
-                  class="text-none font-weight-bold px-6 me-2"
+                  class="text-none font-weight-bold px-5 flex-grow-1 flex-sm-grow-0"
                   color="primary"
                   elevation="0"
-                  height="40"
+                  height="44"
                   :loading="downloading"
                   prepend-icon="mdi-tray-arrow-down"
                   rounded="lg"
@@ -77,10 +92,10 @@
                   {{ $t('common.download') }}
                 </v-btn>
                 <v-btn
-                  class="text-none font-weight-bold px-6"
+                  class="text-none font-weight-bold px-6 flex-grow-1 flex-sm-grow-0"
                   color="primary"
                   elevation="0"
-                  height="40"
+                  height="44"
                   prepend-icon="mdi-plus"
                   rounded="lg"
                   variant="flat"
@@ -240,68 +255,81 @@
                       {{ item.description || '-' }}
                     </div>
                   </td>
-                  <td class="text-end pe-4">
-                    <!-- Link Descendant -->
-                    <v-btn
-                      class="me-1"
-                      color="primary"
-                      density="compact"
-                      icon
-                      size="small"
-                      variant="text"
-                      @click="openLinkDialog(item)"
-                    >
-                      <v-icon size="20">mdi-link-variant-plus</v-icon>
-                      <v-tooltip activator="parent" location="top"
-                        >添加子权限</v-tooltip
+                  <td class="text-end pe-6">
+                    <div class="d-flex align-center justify-end gap-2">
+                      <!-- 1. Hierarchy Operations Group -->
+                      <div
+                        v-if="viewMode === 'tree'"
+                        class="d-flex align-center bg-grey-lighten-5 rounded-pill px-2 me-2"
+                        style="height: 36px"
                       >
-                    </v-btn>
+                        <v-btn
+                          color="primary"
+                          density="compact"
+                          icon
+                          width="32"
+                          height="32"
+                          variant="text"
+                          @click="openLinkDialog(item)"
+                        >
+                          <v-icon size="18">mdi-link-variant-plus</v-icon>
+                          <v-tooltip activator="parent" location="top"
+                            >添加子权限</v-tooltip
+                          >
+                        </v-btn>
 
-                    <!-- Unlink Relation -->
-                    <v-btn
-                      v-if="item.parentId"
-                      class="me-1"
-                      color="warning"
-                      density="compact"
-                      icon
-                      :loading="processingRelation.has(item.id)"
-                      size="small"
-                      variant="text"
-                      @click="handleUnlink(item)"
-                    >
-                      <v-icon size="20">mdi-link-variant-off</v-icon>
-                      <v-tooltip activator="parent" location="top"
-                        >解除父子关系</v-tooltip
+                        <v-btn
+                          v-if="item.parentId"
+                          color="warning"
+                          density="compact"
+                          icon
+                          width="32"
+                          height="32"
+                          variant="text"
+                          :loading="processingRelation.has(item.id)"
+                          @click="handleUnlink(item)"
+                        >
+                          <v-icon size="18">mdi-link-variant-off</v-icon>
+                          <v-tooltip activator="parent" location="top"
+                            >解除关系</v-tooltip
+                          >
+                        </v-btn>
+                      </div>
+
+                      <!-- 2. Standard Operations Group (Flat Mode Only) -->
+                      <div
+                        v-if="viewMode === 'flat'"
+                        class="d-flex align-center"
                       >
-                    </v-btn>
-
-                    <v-btn
-                      class="me-1"
-                      color="grey-darken-1"
-                      density="compact"
-                      icon
-                      size="small"
-                      variant="text"
-                      @click="handleEdit(item)"
-                    >
-                      <v-icon size="20">mdi-pencil-outline</v-icon>
-                      <v-tooltip activator="parent" location="top">{{
-                        $t('common.edit')
-                      }}</v-tooltip>
-                    </v-btn>
-                    <v-btn
-                      color="error"
-                      density="compact"
-                      icon
-                      size="small"
-                      variant="text"
-                      @click="handleDelete(item.id)"
-                    >
-                      <v-icon size="20">mdi-delete-outline</v-icon>
-                      <v-tooltip activator="parent" location="top">{{
-                        $t('common.delete')
-                      }}</v-tooltip>
-                    </v-btn>
+                        <v-btn
+                          class="me-1"
+                          color="grey-darken-1"
+                          density="compact"
+                          icon
+                          size="small"
+                          variant="text"
+                          @click="handleEdit(item)"
+                        >
+                          <v-icon size="18">mdi-pencil-outline</v-icon>
+                          <v-tooltip activator="parent" location="top">{{
+                            $t('common.edit')
+                          }}</v-tooltip>
+                        </v-btn>
+                        <v-btn
+                          color="error"
+                          density="compact"
+                          icon
+                          size="small"
+                          variant="text"
+                          @click="handleDelete(item.id)"
+                        >
+                          <v-icon size="18">mdi-delete-outline</v-icon>
+                          <v-tooltip activator="parent" location="top">{{
+                            $t('common.delete')
+                          }}</v-tooltip>
+                        </v-btn>
+                      </div>
+                    </div>
                   </td>
                 </tr>
 
@@ -475,7 +503,7 @@
             item-title="name"
             item-value="id"
             :loading="searching"
-            placeholder="搜索权限名称或编码"
+            placeholder="搜索权限名称"
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
             color="primary"
@@ -485,11 +513,8 @@
             @compositionstart="onCompositionStart"
             @compositionend="onCompositionEnd"
           >
-            <template #item="{ props, item }">
-              <v-list-item
-                v-bind="props"
-                :subtitle="item.raw.code"
-              ></v-list-item>
+            <template #item="{ props }">
+              <v-list-item v-bind="props"></v-list-item>
             </template>
           </v-autocomplete>
         </v-card-text>
@@ -690,25 +715,49 @@ async function loadItems() {
 
       const data = res as any;
       const pageData = data.content ? data : data.data || {};
+      const list = pageData.content || [];
 
-      serverItems.value = (pageData.content || []).map((item: any) => ({
+      serverItems.value = list.map((item: any) => ({
         ...item,
         level: 0,
       }));
       totalItems.value = Number(pageData.totalElements) || 0;
+
+      // Reset tree states when in flat mode
+      expandedIds.value.clear();
+      expandedMeta.value.clear();
     } else {
       // Tree Mode: Load Roots
       const res = await findRootPermissions();
-      serverItems.value = (res.data || []).map((item) => ({
+      const data = res as any;
+
+      // Robust extraction: data.data could be Permission[] or PageResult<Permission>
+      const payload = data.data;
+      let rootsList: any[] = [];
+
+      if (Array.isArray(payload)) {
+        rootsList = payload;
+      } else if (payload && Array.isArray(payload.content)) {
+        rootsList = payload.content;
+      }
+
+      const roots = rootsList.map((item: any) => ({
         ...item,
         level: 0,
-        hasChildren: true, // Assume they might have children or we check a flag if available
+        hasChildren: true,
       }));
-      totalItems.value = serverItems.value.length;
+
+      serverItems.value = roots;
+      totalItems.value = roots.length;
+
+      // Reset expansion state when refreshing roots
       expandedIds.value.clear();
+      expandedMeta.value.clear();
     }
   } catch (error) {
     console.error('Failed to load permissions', error);
+    serverItems.value = [];
+    totalItems.value = 0;
   } finally {
     loading.value = false;
   }
@@ -1112,6 +1161,37 @@ async function handleDownload() {
 
 .child-level-row {
   background-color: rgba(var(--v-theme-background), 0.5);
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.search-field {
+  transition: all 0.3s ease;
+}
+
+.search-field :deep(.v-field--focused) {
+  background-color: white !important;
+  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.1) !important;
+}
+
+.view-mode-toggle {
+  height: 44px !important;
+  display: flex;
+  align-items: center;
+}
+
+.border-e {
+  border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
 }
 
 .d-flex {
