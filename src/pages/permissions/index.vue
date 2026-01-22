@@ -141,7 +141,7 @@
               fixed-header
               :headers="headers"
               hover
-              item-value="id"
+              item-value="treeKey"
               :items="serverItems"
               :items-length="totalItems"
               :loading="loading"
@@ -214,11 +214,11 @@
                       <v-btn
                         v-if="viewMode === 'tree'"
                         class="me-1"
-                        :class="{ 'rotate-90': expandedIds.has(item.id) }"
+                        :class="{ 'rotate-90': expandedIds.has(item.treeKey) }"
                         color="grey-darken-1"
                         density="compact"
                         :icon="
-                          loadingChildren.has(item.id)
+                          loadingChildren.has(item.treeKey)
                             ? 'mdi-loading mdi-spin'
                             : 'mdi-chevron-right'
                         "
@@ -286,10 +286,11 @@
                           width="32"
                           height="32"
                           variant="text"
-                          :loading="processingRelation.has(item.id)"
+                          :loading="processingRelation.has(item.treeKey)"
                           @click="handleUnlink(item)"
                         >
                           <v-icon size="18">mdi-link-variant-off</v-icon>
+
                           <v-tooltip activator="parent" location="top"
                             >解除关系</v-tooltip
                           >
@@ -297,6 +298,7 @@
                       </div>
 
                       <!-- 2. Standard Operations Group (Flat Mode Only) -->
+
                       <div
                         v-if="viewMode === 'flat'"
                         class="d-flex align-center"
@@ -311,10 +313,12 @@
                           @click="handleEdit(item)"
                         >
                           <v-icon size="18">mdi-pencil-outline</v-icon>
+
                           <v-tooltip activator="parent" location="top">{{
                             $t('common.edit')
                           }}</v-tooltip>
                         </v-btn>
+
                         <v-btn
                           color="error"
                           density="compact"
@@ -324,6 +328,7 @@
                           @click="handleDelete(item.id)"
                         >
                           <v-icon size="18">mdi-delete-outline</v-icon>
+
                           <v-tooltip activator="parent" location="top">{{
                             $t('common.delete')
                           }}</v-tooltip>
@@ -334,6 +339,7 @@
                 </tr>
 
                 <!-- 2. Load More Row -->
+
                 <tr v-else class="child-level-row">
                   <td class="ps-4 py-2" colspan="4">
                     <div
@@ -341,11 +347,12 @@
                       :style="{ paddingLeft: (item as any).level * 32 + 'px' }"
                     >
                       <div class="indent-guide"></div>
+
                       <v-btn
                         class="text-none font-weight-bold"
                         color="primary"
                         density="compact"
-                        :loading="loadingMore.has(item.parentId)"
+                        :loading="loadingMore.has(item.parentTreeKey)"
                         prepend-icon="mdi-dots-horizontal"
                         rounded="pill"
                         size="small"
@@ -572,8 +579,8 @@ const loading = ref(false);
 const saving = ref(false);
 const downloading = ref(false);
 const serverItems = ref<any[]>([]);
-const expandedIds = ref<Set<number>>(new Set());
-const expandedMeta = ref<Map<number, { current: number; total: number }>>(
+const expandedIds = ref<Set<string>>(new Set());
+const expandedMeta = ref<Map<string, { current: number; total: number }>>(
   new Map(),
 );
 
@@ -582,9 +589,9 @@ const draggedItem = ref<any>(null);
 const dropTargetId = ref<number | null>(null);
 
 // Track loading state for specific rows (children)
-const loadingChildren = ref<Set<number>>(new Set());
-const loadingMore = ref<Set<number>>(new Set());
-const processingRelation = ref<Set<number>>(new Set());
+const loadingChildren = ref<Set<string>>(new Set());
+const loadingMore = ref<Set<string>>(new Set());
+const processingRelation = ref<Set<string>>(new Set());
 
 // Link Dialog State
 const linkDialog = ref(false);
@@ -720,6 +727,7 @@ async function loadItems() {
       serverItems.value = list.map((item: any) => ({
         ...item,
         level: 0,
+        treeKey: String(item.id),
       }));
       totalItems.value = Number(pageData.totalElements) || 0;
 
@@ -744,9 +752,9 @@ async function loadItems() {
       const roots = rootsList.map((item: any) => ({
         ...item,
         level: 0,
+        treeKey: `root-${item.id}`,
         hasChildren: true,
       }));
-
       serverItems.value = roots;
       totalItems.value = roots.length;
 
@@ -764,12 +772,14 @@ async function loadItems() {
 }
 
 async function toggleExpand(item: any) {
-  if (expandedIds.value.has(item.id)) {
+  if (expandedIds.value.has(item.treeKey)) {
     // Collapse
-    expandedIds.value.delete(item.id);
-    expandedMeta.value.delete(item.id);
+    expandedIds.value.delete(item.treeKey);
+    expandedMeta.value.delete(item.treeKey);
     // Remove all nested children and load-more placeholders
-    const index = serverItems.value.findIndex((i) => i.id === item.id);
+    const index = serverItems.value.findIndex(
+      (i) => i.treeKey === item.treeKey,
+    );
     if (index === -1) return;
 
     let removeCount = 0;
@@ -783,7 +793,7 @@ async function toggleExpand(item: any) {
     serverItems.value.splice(index + 1, removeCount);
   } else {
     // Expand - Load first page
-    loadingChildren.value.add(item.id);
+    loadingChildren.value.add(item.treeKey);
     try {
       const pageSize = 5; // Use a small page size for child tree levels
       const res = await findDirectPermissions({
@@ -799,21 +809,26 @@ async function toggleExpand(item: any) {
         ...child,
         level: item.level + 1,
         parentId: item.id, // Set parentId for children
+        treeKey: `${item.treeKey}-${child.id}`,
         isLoadMore: false,
       }));
 
-      const index = serverItems.value.findIndex((i) => i.id === item.id);
+      const index = serverItems.value.findIndex(
+        (i) => i.treeKey === item.treeKey,
+      );
       if (index !== -1) {
         // Insert children
         serverItems.value.splice(index + 1, 0, ...children);
-        expandedIds.value.add(item.id);
-        expandedMeta.value.set(item.id, { current: 1, total });
+        expandedIds.value.add(item.treeKey);
+        expandedMeta.value.set(item.treeKey, { current: 1, total });
 
         // Add "Load More" placeholder if needed
         if (total > children.length) {
           serverItems.value.splice(index + 1 + children.length, 0, {
             id: `load-more-${item.id}`,
+            treeKey: `load-more-${item.treeKey}`,
             parentId: item.id,
+            parentTreeKey: item.treeKey,
             level: item.level + 1,
             isLoadMore: true,
           });
@@ -822,16 +837,16 @@ async function toggleExpand(item: any) {
     } catch (error) {
       console.error('Failed to load children', error);
     } finally {
-      loadingChildren.value.delete(item.id);
+      loadingChildren.value.delete(item.treeKey);
     }
   }
 }
 
 async function loadMoreChildren(parentItem: any) {
-  const meta = expandedMeta.value.get(parentItem.parentId);
-  if (!meta || loadingMore.value.has(parentItem.parentId)) return;
+  const meta = expandedMeta.value.get(parentItem.parentTreeKey);
+  if (!meta || loadingMore.value.has(parentItem.parentTreeKey)) return;
 
-  loadingMore.value.add(parentItem.parentId);
+  loadingMore.value.add(parentItem.parentTreeKey);
   try {
     const pageSize = 5;
     const nextPage = meta.current + 1;
@@ -847,12 +862,13 @@ async function loadMoreChildren(parentItem: any) {
       ...child,
       level: parentItem.level,
       parentId: parentItem.parentId, // Set parentId
+      treeKey: `${parentItem.parentTreeKey}-${child.id}`,
       isLoadMore: false,
     }));
 
     // Find the current "Load More" item index
     const loadMoreIndex = serverItems.value.findIndex(
-      (i) => i.id === parentItem.id,
+      (i) => i.treeKey === parentItem.treeKey,
     );
 
     if (loadMoreIndex !== -1) {
@@ -871,10 +887,9 @@ async function loadMoreChildren(parentItem: any) {
   } catch (error) {
     console.error('Failed to load more children', error);
   } finally {
-    loadingMore.value.delete(parentItem.parentId);
+    loadingMore.value.delete(parentItem.parentTreeKey);
   }
 }
-
 watch(viewMode, () => {
   page.value = 1;
   refresh();
@@ -989,7 +1004,7 @@ async function handleUnlink(item: any) {
 
   if (!confirmed) return;
 
-  processingRelation.value.add(item.id);
+  processingRelation.value.add(item.treeKey);
   try {
     await deletePermissionPath(item.parentId, item.id);
     message.success('已解除父子关系');
@@ -997,7 +1012,7 @@ async function handleUnlink(item: any) {
   } catch (error) {
     console.error('Failed to unlink permission', error);
   } finally {
-    processingRelation.value.delete(item.id);
+    processingRelation.value.delete(item.treeKey);
   }
 }
 
