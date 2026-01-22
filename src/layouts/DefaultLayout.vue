@@ -44,7 +44,7 @@
           <div
             class="text-caption text-secondary font-weight-bold text-no-wrap"
           >
-            Admin Panel
+            {{ $t('common.adminPanel') }}
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@
             marginBottom: rail ? '0 !important' : '8px',
           }"
         >
-          Menu
+          {{ $t('common.menu') }}
         </div>
 
         <v-list class="pa-0" density="comfortable" nav>
@@ -105,76 +105,98 @@
       <!-- Bottom Actions (User) -->
       <template #append>
         <div class="pa-4 transition-all">
-          <v-card
-            :class="[
-              'bg-primary-lighten-5 flat transition-all overflow-hidden',
-              rail ? 'px-0 py-4 d-flex flex-column align-center' : 'pa-4',
-            ]"
-            flat
-            rounded="xl"
-          >
-            <div
-              :class="[
-                'd-flex align-center transition-all',
-                rail ? 'flex-column justify-center mb-3' : 'mb-3',
-              ]"
-            >
-              <v-avatar
+          <v-menu location="end top" offset="10" transition="scale-transition">
+            <template #activator="{ props }">
+              <v-card
+                v-bind="props"
                 :class="[
-                  'border-2 border-white transition-all',
-                  rail ? 'mb-2' : 'me-3',
+                  'bg-primary-lighten-5 flat transition-all overflow-hidden cursor-pointer hover-scale',
+                  rail ? 'px-0 py-3 d-flex flex-column align-center' : 'pa-4',
                 ]"
-                color="primary"
-                size="40"
+                v-ripple
+                flat
+                rounded="xl"
               >
-                <v-img v-if="userAvatar" :src="userAvatar"></v-img>
-                <span v-else class="text-h6 font-weight-bold text-white">{{
-                  (user?.nickName || user?.username || 'A')
-                    .charAt(0)
-                    .toUpperCase()
-                }}</span>
-              </v-avatar>
+                <div
+                  :class="[
+                    'd-flex align-center transition-all',
+                    rail ? 'justify-center' : '',
+                  ]"
+                >
+                  <v-avatar
+                    :class="[
+                      'border-2 border-white transition-all',
+                      rail ? '' : 'me-3',
+                    ]"
+                    color="primary"
+                    size="40"
+                  >
+                    <v-img v-if="userAvatar" :src="userAvatar"></v-img>
+                    <span v-else class="text-h6 font-weight-bold text-white">{{
+                      (user?.nickName || user?.username || 'A')
+                        .charAt(0)
+                        .toUpperCase()
+                    }}</span>
+                  </v-avatar>
 
-              <div
-                class="overflow-hidden transition-all"
-                :style="{
-                  opacity: rail ? 0 : 1,
-                  width: rail ? '0px' : 'auto',
-                  height: rail ? '0px' : 'auto',
-                }"
-              >
-                <div class="text-subtitle-2 font-weight-bold text-truncate">
-                  {{ user?.nickName || user?.username || 'Admin' }}
+                  <div
+                    class="overflow-hidden transition-all"
+                    :style="{
+                      opacity: rail ? 0 : 1,
+                      width: rail ? '0px' : 'auto',
+                      height: rail ? '0px' : 'auto',
+                    }"
+                  >
+                    <div class="text-subtitle-2 font-weight-bold text-truncate">
+                      {{ user?.nickName || user?.username || 'Admin' }}
+                    </div>
+                    <div class="text-caption text-secondary text-truncate">
+                      {{ user?.email || 'user@example.com' }}
+                    </div>
+                  </div>
+
+                  <v-icon v-if="!rail" class="ms-auto" color="grey" size="20"
+                    >mdi-chevron-right</v-icon
+                  >
                 </div>
-                <div class="text-caption text-secondary text-truncate">
-                  {{ user?.email || 'user@example.com' }}
-                </div>
-              </div>
-            </div>
+              </v-card>
+            </template>
 
-            <v-btn
-              v-if="!rail"
-              block
-              class="bg-white text-error"
-              flat
-              height="36"
-              prepend-icon="mdi-logout"
-              size="small"
-              @click="handleLogout"
-            >
-              {{ $t('user.logout') }}
-            </v-btn>
-
-            <v-btn
-              v-else
-              class="bg-white text-error"
-              icon="mdi-logout"
-              size="small"
-              variant="flat"
-              @click="handleLogout"
-            >
-            </v-btn>
-          </v-card>
+            <!-- User Menu -->
+            <v-card min-width="200" rounded="xl" elevation="4">
+              <v-list density="compact" nav>
+                <v-list-item
+                  prepend-icon="mdi-account-cog-outline"
+                  to="/profile"
+                  value="accountSettings"
+                  rounded="lg"
+                >
+                  <v-list-item-title>{{
+                    $t('user.personalSettings')
+                  }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  prepend-icon="mdi-cog-outline"
+                  value="systemSettings"
+                  rounded="lg"
+                >
+                  <v-list-item-title>{{
+                    $t('user.systemSettings')
+                  }}</v-list-item-title>
+                </v-list-item>
+                <v-divider class="my-2"></v-divider>
+                <v-list-item
+                  class="text-error"
+                  prepend-icon="mdi-logout"
+                  value="logout"
+                  rounded="lg"
+                  @click="handleLogout"
+                >
+                  <v-list-item-title>{{ $t('user.logout') }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
         </div>
       </template>
     </v-navigation-drawer>
@@ -210,7 +232,7 @@
               bg-color="white"
               density="compact"
               hide-details
-              placeholder="Search..."
+              :placeholder="$t('common.search')"
               prepend-inner-icon="mdi-magnify"
               rounded="pill"
               variant="solo"
@@ -229,15 +251,6 @@
               <v-icon>mdi-bell-outline</v-icon>
             </v-badge>
           </v-btn>
-
-          <v-btn
-            class="bg-white text-grey-darken-1"
-            elevation="0"
-            icon="mdi-cog-outline"
-            rounded="lg"
-            size="small"
-            to="/profile"
-          ></v-btn>
         </div>
       </header>
 
@@ -267,7 +280,7 @@ import { MENU_ITEMS } from '@/config/menu';
 import { message } from '@/utils/message';
 
 const drawer = ref(true);
-const rail = ref(false);
+const rail = ref(true);
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
@@ -345,6 +358,15 @@ async function handleLogout() {
 
 .scroll-smooth {
   scroll-behavior: smooth;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-scale:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Custom Scrollbar */

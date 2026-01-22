@@ -133,11 +133,13 @@ meta:
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { login } from '@/api/auth';
 import logo from '@/assets/logo.svg';
 import { message } from '@/utils/message';
 
+const { t } = useI18n();
 const router = useRouter();
 
 const form = reactive({
@@ -151,7 +153,7 @@ const isLoading = ref(false);
 
 async function handleLogin() {
   if (!form.email || !form.password) {
-    message.warning('请输入用户名和密码');
+    message.warning(t('common.required'));
     return;
   }
 
@@ -177,10 +179,10 @@ async function handleLogin() {
       if (tokenInfo.refresh_token) {
         localStorage.setItem('refresh_token', tokenInfo.refresh_token);
       }
-      message.success('登录成功');
+      message.success(t('auth.loginSuccess'));
       router.push('/');
     } else {
-      message.error('登录失败: 未获取到令牌');
+      message.error(t('auth.loginFailed'));
     }
   } catch (error) {
     // Error is already handled by interceptor (message.error)

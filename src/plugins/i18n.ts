@@ -21,6 +21,8 @@ const messages = {
       phoneCode: 'Code',
       gender: 'Gender',
       birthday: 'Birthday',
+      menu: 'Menu',
+      adminPanel: 'Admin Panel',
     },
     country: {
       china: 'China',
@@ -64,17 +66,21 @@ const messages = {
       signup: 'Sign up',
       alreadyUser: 'Already have an account?',
       signIn: 'Sign in instead',
+      loginSuccess: 'Login Successful',
+      loginFailed: 'Login Failed: No token received',
     },
     menu: {
       dashboard: 'Dashboard',
       permissions: 'Permissions',
     },
     permission: {
-      title: 'Permission Management',
       code: 'Permission Code',
       name: 'Permission Name',
       description: 'Description',
       list: 'Permission List',
+      manageDescription: 'Manage system access controls',
+      codePlaceholder: 'e.g. USER_VIEW',
+      namePlaceholder: 'e.g. View Users',
     },
     user: {
       personalSettings: 'Personal Settings',
@@ -159,6 +165,8 @@ const messages = {
       phoneCode: '区号',
       gender: '性别',
       birthday: '生日',
+      menu: '菜单',
+      adminPanel: '管理后台',
     },
     country: {
       china: '中国',
@@ -202,17 +210,21 @@ const messages = {
       signup: '注册',
       alreadyUser: '已经是用户？',
       signIn: '直接登录',
+      loginSuccess: '登录成功',
+      loginFailed: '登录失败: 未获取到令牌',
     },
     menu: {
       dashboard: '仪表盘',
       permissions: '权限管理',
     },
     permission: {
-      title: '权限管理',
       code: '权限编码',
       name: '权限名称',
       description: '描述',
       list: '权限列表',
+      manageDescription: '管理系统访问权限',
+      codePlaceholder: '例如：USER_VIEW',
+      namePlaceholder: '例如：查看用户',
     },
     user: {
       personalSettings: '个人设置',

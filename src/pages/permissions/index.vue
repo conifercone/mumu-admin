@@ -62,10 +62,10 @@
               <div class="d-flex align-center justify-space-between">
                 <div>
                   <h3 class="text-h6 font-weight-bold text-grey-darken-3">
-                    Permission List
+                    {{ $t('permission.list') }}
                   </h3>
                   <div class="text-caption text-grey">
-                    Manage system access controls
+                    {{ $t('permission.description') }}
                   </div>
                 </div>
                 <v-btn
@@ -226,7 +226,7 @@
                   class="rounded-lg"
                   density="comfortable"
                   hide-details="auto"
-                  placeholder="e.g. USER_VIEW"
+                  :placeholder="$t('permission.codePlaceholder')"
                   required
                   :rules="[(v: string) => !!v || $t('common.required')]"
                   variant="outlined"
@@ -246,7 +246,7 @@
                   class="rounded-lg"
                   density="comfortable"
                   hide-details="auto"
-                  placeholder="e.g. View Users"
+                  :placeholder="$t('permission.namePlaceholder')"
                   required
                   :rules="[(v: string) => !!v || $t('common.required')]"
                   variant="outlined"
