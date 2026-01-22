@@ -654,7 +654,7 @@ async function confirmLink() {
     });
     message.success('子权限添加成功');
     linkDialog.value = false;
-    refresh();
+    refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to link descendant', error);
   } finally {
@@ -709,7 +709,7 @@ const headers = computed(() => [
   },
 ]);
 
-async function loadItems() {
+async function loadItems(options?: { preserveState?: boolean }) {
   loading.value = true;
   try {
     if (viewMode.value === 'flat') {
@@ -755,12 +755,25 @@ async function loadItems() {
         treeKey: `root-${item.id}`,
         hasChildren: true,
       }));
+
+      // Backup old expanded state if preserving
+      const oldExpanded = options?.preserveState
+        ? new Set(expandedIds.value)
+        : null;
+
       serverItems.value = roots;
       totalItems.value = roots.length;
 
-      // Reset expansion state when refreshing roots
-      expandedIds.value.clear();
-      expandedMeta.value.clear();
+      if (options?.preserveState && oldExpanded) {
+        // Clear current set so toggleExpand can re-add them correctly
+        expandedIds.value.clear();
+        // Re-expand previously expanded nodes that still exist
+        await rehydrateTree(oldExpanded);
+      } else {
+        // Full reset
+        expandedIds.value.clear();
+        expandedMeta.value.clear();
+      }
     }
   } catch (error) {
     console.error('Failed to load permissions', error);
@@ -768,6 +781,29 @@ async function loadItems() {
     totalItems.value = 0;
   } finally {
     loading.value = false;
+  }
+}
+
+/**
+ * Recursively re-expand nodes from a saved state set
+ */
+async function rehydrateTree(oldExpanded: Set<string>) {
+  // We need to re-expand level by level to ensure serverItems is populated
+  let currentLevel = 0;
+  let expandedInThisRound = true;
+
+  while (expandedInThisRound && currentLevel < 10) {
+    expandedInThisRound = false;
+    // Find items at current level that need expansion
+    const targets = serverItems.value.filter(
+      (item) => item.level === currentLevel && oldExpanded.has(item.treeKey),
+    );
+
+    for (const target of targets) {
+      await toggleExpand(target);
+      expandedInThisRound = true;
+    }
+    currentLevel++;
   }
 }
 
@@ -904,9 +940,11 @@ watch(
   },
 );
 
-function refresh() {
-  page.value = 1;
-  loadItems();
+function refresh(options?: { preserveState?: boolean }) {
+  if (!options?.preserveState) {
+    page.value = 1;
+  }
+  loadItems(options);
 }
 
 function reset() {
@@ -1008,7 +1046,7 @@ async function handleUnlink(item: any) {
   try {
     await deletePermissionPath(item.parentId, item.id);
     message.success('已解除父子关系');
-    refresh();
+    refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to unlink permission', error);
   } finally {
@@ -1064,7 +1102,7 @@ async function onDrop(event: DragEvent, targetItem: any) {
       descendantId: sourceItem.id,
     });
     message.success('父子关系建立成功');
-    refresh();
+    refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to add descendant', error);
   }
