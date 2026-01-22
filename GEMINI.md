@@ -72,11 +72,26 @@ Routing is **file-based**, handled by `unplugin-vue-router`.
 - Example: `src/pages/auth/login.vue` -> `/auth/login`
 - `src/pages/index.vue` -> `/`
 
-### UI & Styling
+### UI & Styling (Design System: Bento Light)
 
-- **Vuetify:** Primary UI library. Use Vuetify components (e.g., `v-btn`, `v-card`).
-- **Icons:** Material Design Icons (`@mdi/font`).
-- **Custom Styles:** Located in `src/styles/`. SCSS is supported.
+The project follows a custom "Bento" design language characterized by soft colors, rounded corners, and floating elements.
+
+- **Theme:** `bentoLight` (Defined in `src/plugins/vuetify.ts`)
+- **Color Palette:**
+  - **Primary:** `#6C5DD3` (Soft Vibrant Purple)
+  - **Background:** `#F8F9FC` (Very Light Cool Grey) - _Global App Background_
+  - **Surface:** `#FFFFFF` (White) - _Cards & Sidebar_
+  - **Secondary:** `#A098E5`
+  - **Status:** Success `#4ADE80`, Warning `#FACC15`, Error `#F75555`
+- **Component Defaults (Global):**
+  - `v-card`: `elevation="0"`, `rounded="xl"`, `color="surface"`
+  - `v-btn`: `elevation="0"`, `rounded="lg"`, `height="44px"`, `class="text-none"`
+  - `v-text-field` / `v-select`: `variant="solo-filled"`, `rounded="lg"`, `density="comfortable"`
+- **Layout Patterns:**
+  - **Sidebar:** Floating card style (`ma-4`), supports "Rail" (Mini) mode with auto-centering icons.
+  - **Header:** Transparent, floating, with dynamic page titles.
+  - **Page Structure:** Use `v-container` (fluid) -> `v-row` -> `v-col`.
+- **Icons:** Material Design Icons (`@mdi/font`). Icon buttons in the sidebar use manual Flexbox alignment for perfect centering in Rail mode.
 
 ## Conventions
 
