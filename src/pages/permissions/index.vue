@@ -192,6 +192,7 @@
                   :class="{
                     'child-level-row': (item as any).level > 0,
                     'drop-target': dropTargetId === item.id,
+                    'locate-highlight': highlightedId === item.id,
                   }"
                   :draggable="viewMode === 'tree'"
                   @dragstart="onDragStart($event, item)"
@@ -303,6 +304,22 @@
                         v-if="viewMode === 'flat'"
                         class="d-flex align-center"
                       >
+                        <v-btn
+                          class="me-1"
+                          color="info"
+                          density="compact"
+                          icon
+                          size="small"
+                          variant="text"
+                          @click="locateInTree(item)"
+                        >
+                          <v-icon size="18">mdi-crosshairs-gps</v-icon>
+
+                          <v-tooltip activator="parent" location="top"
+                            >在树中定位</v-tooltip
+                          >
+                        </v-btn>
+
                         <v-btn
                           class="me-1"
                           color="grey-darken-1"
@@ -552,7 +569,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
   addPermissionDescendant,
@@ -592,6 +609,7 @@ const dropTargetId = ref<number | null>(null);
 const loadingChildren = ref<Set<string>>(new Set());
 const loadingMore = ref<Set<string>>(new Set());
 const processingRelation = ref<Set<string>>(new Set());
+const highlightedId = ref<number | null>(null);
 
 // Link Dialog State
 const linkDialog = ref(false);
@@ -1104,6 +1122,53 @@ async function onDrop(event: DragEvent, targetItem: any) {
   }
 }
 
+// Auto scroll to highlighted item whenever the list updates and loading finishes
+watch(
+  () => [serverItems.value, highlightedId.value, loading.value],
+  async ([items, id, isLoading]) => {
+    if (
+      !isLoading &&
+      id &&
+      items &&
+      (items as any[]).some((i) => i.id === id)
+    ) {
+      await nextTick();
+      // Small additional delay to ensure Vuetify transition/render is complete
+      setTimeout(() => {
+        const el = document.querySelector('.locate-highlight');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  },
+  { deep: false },
+);
+
+async function locateInTree(item: any) {
+  // 1. Set global ID to highlight
+  highlightedId.value = item.id;
+
+  // 2. Prepare expansion path
+  if (item.parentId) {
+    // Add parent to expansion set
+    expandedIds.value.add(`root-${item.parentId}`);
+  }
+
+  // 3. Switch mode
+  if (viewMode.value !== 'tree') {
+    viewMode.value = 'tree';
+  } else {
+    // If already in tree mode, trigger refresh with state preservation
+    refresh({ preserveState: true });
+  }
+
+  // 4. Clear highlight after animation
+  setTimeout(() => {
+    highlightedId.value = null;
+  }, 8000);
+}
+
 async function handleDownload() {
   downloading.value = true;
   try {
@@ -1254,6 +1319,28 @@ async function handleDownload() {
   bottom: 0;
   width: 1px;
   background-color: rgba(var(--v-theme-secondary), 0.2);
+}
+
+.locate-highlight {
+  animation: pulse-highlight 2s ease-in-out;
+}
+
+@keyframes pulse-highlight {
+  0% {
+    background-color: transparent;
+  }
+  20% {
+    background-color: rgba(var(--v-theme-info), 0.2);
+  }
+  40% {
+    background-color: rgba(var(--v-theme-info), 0.1);
+  }
+  60% {
+    background-color: rgba(var(--v-theme-info), 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 :deep(.v-field--variant-solo-filled) {
