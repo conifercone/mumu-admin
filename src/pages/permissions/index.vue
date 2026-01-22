@@ -48,6 +48,7 @@
               </v-col>
 
               <!-- View Mode Toggle -->
+
               <v-col class="d-flex align-center" cols="auto">
                 <v-btn-toggle
                   v-model="viewMode"
@@ -59,19 +60,67 @@
                 >
                   <v-btn class="rounded-lg px-4" height="36" value="flat">
                     <v-icon start size="18">mdi-view-list</v-icon>
+
                     <span class="text-button font-weight-bold">列表</span>
+
                     <v-tooltip activator="parent" location="top"
                       >平铺模式</v-tooltip
                     >
                   </v-btn>
+
                   <v-btn class="rounded-lg px-4" height="36" value="tree">
                     <v-icon start size="18">mdi-file-tree</v-icon>
+
                     <span class="text-button font-weight-bold">树级</span>
+
                     <v-tooltip activator="parent" location="top"
                       >层级模式</v-tooltip
                     >
                   </v-btn>
                 </v-btn-toggle>
+              </v-col>
+
+              <!-- Tree Quick Actions (Expand/Collapse All) -->
+
+              <v-col
+                v-if="viewMode === 'tree'"
+                class="d-flex align-center"
+                cols="auto"
+              >
+                <div
+                  class="bg-grey-lighten-5 rounded-lg pa-1 d-flex gap-1"
+                  style="height: 44px"
+                >
+                  <v-btn
+                    class="rounded-lg"
+                    color="grey-darken-1"
+                    density="comfortable"
+                    icon
+                    variant="text"
+                    @click="expandAll"
+                  >
+                    <v-icon size="20">mdi-unfold-more-horizontal</v-icon>
+
+                    <v-tooltip activator="parent" location="top"
+                      >全部展开</v-tooltip
+                    >
+                  </v-btn>
+
+                  <v-btn
+                    class="rounded-lg"
+                    color="grey-darken-1"
+                    density="comfortable"
+                    icon
+                    variant="text"
+                    @click="collapseAll"
+                  >
+                    <v-icon size="20">mdi-unfold-less-horizontal</v-icon>
+
+                    <v-tooltip activator="parent" location="top"
+                      >全部收起</v-tooltip
+                    >
+                  </v-btn>
+                </div>
               </v-col>
 
               <v-spacer class="d-none d-md-flex"></v-spacer>
@@ -109,7 +158,7 @@
 
           <!-- 2. Main Data Table -->
           <v-card
-            class="flex-grow-1 rounded-xl overflow-hidden"
+            class="flex-grow-1 rounded-xl overflow-hidden d-flex flex-column"
             elevation="0"
             flat
           >
@@ -133,261 +182,277 @@
               </div>
             </div>
 
-            <v-data-table-server
-              v-model:items-per-page="itemsPerPage"
-              v-model:page="page"
-              class="bg-transparent"
-              density="comfortable"
-              fixed-header
-              :headers="headers"
-              hover
-              item-value="treeKey"
-              :items="serverItems"
-              :items-length="totalItems"
-              :loading="loading"
-              :select-props="{
-                menuProps: {
-                  contentClass: 'pagination-select-menu',
-                  offset: 8,
-                },
-              }"
-              @update:options="loadItems"
-            >
-              <template
-                #headers="{ columns, isSorted, getSortIcon, toggleSort }"
+            <div class="table-container flex-grow-1">
+              <v-data-table-server
+                v-model:items-per-page="itemsPerPage"
+                v-model:page="page"
+                class="bg-transparent h-100"
+                density="comfortable"
+                fixed-header
+                :headers="headers"
+                hover
+                item-value="treeKey"
+                :items="serverItems"
+                :items-length="totalItems"
+                :loading="loading"
+                :select-props="{
+                  menuProps: {
+                    contentClass: 'pagination-select-menu',
+                    offset: 8,
+                  },
+                }"
+                @update:options="loadItems"
               >
-                <tr class="bg-grey-lighten-5">
-                  <template
-                    v-for="column in columns"
-                    :key="column.key || column.title"
-                  >
-                    <th
-                      class="text-uppercase text-caption font-weight-bold text-grey-darken-1 border-0 py-3"
-                      :class="{
-                        'text-start': column.align === 'start',
-                        'text-end': column.align === 'end',
-                        'text-center': column.align === 'center',
-                      }"
-                      :style="{
-                        width: column.width,
-                        cursor: column.sortable ? 'pointer' : 'default',
-                      }"
-                      @click="() => column.sortable && toggleSort(column)"
-                    >
-                      {{ column.title }}
-                      <v-icon v-if="isSorted(column)" size="small">{{
-                        getSortIcon(column)
-                      }}</v-icon>
-                    </th>
-                  </template>
-                </tr>
-              </template>
-
-              <!-- Custom Row -->
-              <template #item="{ item }">
-                <!-- 1. Normal Row -->
-                <tr
-                  v-if="!item.isLoadMore"
-                  class="table-row-hover"
-                  :class="{
-                    'child-level-row': (item as any).level > 0,
-                    'drop-target': dropTargetId === item.id,
-                    'locate-highlight': highlightedId === item.id,
-                  }"
-                  :draggable="viewMode === 'tree'"
-                  @dragstart="onDragStart($event, item)"
-                  @dragover="onDragOver($event, item)"
-                  @dragleave="onDragLeave"
-                  @drop="onDrop($event, item)"
+                <template
+                  #headers="{ columns, isSorted, getSortIcon, toggleSort }"
                 >
-                  <td class="ps-4">
-                    <div
-                      class="d-flex align-center"
-                      :style="{ paddingLeft: (item as any).level * 32 + 'px' }"
+                  <tr class="bg-grey-lighten-5">
+                    <template
+                      v-for="column in columns"
+                      :key="column.key || column.title"
                     >
-                      <!-- Indent Guide -->
-                      <div
-                        v-if="(item as any).level > 0"
-                        class="indent-guide"
-                      ></div>
-
-                      <!-- Expand Button (Tree Mode Only) -->
-                      <v-btn
-                        v-if="viewMode === 'tree'"
-                        class="me-1"
-                        :class="{ 'rotate-90': expandedIds.has(item.treeKey) }"
-                        color="grey-darken-1"
-                        density="compact"
-                        :icon="
-                          loadingChildren.has(item.treeKey)
-                            ? 'mdi-loading mdi-spin'
-                            : 'mdi-chevron-right'
-                        "
-                        size="small"
-                        variant="text"
-                        @click.stop="toggleExpand(item)"
-                      ></v-btn>
-
-                      <v-chip
-                        class="font-weight-bold letter-spacing-0"
-                        :color="
-                          (item as any).level > 0 ? 'secondary' : 'primary'
-                        "
-                        label
-                        size="small"
-                        variant="tonal"
+                      <th
+                        class="text-uppercase text-caption font-weight-bold text-grey-darken-1 border-0 py-3"
+                        :class="{
+                          'text-start': column.align === 'start',
+                          'text-end': column.align === 'end',
+                          'text-center': column.align === 'center',
+                        }"
+                        :style="{
+                          width: column.width,
+                          cursor: column.sortable ? 'pointer' : 'default',
+                        }"
+                        @click="() => column.sortable && toggleSort(column)"
                       >
-                        {{ item.code }}
-                      </v-chip>
-                    </div>
-                  </td>
-                  <td>
-                    <span
-                      class="text-body-2 font-weight-bold text-grey-darken-3"
-                    >
-                      {{ item.name }}
-                    </span>
-                  </td>
-                  <td>
-                    <div
-                      class="text-truncate text-grey-darken-1"
-                      style="max-width: 250px"
-                    >
-                      {{ item.description || '-' }}
-                    </div>
-                  </td>
-                  <td class="text-end pe-6">
-                    <div class="d-flex align-center justify-end gap-2">
-                      <!-- 1. Hierarchy Operations Group -->
+                        {{ column.title }}
+                        <v-icon v-if="isSorted(column)" size="small">{{
+                          getSortIcon(column)
+                        }}</v-icon>
+                      </th>
+                    </template>
+                  </tr>
+                </template>
+
+                <!-- Custom Row -->
+                <template #item="{ item }">
+                  <!-- 1. Normal Row -->
+                  <tr
+                    v-if="!item.isLoadMore"
+                    class="table-row-hover"
+                    :class="{
+                      'child-level-row': (item as any).level > 0,
+                      'drop-target': dropTargetId === item.id,
+                      'locate-highlight': highlightedId === item.id,
+                    }"
+                    :draggable="viewMode === 'tree'"
+                    @dragstart="onDragStart($event, item)"
+                    @dragover="onDragOver($event, item)"
+                    @dragleave="onDragLeave"
+                    @drop="onDrop($event, item)"
+                    @dblclick="onRowDoubleClick(item)"
+                  >
+                    <td class="ps-4">
                       <div
-                        v-if="viewMode === 'tree'"
-                        class="d-flex align-center bg-grey-lighten-5 rounded-pill px-2 me-2"
-                        style="height: 36px"
+                        class="d-flex align-center"
+                        :style="{
+                          paddingLeft: (item as any).level * 32 + 'px',
+                        }"
                       >
+                        <!-- Indent Guide -->
+                        <div
+                          v-if="(item as any).level > 0"
+                          class="indent-guide"
+                        ></div>
+
+                        <!-- Expand Button / Leaf Indicator (Tree Mode Only) -->
+                        <div
+                          v-if="viewMode === 'tree'"
+                          class="tree-node-toggle d-flex align-center justify-center me-1"
+                        >
+                          <v-btn
+                            v-if="item.hasDescendant"
+                            :class="{
+                              'rotate-90': expandedIds.has(item.treeKey),
+                            }"
+                            color="grey-darken-1"
+                            density="compact"
+                            :icon="
+                              loadingChildren.has(item.treeKey)
+                                ? 'mdi-loading mdi-spin'
+                                : 'mdi-chevron-right'
+                            "
+                            size="small"
+                            variant="text"
+                            @click.stop="toggleExpand(item)"
+                          ></v-btn>
+                          <!-- Subtle leaf indicator for consistent alignment -->
+                          <v-icon v-else color="grey-lighten-2" size="14">
+                            mdi-circle-small
+                          </v-icon>
+                        </div>
+
+                        <v-chip
+                          class="font-weight-bold letter-spacing-0"
+                          :color="
+                            (item as any).level > 0 ? 'secondary' : 'primary'
+                          "
+                          label
+                          size="small"
+                          variant="tonal"
+                        >
+                          {{ item.code }}
+                        </v-chip>
+                      </div>
+                    </td>
+                    <td>
+                      <span
+                        class="text-body-2 font-weight-bold text-grey-darken-3"
+                      >
+                        {{ item.name }}
+                      </span>
+                    </td>
+                    <td>
+                      <div
+                        class="text-truncate text-grey-darken-1"
+                        style="max-width: 250px"
+                      >
+                        {{ item.description || '-' }}
+                      </div>
+                    </td>
+                    <td class="text-end pe-6">
+                      <div class="d-flex align-center justify-end gap-2">
+                        <!-- 1. Hierarchy Operations Group -->
+                        <div
+                          v-if="viewMode === 'tree'"
+                          class="d-flex align-center bg-grey-lighten-5 rounded-pill px-2 me-2"
+                          style="height: 36px"
+                        >
+                          <v-btn
+                            color="primary"
+                            density="compact"
+                            icon
+                            width="32"
+                            height="32"
+                            variant="text"
+                            @click="openLinkDialog(item)"
+                          >
+                            <v-icon size="18">mdi-link-variant-plus</v-icon>
+                            <v-tooltip activator="parent" location="top"
+                              >添加子权限</v-tooltip
+                            >
+                          </v-btn>
+
+                          <v-btn
+                            v-if="item.parentId"
+                            color="warning"
+                            density="compact"
+                            icon
+                            width="32"
+                            height="32"
+                            variant="text"
+                            :loading="processingRelation.has(item.treeKey)"
+                            @click="handleUnlink(item)"
+                          >
+                            <v-icon size="18">mdi-link-variant-off</v-icon>
+
+                            <v-tooltip activator="parent" location="top"
+                              >解除关系</v-tooltip
+                            >
+                          </v-btn>
+                        </div>
+
+                        <!-- 2. Standard Operations Group (Flat Mode Only) -->
+
+                        <div
+                          v-if="viewMode === 'flat'"
+                          class="d-flex align-center"
+                        >
+                          <v-btn
+                            class="me-1"
+                            color="info"
+                            density="compact"
+                            icon
+                            size="small"
+                            variant="text"
+                            @click="locateInTree(item)"
+                          >
+                            <v-icon size="18">mdi-crosshairs-gps</v-icon>
+
+                            <v-tooltip activator="parent" location="top"
+                              >在树中定位</v-tooltip
+                            >
+                          </v-btn>
+
+                          <v-btn
+                            class="me-1"
+                            color="grey-darken-1"
+                            density="compact"
+                            icon
+                            size="small"
+                            variant="text"
+                            @click="handleEdit(item)"
+                          >
+                            <v-icon size="18">mdi-pencil-outline</v-icon>
+
+                            <v-tooltip activator="parent" location="top">{{
+                              $t('common.edit')
+                            }}</v-tooltip>
+                          </v-btn>
+
+                          <v-btn
+                            color="error"
+                            density="compact"
+                            icon
+                            size="small"
+                            variant="text"
+                            @click="handleDelete(item.id)"
+                          >
+                            <v-icon size="18">mdi-delete-outline</v-icon>
+
+                            <v-tooltip activator="parent" location="top">{{
+                              $t('common.delete')
+                            }}</v-tooltip>
+                          </v-btn>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 2. Load More Row -->
+
+                  <tr v-else class="child-level-row">
+                    <td class="ps-4 py-2" colspan="4">
+                      <div
+                        class="d-flex align-center"
+                        :style="{
+                          paddingLeft: (item as any).level * 32 + 'px',
+                        }"
+                      >
+                        <div class="indent-guide"></div>
+
                         <v-btn
+                          class="text-none font-weight-bold"
                           color="primary"
                           density="compact"
-                          icon
-                          width="32"
-                          height="32"
+                          :loading="loadingMore.has(item.parentTreeKey)"
+                          prepend-icon="mdi-dots-horizontal"
+                          rounded="pill"
+                          size="small"
                           variant="text"
-                          @click="openLinkDialog(item)"
+                          @click="loadMoreChildren(item)"
                         >
-                          <v-icon size="18">mdi-link-variant-plus</v-icon>
-                          <v-tooltip activator="parent" location="top"
-                            >添加子权限</v-tooltip
-                          >
-                        </v-btn>
-
-                        <v-btn
-                          v-if="item.parentId"
-                          color="warning"
-                          density="compact"
-                          icon
-                          width="32"
-                          height="32"
-                          variant="text"
-                          :loading="processingRelation.has(item.treeKey)"
-                          @click="handleUnlink(item)"
-                        >
-                          <v-icon size="18">mdi-link-variant-off</v-icon>
-
-                          <v-tooltip activator="parent" location="top"
-                            >解除关系</v-tooltip
-                          >
+                          查看更多子权限...
                         </v-btn>
                       </div>
-
-                      <!-- 2. Standard Operations Group (Flat Mode Only) -->
-
-                      <div
-                        v-if="viewMode === 'flat'"
-                        class="d-flex align-center"
-                      >
-                        <v-btn
-                          class="me-1"
-                          color="info"
-                          density="compact"
-                          icon
-                          size="small"
-                          variant="text"
-                          @click="locateInTree(item)"
-                        >
-                          <v-icon size="18">mdi-crosshairs-gps</v-icon>
-
-                          <v-tooltip activator="parent" location="top"
-                            >在树中定位</v-tooltip
-                          >
-                        </v-btn>
-
-                        <v-btn
-                          class="me-1"
-                          color="grey-darken-1"
-                          density="compact"
-                          icon
-                          size="small"
-                          variant="text"
-                          @click="handleEdit(item)"
-                        >
-                          <v-icon size="18">mdi-pencil-outline</v-icon>
-
-                          <v-tooltip activator="parent" location="top">{{
-                            $t('common.edit')
-                          }}</v-tooltip>
-                        </v-btn>
-
-                        <v-btn
-                          color="error"
-                          density="compact"
-                          icon
-                          size="small"
-                          variant="text"
-                          @click="handleDelete(item.id)"
-                        >
-                          <v-icon size="18">mdi-delete-outline</v-icon>
-
-                          <v-tooltip activator="parent" location="top">{{
-                            $t('common.delete')
-                          }}</v-tooltip>
-                        </v-btn>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-
-                <!-- 2. Load More Row -->
-
-                <tr v-else class="child-level-row">
-                  <td class="ps-4 py-2" colspan="4">
-                    <div
-                      class="d-flex align-center"
-                      :style="{ paddingLeft: (item as any).level * 32 + 'px' }"
-                    >
-                      <div class="indent-guide"></div>
-
-                      <v-btn
-                        class="text-none font-weight-bold"
-                        color="primary"
-                        density="compact"
-                        :loading="loadingMore.has(item.parentTreeKey)"
-                        prepend-icon="mdi-dots-horizontal"
-                        rounded="pill"
-                        size="small"
-                        variant="text"
-                        @click="loadMoreChildren(item)"
-                      >
-                        查看更多子权限...
-                      </v-btn>
-                    </div>
-                  </td>
-                </tr>
-              </template>
-            </v-data-table-server>
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table-server>
+            </div>
           </v-card>
         </div>
       </v-col>
     </v-row>
-
     <!-- Create/Edit Dialog -->
     <v-dialog
       v-model="dialog"
@@ -767,7 +832,7 @@ async function loadItems(options?: { preserveState?: boolean }) {
         ...item,
         level: 0,
         treeKey: `root-${item.id}`,
-        hasChildren: true,
+        // hasDescendant is now provided by the API
       }));
 
       // Backup old expanded state if preserving
@@ -822,6 +887,8 @@ async function rehydrateTree(oldExpanded: Set<string>) {
 }
 
 async function toggleExpand(item: any) {
+  if (!item.hasDescendant && !expandedIds.value.has(item.treeKey)) return;
+
   if (expandedIds.value.has(item.treeKey)) {
     // Collapse
     expandedIds.value.delete(item.treeKey);
@@ -1090,6 +1157,41 @@ function onDragLeave() {
   dropTargetId.value = null;
 }
 
+function onRowDoubleClick(item: any) {
+  if (viewMode.value === 'tree' && !item.isLoadMore && item.hasDescendant) {
+    toggleExpand(item);
+  }
+}
+
+async function expandAll() {
+  if (viewMode.value !== 'tree' || loading.value) return;
+
+  loading.value = true;
+  try {
+    // Find all root level items that are not expanded and have descendants
+    const rootsToExpand = serverItems.value.filter(
+      (item) =>
+        item.level === 0 &&
+        item.hasDescendant &&
+        !expandedIds.value.has(item.treeKey),
+    );
+
+    // Expand them sequentially or in parallel (parallel here for speed)
+    await Promise.all(rootsToExpand.map((item) => toggleExpand(item)));
+  } finally {
+    loading.value = false;
+  }
+}
+
+function collapseAll() {
+  if (viewMode.value !== 'tree') return;
+
+  expandedIds.value.clear();
+  expandedMeta.value.clear();
+  // Filter list back to only level 0 items
+  serverItems.value = serverItems.value.filter((item) => item.level === 0);
+}
+
 async function onDrop(event: DragEvent, targetItem: any) {
   event.preventDefault();
   const sourceItem = draggedItem.value;
@@ -1123,8 +1225,10 @@ async function onDrop(event: DragEvent, targetItem: any) {
 }
 
 // Auto scroll to highlighted item whenever the list updates and loading finishes
+
 watch(
   () => [serverItems.value, highlightedId.value, loading.value],
+
   async ([items, id, isLoading]) => {
     if (
       !isLoading &&
@@ -1133,15 +1237,21 @@ watch(
       (items as any[]).some((i) => i.id === id)
     ) {
       await nextTick();
-      // Small additional delay to ensure Vuetify transition/render is complete
-      setTimeout(() => {
-        const el = document.querySelector('.locate-highlight');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 100);
+
+      // Use double rAF or a slight delay to ensure browser has painted the tree expansion
+
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          const el = document.querySelector('.locate-highlight');
+
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 150);
+      });
     }
   },
+
   { deep: false },
 );
 
@@ -1321,21 +1431,52 @@ async function handleDownload() {
   background-color: rgba(var(--v-theme-secondary), 0.2);
 }
 
-.locate-highlight {
-  animation: pulse-highlight 2s ease-in-out;
+.tree-node-toggle {
+  width: 32px;
+  height: 32px;
 }
 
-@keyframes pulse-highlight {
+.table-container {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  /* Custom Slim Scrollbar for Bento Design */
+}
+
+.table-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: rgba(var(--v-theme-secondary), 0.2);
+  border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--v-theme-secondary), 0.4);
+}
+
+.locate-highlight td {
+  animation: spotlight-pulse 4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  position: relative;
+}
+
+/* Vertical indicator using inset shadow on the first cell - NO layout shift */
+.locate-highlight td:first-child {
+  box-shadow: inset 4px 0 0 -0px rgb(var(--v-theme-info));
+}
+
+@keyframes spotlight-pulse {
   0% {
-    background-color: transparent;
+    background-color: rgba(var(--v-theme-info), 0.3);
   }
-  20% {
-    background-color: rgba(var(--v-theme-info), 0.2);
-  }
-  40% {
+  10% {
     background-color: rgba(var(--v-theme-info), 0.1);
   }
-  60% {
+  30% {
     background-color: rgba(var(--v-theme-info), 0.2);
   }
   100% {

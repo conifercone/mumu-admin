@@ -8,6 +8,7 @@ export interface Permission {
   description: string;
   parentId?: number;
   children?: Permission[];
+  hasDescendant?: boolean;
 }
 
 export interface PermissionQueryParams {
