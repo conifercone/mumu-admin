@@ -84,3 +84,4 @@ Routing is **file-based**, handled by `unplugin-vue-router`.
 - **Async/Await:** Prefer `async/await` over raw Promises.
 - **Composition API:** Use `<script setup lang="ts">`.
 - **I18n:** Use `useI18n` composable for text.
+- **Page Naming:** Files in `src/pages/` must use `kebab-case` naming (e.g., `user-profile.vue`).
