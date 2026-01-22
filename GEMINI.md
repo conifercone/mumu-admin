@@ -78,11 +78,11 @@ The project follows a custom "Bento" design language characterized by soft color
 
 - **Theme:** `bentoLight` (Defined in `src/plugins/vuetify.ts`)
 - **Color Palette:**
-  - **Primary:** `#6C5DD3` (Soft Vibrant Purple)
-  - **Background:** `#F8F9FC` (Very Light Cool Grey) - _Global App Background_
+  - **Primary:** `#7367F0` (Electric Violet)
+  - **Background:** `#F4F5FA` (Light Grey-Blue) - _Global App Background_
   - **Surface:** `#FFFFFF` (White) - _Cards & Sidebar_
-  - **Secondary:** `#A098E5`
-  - **Status:** Success `#4ADE80`, Warning `#FACC15`, Error `#F75555`
+  - **Secondary:** `#A8AAAE`
+  - **Status:** Success `#28C76F`, Warning `#FF9F43`, Error `#EA5455`, Info `#00CFE8`
 - **Component Defaults (Global):**
   - `v-card`: `elevation="0"`, `rounded="xl"`, `color="surface"`
   - `v-btn`: `elevation="0"`, `rounded="lg"`, `height="44px"`, `class="text-none"`

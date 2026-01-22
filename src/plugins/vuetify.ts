@@ -73,17 +73,17 @@ export default createVuetify({
       bentoLight: {
         dark: false,
         colors: {
-          background: '#F8F9FC',
+          background: '#F4F5FA',
           surface: '#FFFFFF',
-          primary: '#6C5DD3',
-          secondary: '#A098E5',
-          error: '#FF5757',
-          info: '#3F8CFF',
-          success: '#4ADE80',
-          warning: '#FACC15',
-          'grey-lighten-5': '#F8F9FC', // Align with background
-          'text-primary': '#11142D',
-          'text-secondary': '#808191',
+          primary: '#7367F0',
+          secondary: '#A8AAAE',
+          error: '#EA5455',
+          info: '#00CFE8',
+          success: '#28C76F',
+          warning: '#FF9F43',
+          'grey-lighten-5': '#F4F5FA', // Align with background
+          'text-primary': '#4B4B59',
+          'text-secondary': '#888891',
         },
       },
     },
