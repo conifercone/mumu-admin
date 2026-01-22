@@ -1,124 +1,259 @@
 <template>
-  <v-layout class="rounded rounded-md">
-    <!-- Navigation Drawer -->
+  <v-layout class="bg-background">
+    <!-- Floating Sidebar -->
     <v-navigation-drawer
       v-model="drawer"
-      border="e"
-      class="bg-surface"
+      :class="[
+        'sidebar-container my-4 ms-4 rounded-xl border-0 transition-all',
+        rail ? 'px-1' : '',
+      ]"
+      color="white"
       elevation="0"
-      expand-on-hover
-      rail
+      floating
+      :rail="rail"
+      rail-width="80"
+      width="280"
     >
-      <v-list class="pa-2">
-        <v-list-item
-          nav
-          prepend-avatar="@/assets/logo.svg"
-          subtitle="v1.0.0"
-          title="MUMU ADMIN"
-        ></v-list-item>
-      </v-list>
+      <!-- Logo Area -->
+      <div
+        class="d-flex align-center overflow-hidden transition-all"
+        :class="rail ? 'justify-center py-6 px-0' : 'justify-start pa-6'"
+        style="height: 88px"
+      >
+        <v-img
+          alt="Logo"
+          class="transition-all flex-shrink-0"
+          :class="rail ? '' : 'me-3'"
+          contain
+          height="40"
+          src="@/assets/logo.svg"
+          width="40"
+        ></v-img>
 
-      <v-divider class="mb-2"></v-divider>
-
-      <v-list class="pa-2" density="compact" nav>
-        <v-list-item
-          v-for="(item, i) in MENU_ITEMS"
-          :key="i"
-          active-class="bg-primary text-white"
-          class="mb-1"
-          :prepend-icon="item.icon"
-          rounded="lg"
-          :to="item.to"
-          :value="item"
+        <div
+          class="transition-all overflow-hidden"
+          :style="{
+            opacity: rail ? 0 : 1,
+            width: rail ? '0px' : 'auto',
+            transform: rail ? 'translateX(-10px)' : 'translateX(0)',
+          }"
         >
-          <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+          <div class="text-h6 font-weight-bold text-primary text-no-wrap">
+            MUMU
+          </div>
+          <div
+            class="text-caption text-secondary font-weight-bold text-no-wrap"
+          >
+            Admin Panel
+          </div>
+        </div>
+      </div>
 
-    <!-- App Bar -->
-    <v-app-bar border="b" class="px-2" color="surface" elevation="0" flat>
-      <v-app-bar-nav-icon
-        variant="text"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
-      <v-app-bar-title class="text-subtitle-1 font-weight-bold ps-2">
-        {{ $t('menu.dashboard') }}
-      </v-app-bar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon="mdi-magnify"></v-btn>
-      <v-btn icon="mdi-bell-outline"></v-btn>
+      <div
+        class="mb-2 d-flex flex-column flex-grow-1 transition-all"
+        :class="rail ? 'px-2' : 'px-3'"
+      >
+        <div
+          class="text-overline text-grey-lighten-1 font-weight-bold mb-2 ps-3 transition-all overflow-hidden"
+          :style="{
+            height: rail ? '0px' : '20px',
+            opacity: rail ? 0 : 1,
+            marginBottom: rail ? '0 !important' : '8px',
+          }"
+        >
+          Menu
+        </div>
 
-      <v-menu min-width="200px" rounded>
-        <template #activator="{ props }">
-          <v-btn class="mx-2" icon v-bind="props">
-            <v-avatar color="primary" size="32">
-              <v-img v-if="userAvatar" :src="userAvatar"></v-img>
-              <span v-else>{{
-                (user?.nickName || user?.username || 'A')
-                  .charAt(0)
-                  .toUpperCase()
-              }}</span>
-            </v-avatar>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-list>
-            <v-list-item
-              :prepend-avatar="userAvatar || '/favicon.ico'"
-              :subtitle="user?.email || '...'"
-              :title="user?.nickName || user?.username || '...'"
-            ></v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-list density="compact">
-            <v-list-item
-              prepend-icon="mdi-account-cog-outline"
-              to="/profile"
-              value="accountSettings"
+        <v-list class="pa-0" density="comfortable" nav>
+          <v-list-item
+            v-for="(item, i) in MENU_ITEMS"
+            :key="i"
+            active-class="bg-primary text-white"
+            class="mb-2 transition-swing rounded-lg text-grey-darken-2"
+            :class="rail ? 'px-2' : ''"
+            :to="item.to"
+            :value="item"
+          >
+            <div
+              class="d-flex align-center"
+              :class="rail ? 'justify-center w-100' : ''"
             >
-              <v-list-item-title>{{
-                $t('user.personalSettings')
-              }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item prepend-icon="mdi-cog-outline" value="systemSettings">
-              <v-list-item-title>{{
-                $t('user.systemSettings')
-              }}</v-list-item-title>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-list-item
-              color="error"
+              <v-icon
+                :color="isActive(item) ? 'white' : 'grey-darken-1'"
+                size="24"
+              >
+                {{ item.icon }}
+              </v-icon>
+
+              <span v-if="!rail" class="font-weight-medium ms-3 text-truncate">
+                {{ $t(item.title) }}
+              </span>
+            </div>
+
+            <v-tooltip
+              v-if="rail"
+              activator="parent"
+              location="end"
+              offset="10"
+            >
+              {{ $t(item.title) }}
+            </v-tooltip>
+          </v-list-item>
+        </v-list>
+      </div>
+
+      <!-- Bottom Actions (User) -->
+      <template #append>
+        <div class="pa-4 transition-all">
+          <v-card
+            :class="[
+              'bg-primary-lighten-5 flat transition-all overflow-hidden',
+              rail ? 'px-0 py-4 d-flex flex-column align-center' : 'pa-4',
+            ]"
+            flat
+            rounded="xl"
+          >
+            <div
+              :class="[
+                'd-flex align-center transition-all',
+                rail ? 'flex-column justify-center mb-3' : 'mb-3',
+              ]"
+            >
+              <v-avatar
+                :class="[
+                  'border-2 border-white transition-all',
+                  rail ? 'mb-2' : 'me-3',
+                ]"
+                color="primary"
+                size="40"
+              >
+                <v-img v-if="userAvatar" :src="userAvatar"></v-img>
+                <span v-else class="text-h6 font-weight-bold text-white">{{
+                  (user?.nickName || user?.username || 'A')
+                    .charAt(0)
+                    .toUpperCase()
+                }}</span>
+              </v-avatar>
+
+              <div
+                class="overflow-hidden transition-all"
+                :style="{
+                  opacity: rail ? 0 : 1,
+                  width: rail ? '0px' : 'auto',
+                  height: rail ? '0px' : 'auto',
+                }"
+              >
+                <div class="text-subtitle-2 font-weight-bold text-truncate">
+                  {{ user?.nickName || user?.username || 'Admin' }}
+                </div>
+                <div class="text-caption text-secondary text-truncate">
+                  {{ user?.email || 'user@example.com' }}
+                </div>
+              </div>
+            </div>
+
+            <v-btn
+              v-if="!rail"
+              block
+              class="bg-white text-error"
+              flat
+              height="36"
               prepend-icon="mdi-logout"
-              value="logout"
+              size="small"
               @click="handleLogout"
             >
-              <v-list-item-title>{{ $t('user.logout') }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-menu>
-    </v-app-bar>
+              {{ $t('user.logout') }}
+            </v-btn>
 
-    <!-- Main Content -->
-    <v-main class="bg-grey-lighten-4">
-      <div class="pa-6" style="min-height: 100%">
+            <v-btn
+              v-else
+              class="bg-white text-error"
+              icon="mdi-logout"
+              size="small"
+              variant="flat"
+              @click="handleLogout"
+            >
+            </v-btn>
+          </v-card>
+        </div>
+      </template>
+    </v-navigation-drawer>
+
+    <!-- Main Content Wrapper -->
+    <v-main class="d-flex flex-column h-screen overflow-hidden">
+      <!-- Top Bar -->
+      <header
+        class="px-8 pt-6 pb-2 d-flex align-center justify-space-between flex-shrink-0"
+      >
+        <div class="d-flex align-center">
+          <v-btn
+            class="me-4"
+            color="grey-darken-1"
+            :icon="rail ? 'mdi-menu-open' : 'mdi-menu'"
+            variant="text"
+            @click="rail = !rail"
+          ></v-btn>
+
+          <!-- Dynamic Page Title -->
+          <div>
+            <h2 class="text-h5 font-weight-bold text-grey-darken-3">
+              {{ pageTitle }}
+            </h2>
+          </div>
+        </div>
+
+        <!-- Right Actions -->
+        <div class="d-flex align-center gap-3">
+          <!-- Search -->
+          <div class="d-none d-sm-block" style="width: 240px">
+            <v-text-field
+              bg-color="white"
+              density="compact"
+              hide-details
+              placeholder="Search..."
+              prepend-inner-icon="mdi-magnify"
+              rounded="pill"
+              variant="solo"
+              flat
+            ></v-text-field>
+          </div>
+
+          <v-btn
+            class="bg-white text-grey-darken-1"
+            elevation="0"
+            icon
+            rounded="lg"
+            size="small"
+          >
+            <v-badge color="error" content="3" dot>
+              <v-icon>mdi-bell-outline</v-icon>
+            </v-badge>
+          </v-btn>
+
+          <v-btn
+            class="bg-white text-grey-darken-1"
+            elevation="0"
+            icon="mdi-cog-outline"
+            rounded="lg"
+            size="small"
+            to="/profile"
+          ></v-btn>
+        </div>
+      </header>
+
+      <!-- Scrollable Content Area -->
+      <div class="flex-grow-1 overflow-y-auto pa-0 scroll-smooth">
         <router-view />
+
+        <!-- Footer inside content flow -->
+        <v-footer
+          class="bg-transparent text-center d-flex justify-center py-6 text-caption text-grey"
+          :app="false"
+        >
+          2024 © MUMU Admin. All rights reserved.
+        </v-footer>
       </div>
     </v-main>
-
-    <!-- Footer -->
-    <v-footer app border>
-      <div class="text-center w-100">
-        2024{{
-          new Date().getFullYear() > 2024
-            ? ` - ${new Date().getFullYear()}`
-            : ''
-        }}
-        —
-        <strong>{{ $t('layout.footer') }}</strong>
-      </div>
-    </v-footer>
   </v-layout>
 </template>
 
@@ -126,13 +261,15 @@
 import MD5 from 'crypto-js/md5';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getCurrentUser, logout, type UserResponse } from '@/api/auth';
 import { MENU_ITEMS } from '@/config/menu';
 import { message } from '@/utils/message';
 
 const drawer = ref(true);
+const rail = ref(false);
 const router = useRouter();
+const route = useRoute();
 const { t } = useI18n();
 const user = ref<UserResponse | null>(null);
 
@@ -146,6 +283,24 @@ const userAvatar = computed(() => {
   }
   return '';
 });
+
+const pageTitle = computed(() => {
+  // Try to find the matching menu item first
+  const activeItem = MENU_ITEMS.find(
+    (item) => route.path === item.to || route.path.startsWith(item.to + '/'),
+  );
+
+  if (activeItem) {
+    return t(activeItem.title);
+  }
+
+  // Fallback to route name or default
+  return t('menu.dashboard');
+});
+
+function isActive(item: any) {
+  return route.path === item.to || route.path.startsWith(item.to + '/');
+}
 
 async function fetchUserInfo() {
   try {
@@ -175,7 +330,36 @@ async function handleLogout() {
 </script>
 
 <style scoped>
-.bg-grey-lighten-4 {
-  background-color: #f4f5fa !important;
+.sidebar-container {
+  height: calc(100vh - 32px) !important;
+  box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.03);
+}
+
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
 </style>

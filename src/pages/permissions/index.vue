@@ -1,234 +1,210 @@
 <template>
-  <v-container class="pa-6 h-100 bg-grey-lighten-5" fluid>
-    <!-- 1. Page Header -->
-    <v-row align="center" class="mb-4">
-      <v-col>
-        <h1 class="text-h5 font-weight-bold text-high-emphasis">
-          {{ $t('permission.title') }}
-        </h1>
-        <div class="text-body-2 text-medium-emphasis mt-1">
-          {{ $t('permission.list') }}
+  <v-container class="fill-height pa-6 bg-grey-lighten-5" fluid>
+    <v-row class="fill-height" dense>
+      <v-col cols="12">
+        <div class="d-flex flex-column h-100 gap-4">
+          <!-- 1. Action & Filter Bar -->
+          <v-card class="rounded-xl px-4 py-3" elevation="0" flat>
+            <v-row align="center" dense>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="filters.code"
+                  bg-color="grey-lighten-5"
+                  density="compact"
+                  flat
+                  hide-details
+                  :label="$t('permission.code')"
+                  prepend-inner-icon="mdi-magnify"
+                  rounded="lg"
+                  variant="solo-filled"
+                  @keyup.enter="refresh"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="filters.name"
+                  bg-color="grey-lighten-5"
+                  density="compact"
+                  flat
+                  hide-details
+                  :label="$t('permission.name')"
+                  prepend-inner-icon="mdi-filter-variant"
+                  rounded="lg"
+                  variant="solo-filled"
+                  @keyup.enter="refresh"
+                ></v-text-field>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col class="text-right" cols="auto">
+                <v-btn
+                  class="text-none font-weight-bold px-6"
+                  color="primary"
+                  elevation="0"
+                  height="40"
+                  prepend-icon="mdi-plus"
+                  rounded="lg"
+                  variant="flat"
+                  @click="openDialog"
+                >
+                  {{ $t('common.create') }}
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+
+          <!-- 2. Main Data Table -->
+          <v-card
+            class="flex-grow-1 rounded-xl overflow-hidden"
+            elevation="0"
+            flat
+          >
+            <div class="px-6 py-4 border-b">
+              <div class="d-flex align-center justify-space-between">
+                <div>
+                  <h3 class="text-h6 font-weight-bold text-grey-darken-3">
+                    Permission List
+                  </h3>
+                  <div class="text-caption text-grey">
+                    Manage system access controls
+                  </div>
+                </div>
+                <v-btn
+                  color="grey"
+                  density="comfortable"
+                  icon="mdi-refresh"
+                  variant="text"
+                  @click="refresh"
+                ></v-btn>
+              </div>
+            </div>
+
+            <v-data-table-server
+              v-model:items-per-page="itemsPerPage"
+              v-model:page="page"
+              class="bg-transparent"
+              density="comfortable"
+              fixed-header
+              :headers="headers"
+              hover
+              item-value="id"
+              :items="serverItems"
+              :items-length="totalItems"
+              :loading="loading"
+              @update:options="loadItems"
+            >
+              <template
+                #headers="{ columns, isSorted, getSortIcon, toggleSort }"
+              >
+                <tr class="bg-grey-lighten-5">
+                  <template
+                    v-for="column in columns"
+                    :key="column.key || column.title"
+                  >
+                    <th
+                      class="text-uppercase text-caption font-weight-bold text-grey-darken-1 border-0 py-3"
+                      :class="{
+                        'text-start': column.align === 'start',
+                        'text-end': column.align === 'end',
+                        'text-center': column.align === 'center',
+                      }"
+                      :style="{
+                        width: column.width,
+                        cursor: column.sortable ? 'pointer' : 'default',
+                      }"
+                      @click="() => column.sortable && toggleSort(column)"
+                    >
+                      {{ column.title }}
+                      <v-icon v-if="isSorted(column)" size="small">{{
+                        getSortIcon(column)
+                      }}</v-icon>
+                    </th>
+                  </template>
+                </tr>
+              </template>
+
+              <!-- Custom Row -->
+              <template #item="{ item }">
+                <tr class="table-row-hover">
+                  <td class="text-caption text-grey font-weight-mono ps-4">
+                    #{{ item.id }}
+                  </td>
+                  <td>
+                    <v-chip
+                      class="font-weight-bold letter-spacing-0"
+                      color="primary"
+                      label
+                      size="small"
+                      variant="tonal"
+                    >
+                      {{ item.code }}
+                    </v-chip>
+                  </td>
+                  <td>
+                    <span
+                      class="text-body-2 font-weight-bold text-grey-darken-3"
+                    >
+                      {{ item.name }}
+                    </span>
+                  </td>
+                  <td>
+                    <div
+                      class="text-truncate text-grey-darken-1"
+                      style="max-width: 250px"
+                    >
+                      {{ item.description || '-' }}
+                    </div>
+                  </td>
+                  <td class="text-end pe-4">
+                    <v-btn
+                      class="me-1"
+                      color="grey-darken-1"
+                      density="compact"
+                      icon
+                      size="small"
+                      variant="text"
+                    >
+                      <v-icon size="20">mdi-pencil-outline</v-icon>
+                      <v-tooltip activator="parent" location="top">{{
+                        $t('common.edit')
+                      }}</v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      density="compact"
+                      icon
+                      size="small"
+                      variant="text"
+                    >
+                      <v-icon size="20">mdi-delete-outline</v-icon>
+                      <v-tooltip activator="parent" location="top">{{
+                        $t('common.delete')
+                      }}</v-tooltip>
+                    </v-btn>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table-server>
+          </v-card>
         </div>
-      </v-col>
-      <v-col class="text-right">
-        <v-btn
-          class="text-capitalize"
-          color="primary"
-          elevation="2"
-          prepend-icon="mdi-plus"
-          rounded="lg"
-          size="large"
-          variant="flat"
-          @click="openDialog"
-        >
-          {{ $t('common.create') }}
-        </v-btn>
       </v-col>
     </v-row>
 
-    <!-- 2. Search Filter Panel -->
-    <v-card class="mb-4" elevation="0" rounded="lg">
-      <v-card-text class="pa-5">
-        <v-row align="center" dense>
-          <!-- Inputs -->
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filters.code"
-              bg-color="white"
-              clearable
-              color="primary"
-              density="compact"
-              hide-details
-              :label="$t('permission.code')"
-              prepend-inner-icon="mdi-code-braces"
-              variant="outlined"
-              @keyup.enter="refresh"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="filters.name"
-              bg-color="white"
-              clearable
-              color="primary"
-              density="compact"
-              hide-details
-              :label="$t('permission.name')"
-              prepend-inner-icon="mdi-tag-text-outline"
-              variant="outlined"
-              @keyup.enter="refresh"
-            ></v-text-field>
-          </v-col>
-
-          <!-- Buttons (Right Aligned) -->
-          <v-col
-            class="text-right d-flex align-center justify-end"
-            cols="12"
-            md="6"
-          >
-            <v-btn
-              class="text-capitalize me-3"
-              color="secondary"
-              prepend-icon="mdi-refresh"
-              variant="outlined"
-              @click="reset"
-            >
-              {{ $t('common.reset') }}
-            </v-btn>
-            <v-btn
-              class="text-capitalize"
-              color="primary"
-              elevation="1"
-              prepend-icon="mdi-magnify"
-              variant="elevated"
-              @click="refresh"
-            >
-              {{ $t('common.search') }}
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <!-- 3. Data Table -->
-    <v-card border elevation="0" rounded="lg">
-      <v-data-table-server
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="page"
-        class="text-body-2"
-        density="comfortable"
-        :header-props="{
-          class:
-            'bg-grey-lighten-5 text-uppercase text-caption font-weight-bold text-medium-emphasis',
-        }"
-        :headers="headers"
-        hover
-        item-value="id"
-        :items="serverItems"
-        :items-length="totalItems"
-        :loading="loading"
-        @update:options="loadItems"
-      >
-        <!-- Loading Slot -->
-        <template #loading>
-          <v-skeleton-loader type="table-row@6"></v-skeleton-loader>
-        </template>
-
-        <!-- ID Column -->
-        <template #item.id="{ item }">
-          <span class="text-caption text-disabled font-weight-mono">{{
-            item.id
-          }}</span>
-        </template>
-
-        <!-- Code Column -->
-        <template #item.code="{ item }">
-          <v-chip
-            class="font-weight-bold"
-            color="primary"
-            label
-            size="small"
-            variant="tonal"
-          >
-            {{ item.code }}
-          </v-chip>
-        </template>
-
-        <!-- Name Column -->
-        <template #item.name="{ item }">
-          <span class="text-subtitle-2 text-high-emphasis">{{
-            item.name
-          }}</span>
-        </template>
-
-        <!-- Description Column -->
-        <template #item.description="{ item }">
-          <v-tooltip location="top" :text="item.description || ''">
-            <template #activator="{ props }">
-              <span
-                v-if="item.description"
-                v-bind="props"
-                class="text-truncate d-inline-block text-medium-emphasis"
-                style="max-width: 300px; vertical-align: middle"
-              >
-                {{ item.description }}
-              </span>
-              <span v-else class="text-disabled font-italic text-caption"
-                >No description</span
-              >
-            </template>
-          </v-tooltip>
-        </template>
-
-        <!-- Actions Column -->
-        <template #item.actions>
-          <div class="d-flex justify-end">
-            <!-- Edit Button -->
-            <v-tooltip location="top" :text="$t('common.edit')">
-              <template #activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  class="me-1"
-                  color="primary"
-                  density="comfortable"
-                  icon
-                  size="small"
-                  variant="text"
-                >
-                  <v-icon size="small">mdi-pencil-outline</v-icon>
-                </v-btn>
-              </template>
-            </v-tooltip>
-
-            <!-- Delete Button -->
-            <v-tooltip location="top" :text="$t('common.delete')">
-              <template #activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  color="error"
-                  density="comfortable"
-                  icon
-                  size="small"
-                  variant="text"
-                >
-                  <v-icon size="small">mdi-delete-outline</v-icon>
-                </v-btn>
-              </template>
-            </v-tooltip>
-          </div>
-        </template>
-
-        <!-- No Data Slot -->
-        <template #no-data>
-          <div class="pa-10 text-center">
-            <v-icon class="mb-3" color="grey-lighten-2" size="64">
-              mdi-file-search-outline
-            </v-icon>
-            <div class="text-body-1 text-medium-emphasis">
-              No permissions found
-            </div>
-          </div>
-        </template>
-      </v-data-table-server>
-    </v-card>
-
-    <!-- Create Dialog -->
+    <!-- Create/Edit Dialog -->
     <v-dialog
       v-model="dialog"
-      max-width="600px"
+      max-width="480px"
       persistent
       transition="dialog-bottom-transition"
     >
-      <v-card elevation="12" rounded="xl">
-        <v-card-title
-          class="px-6 py-4 d-flex justify-space-between align-center border-b"
-        >
-          <span class="text-h6 font-weight-bold">{{
+      <v-card class="rounded-xl overflow-hidden" elevation="10">
+        <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
+          <span class="text-h6 font-weight-bold text-grey-darken-3">{{
             $t('common.create')
           }}</span>
+          <v-spacer></v-spacer>
           <v-btn
-            color="medium-emphasis"
-            density="comfortable"
+            color="grey-lighten-1"
+            density="compact"
             icon="mdi-close"
             variant="text"
             @click="closeDialog"
@@ -238,67 +214,83 @@
         <v-card-text class="pa-6">
           <v-form ref="formRef" @submit.prevent="savePermission">
             <v-row dense>
-              <v-col cols="12" md="6">
+              <v-col cols="12">
+                <div
+                  class="text-caption font-weight-bold text-grey-darken-1 mb-1"
+                >
+                  {{ $t('permission.code') }}
+                </div>
                 <v-text-field
                   v-model="form.code"
-                  color="primary"
+                  bg-color="grey-lighten-5"
+                  class="rounded-lg"
                   density="comfortable"
-                  hint="e.g. USER_VIEW"
-                  :label="$t('permission.code')"
-                  persistent-hint
-                  prepend-inner-icon="mdi-code-braces"
+                  hide-details="auto"
+                  placeholder="e.g. USER_VIEW"
                   required
                   :rules="[(v: string) => !!v || $t('common.required')]"
                   variant="outlined"
+                  color="primary"
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12" md="6">
+              <v-col class="mt-4" cols="12">
+                <div
+                  class="text-caption font-weight-bold text-grey-darken-1 mb-1"
+                >
+                  {{ $t('permission.name') }}
+                </div>
                 <v-text-field
                   v-model="form.name"
-                  color="primary"
+                  bg-color="grey-lighten-5"
+                  class="rounded-lg"
                   density="comfortable"
-                  :label="$t('permission.name')"
+                  hide-details="auto"
                   placeholder="e.g. View Users"
-                  prepend-inner-icon="mdi-tag-text-outline"
                   required
                   :rules="[(v: string) => !!v || $t('common.required')]"
                   variant="outlined"
+                  color="primary"
                 ></v-text-field>
               </v-col>
 
-              <v-col class="mt-2" cols="12">
+              <v-col class="mt-4" cols="12">
+                <div
+                  class="text-caption font-weight-bold text-grey-darken-1 mb-1"
+                >
+                  {{ $t('permission.description') }}
+                </div>
                 <v-textarea
                   v-model="form.description"
-                  auto-grow
-                  color="primary"
+                  bg-color="grey-lighten-5"
+                  class="rounded-lg"
                   density="comfortable"
-                  :label="$t('permission.description')"
-                  prepend-inner-icon="mdi-text"
+                  hide-details="auto"
                   rows="3"
                   variant="outlined"
+                  color="primary"
                 ></v-textarea>
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
 
-        <v-divider></v-divider>
-
-        <v-card-actions class="px-6 py-4 bg-grey-lighten-5">
+        <v-card-actions class="px-6 pb-6 pt-2">
           <v-spacer></v-spacer>
           <v-btn
-            class="text-capitalize px-4"
+            class="text-none rounded-pill px-6 text-body-2 font-weight-bold"
             color="grey-darken-1"
+            height="40"
             variant="text"
             @click="closeDialog"
           >
             {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
-            class="text-capitalize px-6 ms-2"
+            class="text-none rounded-pill px-6 ms-2 text-body-2 font-weight-bold"
             color="primary"
             elevation="2"
+            height="40"
             :loading="saving"
             variant="flat"
             @click="savePermission"
@@ -345,12 +337,12 @@ const form = reactive({
 });
 
 const headers = computed(() => [
-  { title: t('common.id'), key: 'id', align: 'start' as const, width: '100px' },
+  { title: t('common.id'), key: 'id', align: 'start' as const, width: '80px' },
   {
     title: t('permission.code'),
     key: 'code',
     align: 'start' as const,
-    width: '180px',
+    width: '150px',
   },
   {
     title: t('permission.name'),
@@ -368,7 +360,7 @@ const headers = computed(() => [
     key: 'actions',
     sortable: false,
     align: 'end' as const,
-    width: '120px',
+    width: '100px',
   },
 ]);
 
@@ -441,3 +433,21 @@ async function savePermission() {
   }
 }
 </script>
+
+<style scoped>
+.gap-4 {
+  gap: 16px;
+}
+
+.table-row-hover {
+  transition: background-color 0.2s ease;
+}
+
+.table-row-hover:hover {
+  background-color: rgba(var(--v-theme-primary), 0.04) !important;
+}
+
+:deep(.v-field--variant-solo-filled) {
+  box-shadow: none;
+}
+</style>
