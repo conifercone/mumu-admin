@@ -422,7 +422,7 @@ async function savePermission() {
   saving.value = true;
   try {
     await createPermission(form);
-    message.success(t('user.saveSuccess'));
+    message.success(t('common.saveSuccess') || 'Saved successfully');
     closeDialog();
     refresh();
   } catch (error) {

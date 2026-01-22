@@ -23,6 +23,7 @@ import router from './router';
 
 // Styles
 import 'unfonts.css';
+import '@/styles/global.scss';
 
 const vuetify = createVuetify({
   locale: {

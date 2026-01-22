@@ -9,11 +9,10 @@
 
     <template #actions>
       <v-btn
+        icon="mdi-close"
         variant="text"
         @click="messageState.show = false"
-      >
-        Close
-      </v-btn>
+      ></v-btn>
     </template>
   </v-snackbar>
 </template>
