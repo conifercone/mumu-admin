@@ -730,10 +730,6 @@ async function loadItems(options?: { preserveState?: boolean }) {
         treeKey: String(item.id),
       }));
       totalItems.value = Number(pageData.totalElements) || 0;
-
-      // Reset tree states when in flat mode
-      expandedIds.value.clear();
-      expandedMeta.value.clear();
     } else {
       // Tree Mode: Load Roots
       const res = await findRootPermissions();
@@ -928,7 +924,7 @@ async function loadMoreChildren(parentItem: any) {
 }
 watch(viewMode, () => {
   page.value = 1;
-  refresh();
+  refresh({ preserveState: true });
 });
 
 watch(
