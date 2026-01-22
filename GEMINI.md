@@ -86,7 +86,8 @@ The project follows a custom "Bento" design language characterized by soft color
 - **Component Defaults (Global):**
   - `v-card`: `elevation="0"`, `rounded="xl"`, `color="surface"`
   - `v-btn`: `elevation="0"`, `rounded="lg"`, `height="44px"`, `class="text-none"`
-  - `v-text-field` / `v-select`: `variant="solo-filled"`, `rounded="lg"`, `density="comfortable"`
+  - `v-text-field` / `v-select`: `variant="solo-filled"`, `rounded="lg"`, `density="comfortable"`, `itemColor="primary"`
+  - **Dropdowns/Menus:** Styled as floating pills (`rounded-lg`, `elevation-4`). List items are compact (`min-height: 36px`) with hover effects.
 - **Layout Patterns:**
   - **Sidebar:** Floating card style (`ma-4`), supports "Rail" (Mini) mode with auto-centering icons.
   - **Header:** Transparent, floating, with dynamic page titles.
