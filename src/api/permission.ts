@@ -102,3 +102,12 @@ export function addPermissionDescendant(data: {
 }) {
   return http.put(`${ServicePrefix.IAM}/permission/addDescendant`, data);
 }
+
+/**
+ * Find all ancestor path strings for a descendant
+ */
+export function findAllAncestorPathStrings(descendantId: number) {
+  return http.get<string[]>(
+    `${ServicePrefix.IAM}/permission/findAllAncestorPathStrings/${descendantId}`,
+  );
+}

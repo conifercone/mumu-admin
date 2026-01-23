@@ -642,6 +642,7 @@ import {
   deletePermission,
   deletePermissionPath,
   downloadAllPermissions,
+  findAllAncestorPathStrings,
   findDirectPermissions,
   findRootPermissions,
   getPermissions,
@@ -1258,25 +1259,58 @@ watch(
 async function locateInTree(item: any) {
   // 1. Set global ID to highlight
   highlightedId.value = item.id;
+  loading.value = true;
 
-  // 2. Prepare expansion path
-  if (item.parentId) {
-    // Add parent to expansion set
-    expandedIds.value.add(`root-${item.parentId}`);
+  try {
+    // 2. Fetch ancestor path from API
+    const res = await findAllAncestorPathStrings(item.id);
+    const paths = (res as any).data || res; // Handle potential response wrapper
+
+    if (Array.isArray(paths) && paths.length > 0) {
+      // Iterate over ALL paths to expand the node in every location
+      for (const pathStr of paths) {
+        const ids = pathStr.split('|');
+
+        // Construct tree keys and add to expansion set
+        // Path format: "rootId|childId|...|targetId"
+        let currentKey = 'root';
+
+        // We need to expand all ancestors up to the parent of the target
+        for (let i = 0; i < ids.length - 1; i++) {
+          const id = ids[i];
+          if (i === 0) {
+            currentKey = `root-${id}`;
+          } else {
+            currentKey = `${currentKey}-${id}`;
+          }
+          expandedIds.value.add(currentKey);
+        }
+      }
+    } else if (item.parentId) {
+      // Fallback: try to expand immediate parent if API fails or returns empty
+      // Note: This assumes the parent is a root, which might be wrong for deep nodes,
+      // but it's better than nothing.
+      expandedIds.value.add(`root-${item.parentId}`);
+    }
+
+    // 4. Switch mode (triggers watcher -> refresh -> rehydrateTree)
+    if (viewMode.value !== 'tree') {
+      viewMode.value = 'tree';
+    } else {
+      // If already in tree mode, manually trigger refresh
+      refresh({ preserveState: true });
+    }
+
+    // 5. Highlight cleanup happens in the existing watch/timeout logic
+    setTimeout(() => {
+      highlightedId.value = null;
+    }, 8000);
+  } catch (error) {
+    console.error('Failed to locate item', error);
+    message.error('无法定位到该权限节点');
+  } finally {
+    loading.value = false;
   }
-
-  // 3. Switch mode
-  if (viewMode.value !== 'tree') {
-    viewMode.value = 'tree';
-  } else {
-    // If already in tree mode, trigger refresh with state preservation
-    refresh({ preserveState: true });
-  }
-
-  // 4. Clear highlight after animation
-  setTimeout(() => {
-    highlightedId.value = null;
-  }, 8000);
 }
 
 async function handleDownload() {
