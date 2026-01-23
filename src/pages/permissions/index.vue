@@ -61,21 +61,25 @@
                   <v-btn class="rounded-lg px-4" height="36" value="flat">
                     <v-icon start size="18">mdi-view-list</v-icon>
 
-                    <span class="text-button font-weight-bold">列表</span>
+                    <span class="text-button font-weight-bold">{{
+                      $t('permission.listView')
+                    }}</span>
 
-                    <v-tooltip activator="parent" location="top"
-                      >平铺模式</v-tooltip
-                    >
+                    <v-tooltip activator="parent" location="top">{{
+                      $t('permission.flatMode')
+                    }}</v-tooltip>
                   </v-btn>
 
                   <v-btn class="rounded-lg px-4" height="36" value="tree">
                     <v-icon start size="18">mdi-file-tree</v-icon>
 
-                    <span class="text-button font-weight-bold">树级</span>
+                    <span class="text-button font-weight-bold">{{
+                      $t('permission.treeView')
+                    }}</span>
 
-                    <v-tooltip activator="parent" location="top"
-                      >层级模式</v-tooltip
-                    >
+                    <v-tooltip activator="parent" location="top">{{
+                      $t('permission.treeMode')
+                    }}</v-tooltip>
                   </v-btn>
                 </v-btn-toggle>
               </v-col>
@@ -101,9 +105,9 @@
                   >
                     <v-icon size="20">mdi-unfold-more-horizontal</v-icon>
 
-                    <v-tooltip activator="parent" location="top"
-                      >全部展开</v-tooltip
-                    >
+                    <v-tooltip activator="parent" location="top">{{
+                      $t('permission.expandAll')
+                    }}</v-tooltip>
                   </v-btn>
 
                   <v-btn
@@ -116,9 +120,9 @@
                   >
                     <v-icon size="20">mdi-unfold-less-horizontal</v-icon>
 
-                    <v-tooltip activator="parent" location="top"
-                      >全部收起</v-tooltip
-                    >
+                    <v-tooltip activator="parent" location="top">{{
+                      $t('permission.collapseAll')
+                    }}</v-tooltip>
                   </v-btn>
                 </div>
               </v-col>
@@ -337,9 +341,9 @@
                             @click="openLinkDialog(item)"
                           >
                             <v-icon size="18">mdi-link-variant-plus</v-icon>
-                            <v-tooltip activator="parent" location="top"
-                              >添加子权限</v-tooltip
-                            >
+                            <v-tooltip activator="parent" location="top">{{
+                              $t('permission.addChild')
+                            }}</v-tooltip>
                           </v-btn>
 
                           <v-btn
@@ -355,9 +359,9 @@
                           >
                             <v-icon size="18">mdi-link-variant-off</v-icon>
 
-                            <v-tooltip activator="parent" location="top"
-                              >解除关系</v-tooltip
-                            >
+                            <v-tooltip activator="parent" location="top">{{
+                              $t('permission.unlink')
+                            }}</v-tooltip>
                           </v-btn>
                         </div>
 
@@ -378,9 +382,9 @@
                           >
                             <v-icon size="18">mdi-crosshairs-gps</v-icon>
 
-                            <v-tooltip activator="parent" location="top"
-                              >在树中定位</v-tooltip
-                            >
+                            <v-tooltip activator="parent" location="top">{{
+                              $t('permission.locateInTree')
+                            }}</v-tooltip>
                           </v-btn>
 
                           <v-btn
@@ -441,7 +445,7 @@
                           variant="text"
                           @click="loadMoreChildren(item)"
                         >
-                          查看更多子权限...
+                          {{ $t('permission.loadMoreChildren') }}
                         </v-btn>
                       </div>
                     </td>
@@ -569,9 +573,9 @@
     <v-dialog v-model="linkDialog" max-width="400px" persistent>
       <v-card class="rounded-xl overflow-hidden">
         <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-grey-darken-3"
-            >添加子权限</span
-          >
+          <span class="text-h6 font-weight-bold text-grey-darken-3">{{
+            $t('permission.addChild')
+          }}</span>
           <v-spacer></v-spacer>
           <v-btn
             color="grey-lighten-1"
@@ -584,7 +588,7 @@
 
         <v-card-text class="pa-6">
           <div class="text-caption font-weight-bold text-grey-darken-1 mb-2">
-            选择要添加为 [{{ linkParent?.name }}] 子项的权限
+            {{ $t('permission.selectChild', { name: linkParent?.name }) }}
           </div>
           <v-autocomplete
             v-model="selectedDescendantId"
@@ -592,7 +596,7 @@
             item-title="name"
             item-value="id"
             :loading="searching"
-            placeholder="搜索权限名称"
+            :placeholder="$t('permission.searchPlaceholder')"
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
             color="primary"
@@ -615,7 +619,7 @@
             variant="text"
             @click="linkDialog = false"
           >
-            取消
+            {{ $t('common.cancel') }}
           </v-btn>
           <v-btn
             class="text-none rounded-pill px-6 ms-2"
@@ -625,7 +629,7 @@
             variant="flat"
             @click="confirmLink"
           >
-            确认添加
+            {{ $t('common.confirmAdd') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -736,7 +740,7 @@ async function confirmLink() {
       ancestorId: linkParent.value.id,
       descendantId: selectedDescendantId.value,
     });
-    message.success('子权限添加成功');
+    message.success(t('permission.childAddedSuccess'));
     linkDialog.value = false;
     refresh({ preserveState: true });
   } catch (error) {
@@ -1115,9 +1119,9 @@ async function handleUnlink(item: any) {
   if (!item.parentId) return;
 
   const confirmed = await confirm({
-    title: '解除父子关系',
-    content: `确定要解除权限 [${item.name}] 与其父权限的关系吗？`,
-    confirmText: '解除',
+    title: t('permission.unlinkTitle'),
+    content: t('permission.unlinkConfirm', { name: item.name }),
+    confirmText: t('permission.unlinkConfirmBtn'),
     color: 'warning',
     icon: 'mdi-link-variant-off',
   });
@@ -1127,7 +1131,7 @@ async function handleUnlink(item: any) {
   processingRelation.value.add(item.treeKey);
   try {
     await deletePermissionPath(item.parentId, item.id);
-    message.success('已解除父子关系');
+    message.success(t('permission.unlinkSuccess'));
     refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to unlink permission', error);
@@ -1204,9 +1208,12 @@ async function onDrop(event: DragEvent, targetItem: any) {
   if (!sourceItem || sourceItem.id === targetId) return;
 
   const confirmed = await confirm({
-    title: '建立父子关系',
-    content: `确定要将 [${sourceItem.name}] 设置为 [${targetItem.name}] 的子权限吗？`,
-    confirmText: '确认建立',
+    title: t('permission.linkTitle'),
+    content: t('permission.linkConfirm', {
+      sourceName: sourceItem.name,
+      targetName: targetItem.name,
+    }),
+    confirmText: t('permission.linkConfirmBtn'),
     color: 'primary',
     icon: 'mdi-link-variant',
   });
@@ -1218,7 +1225,7 @@ async function onDrop(event: DragEvent, targetItem: any) {
       ancestorId: targetId,
       descendantId: sourceItem.id,
     });
-    message.success('父子关系建立成功');
+    message.success(t('permission.linkSuccess'));
     refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to add descendant', error);
@@ -1307,7 +1314,7 @@ async function locateInTree(item: any) {
     }, 8000);
   } catch (error) {
     console.error('Failed to locate item', error);
-    message.error('无法定位到该权限节点');
+    message.error(t('permission.locateFailed'));
   } finally {
     loading.value = false;
   }
