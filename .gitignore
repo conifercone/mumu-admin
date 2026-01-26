@@ -26,5 +26,3 @@ pnpm-debug.log*
 !.vscode/tasks.json
 
 # AI
-.gemini
-.shared
