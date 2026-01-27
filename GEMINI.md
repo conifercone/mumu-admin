@@ -109,3 +109,4 @@ The project follows a custom "Bento" design language characterized by soft color
 - **Shell Commands:** Execute shell commands separately; do not use `&&` chaining (PowerShell environment compatibility).
 - **Git Commit:** Only commit code when explicitly requested. Follow Angular Commits convention. Subject and body must be in Chinese. Scope is mandatory.
 - **Code Comments:** All code comments must be in Chinese.
+- **Linting:** Always execute `pnpm run lint` after modifying code to verify and fix any style or quality issues.
