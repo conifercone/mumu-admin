@@ -5,132 +5,172 @@ meta:
 
 <template>
   <div class="auth-wrapper d-flex align-center justify-center pa-4">
-    <v-card class="auth-card pa-sm-8 pa-5" elevation="10" max-width="448">
-      <v-card-item class="justify-center">
-        <template #prepend>
-          <div class="d-flex">
-            <v-img class="me-2" height="32" :src="logo" width="32" />
-          </div>
-        </template>
-
-        <v-card-title class="text-2xl font-weight-bold text-primary">
-          MUMU-ADMIN
-        </v-card-title>
+    <v-card
+      class="auth-card pa-sm-10 pa-6"
+      color="surface"
+      elevation="24"
+      max-width="480"
+      rounded="xl"
+      width="100%"
+    >
+      <v-card-item class="justify-center pt-0 pb-6">
+        <div class="d-flex flex-column align-center text-center">
+          <v-img class="mb-4" contain height="56" :src="logo" width="56" />
+          <h2 class="text-h4 font-weight-bold text-primary mb-2">MUMU ADMIN</h2>
+          <p class="text-body-1 text-medium-emphasis">
+            {{ $t('auth.registerSubtitle') }}
+          </p>
+        </div>
       </v-card-item>
 
-      <v-card-text class="pt-2">
-        <h5 class="text-h5 mb-1">
+      <div class="text-center mb-6">
+        <h5 class="text-h6 font-weight-semibold">
           {{ $t('auth.registerTitle') }}
         </h5>
-        <p class="mb-0">
-          {{ $t('auth.registerSubtitle') }}
-        </p>
-      </v-card-text>
+      </div>
 
-      <v-card-text>
+      <v-card-text class="pa-0">
         <v-form @submit.prevent="() => {}">
-          <v-row>
+          <v-row no-gutters>
             <!-- Username -->
-            <v-col class="pb-0" cols="12">
+            <v-col class="mb-4" cols="12">
               <v-text-field
                 v-model="form.username"
+                bg-color="#F4F5FA"
                 color="primary"
                 density="comfortable"
+                hide-details="auto"
                 :label="$t('common.username')"
                 placeholder="johndoe"
                 prepend-inner-icon="mdi-account-outline"
-                variant="outlined"
+                rounded="lg"
+                variant="solo-filled"
               />
             </v-col>
 
             <!-- Email -->
-            <v-col class="pb-0" cols="12">
+            <v-col class="mb-4" cols="12">
               <v-text-field
                 v-model="form.email"
+                bg-color="#F4F5FA"
                 color="primary"
                 density="comfortable"
+                hide-details="auto"
                 :label="$t('common.email')"
                 placeholder="johndoe@email.com"
                 prepend-inner-icon="mdi-email-outline"
-                variant="outlined"
+                rounded="lg"
+                variant="solo-filled"
               />
             </v-col>
 
             <!-- Password -->
-            <v-col cols="12">
+            <v-col class="mb-2" cols="12">
               <v-text-field
                 v-model="form.password"
                 :append-inner-icon="
                   isPasswordVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
                 "
+                bg-color="#F4F5FA"
                 color="primary"
                 density="comfortable"
+                hide-details="auto"
                 :label="$t('common.password')"
                 placeholder="············"
                 prepend-inner-icon="mdi-lock-outline"
+                rounded="lg"
                 :type="isPasswordVisible ? 'text' : 'password'"
-                variant="outlined"
+                variant="solo-filled"
                 @click:append-inner="isPasswordVisible = !isPasswordVisible"
               />
+            </v-col>
 
-              <!-- Privacy Policy Checkbox -->
-              <div class="d-flex align-center mt-1 mb-4">
-                <v-checkbox
-                  v-model="form.privacyPolicies"
-                  class="me-3"
-                  density="compact"
-                  hide-details
-                  inline
-                >
-                  <template #label>
-                    <span class="me-1">{{ $t('auth.agree') }}</span>
-                    <a class="text-primary" href="javascript:void(0)">
-                      {{ $t('auth.privacy') }}
-                    </a>
-                  </template>
-                </v-checkbox>
-              </div>
+            <!-- Privacy Policy -->
+            <v-col class="mb-6" cols="12">
+              <v-checkbox
+                v-model="form.privacyPolicies"
+                color="primary"
+                density="compact"
+                hide-details
+              >
+                <template #label>
+                  <span class="me-1 text-body-2">{{ $t('auth.agree') }}</span>
+                  <a
+                    class="text-primary text-decoration-none font-weight-medium text-body-2"
+                    href="javascript:void(0)"
+                  >
+                    {{ $t('auth.privacy') }}
+                  </a>
+                </template>
+              </v-checkbox>
+            </v-col>
 
-              <!-- Signup Button -->
-              <v-btn block color="primary" size="large" type="submit">
+            <!-- Signup Button -->
+            <v-col class="mb-6" cols="12">
+              <v-btn
+                block
+                color="primary"
+                elevation="4"
+                height="48"
+                rounded="lg"
+                size="large"
+                type="submit"
+                class="font-weight-bold"
+              >
                 {{ $t('auth.signup') }}
               </v-btn>
             </v-col>
 
             <!-- Login Link -->
-            <v-col class="text-center text-base" cols="12">
-              <span>{{ $t('auth.alreadyUser') }}</span>
-              <router-link class="text-primary ms-2" to="/auth/login">
+            <v-col class="text-center text-body-2 mb-6" cols="12">
+              <span class="text-medium-emphasis me-1">
+                {{ $t('auth.alreadyUser') }}
+              </span>
+              <router-link
+                class="text-primary font-weight-bold text-decoration-none"
+                to="/auth/login"
+              >
                 {{ $t('auth.signIn') }}
               </router-link>
             </v-col>
 
-            <v-col class="d-flex align-center" cols="12">
+            <!-- Divider -->
+            <v-col class="d-flex align-center mb-6" cols="12">
               <v-divider />
-              <span class="mx-4 text-high-emphasis">{{ $t('common.or') }}</span>
+              <span
+                class="mx-4 text-caption text-uppercase text-medium-emphasis"
+              >
+                {{ $t('common.or') }}
+              </span>
               <v-divider />
             </v-col>
 
-            <v-col class="text-center" cols="12">
+            <!-- Social Buttons -->
+            <v-col class="d-flex justify-center gap-4" cols="12">
               <v-btn
-                class="me-2"
                 color="#4267b2"
                 icon="mdi-facebook"
-                variant="text"
+                size="large"
+                variant="tonal"
               />
               <v-btn
-                class="me-2"
                 color="#1da1f2"
                 icon="mdi-twitter"
-                variant="text"
+                size="large"
+                variant="tonal"
               />
               <v-btn
-                class="me-2"
                 color="#272727"
                 icon="mdi-github"
-                variant="text"
+                size="large"
+                variant="tonal"
               />
-              <v-btn color="#db4437" icon="mdi-google" variant="text" />
+              <v-btn
+                color="#db4437"
+                icon="mdi-google"
+                size="large"
+                variant="tonal"
+              />
             </v-col>
           </v-row>
         </v-form>
@@ -156,10 +196,28 @@ const isPasswordVisible = ref(false);
 <style lang="scss">
 .auth-wrapper {
   min-block-size: 100vh;
-  background-color: rgb(var(--v-theme-surface-variant), 0.12);
+  background-image: url('@/assets/login.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+// Add a slight backdrop blur for better focus on card
+.auth-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.05);
+  z-index: 0;
 }
 
 .auth-card {
   z-index: 1 !important;
+}
+
+.gap-4 {
+  gap: 1rem;
 }
 </style>
