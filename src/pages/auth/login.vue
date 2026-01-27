@@ -196,7 +196,9 @@ async function handleLogin() {
 <style lang="scss">
 .auth-wrapper {
   min-block-size: 100vh;
-  background-color: rgb(var(--v-theme-surface-variant), 0.12);
+  background-image: url('@/assets/login.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .auth-card {
