@@ -32,7 +32,7 @@ export const confirmState = reactive<ConfirmState>({
   resolve: null,
 });
 
-export const confirm = (options: ConfirmOptions | string): Promise<boolean> => {
+export function confirm(options: ConfirmOptions | string): Promise<boolean> {
   return new Promise((resolve) => {
     const userOptions =
       typeof options === 'string' ? { content: options } : options;
@@ -49,18 +49,18 @@ export const confirm = (options: ConfirmOptions | string): Promise<boolean> => {
     confirmState.resolve = resolve;
     confirmState.show = true;
   });
-};
+}
 
-export const handleConfirm = () => {
+export function handleConfirm() {
   if (confirmState.resolve) {
     confirmState.resolve(true);
   }
   confirmState.show = false;
-};
+}
 
-export const handleCancel = () => {
+export function handleCancel() {
   if (confirmState.resolve) {
     confirmState.resolve(false);
   }
   confirmState.show = false;
-};
+}

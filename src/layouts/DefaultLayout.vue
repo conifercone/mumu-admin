@@ -107,12 +107,12 @@
           <v-menu location="end top" offset="10" transition="scale-transition">
             <template #activator="{ props }">
               <v-card
+                v-ripple
                 v-bind="props"
                 :class="[
                   'bg-primary-lighten-5 flat transition-all overflow-hidden cursor-pointer hover-scale',
                   rail ? 'px-0 py-3 d-flex flex-column align-center' : 'pa-4',
                 ]"
-                v-ripple
                 flat
                 rounded="xl"
               >
@@ -162,13 +162,13 @@
             </template>
 
             <!-- User Menu -->
-            <v-card min-width="200" rounded="xl" elevation="4">
+            <v-card elevation="4" min-width="200" rounded="xl">
               <v-list density="compact" nav>
                 <v-list-item
                   prepend-icon="mdi-account-cog-outline"
+                  rounded="lg"
                   to="/profile"
                   value="accountSettings"
-                  rounded="lg"
                 >
                   <v-list-item-title>{{
                     $t('user.personalSettings')
@@ -176,8 +176,8 @@
                 </v-list-item>
                 <v-list-item
                   prepend-icon="mdi-cog-outline"
-                  value="systemSettings"
                   rounded="lg"
+                  value="systemSettings"
                 >
                   <v-list-item-title>{{
                     $t('user.systemSettings')
@@ -187,8 +187,8 @@
                 <v-list-item
                   class="text-error"
                   prepend-icon="mdi-logout"
-                  value="logout"
                   rounded="lg"
+                  value="logout"
                   @click="handleLogout"
                 >
                   <v-list-item-title>{{ $t('user.logout') }}</v-list-item-title>
@@ -227,16 +227,41 @@
         <div class="d-flex align-center gap-3">
           <!-- Search -->
           <div class="d-none d-sm-block" style="width: 240px">
-            <v-text-field
+            <v-autocomplete
+              v-model="search"
               bg-color="white"
+              clearable
               density="compact"
+              flat
               hide-details
+              hide-no-data
+              item-title="title"
+              item-value="to"
+              :items="menuSearchResults"
+              menu-icon=""
+              :menu-props="{
+                contentClass: 'rounded-xl elevation-10 mt-2',
+                offset: 5,
+              }"
               :placeholder="$t('common.search')"
               prepend-inner-icon="mdi-magnify"
               rounded="pill"
               variant="solo"
-              flat
-            ></v-text-field>
+              @update:model-value="handleSearchSelect"
+            >
+              <template #item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  class="ma-2 rounded-lg"
+                  :prepend-icon="item.raw.icon"
+                  :title="undefined"
+                >
+                  <v-list-item-title class="font-weight-semibold text-body-2">
+                    {{ item.raw.title }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+            </v-autocomplete>
           </div>
 
           <v-btn
@@ -259,8 +284,8 @@
 
         <!-- Footer inside content flow -->
         <v-footer
-          class="bg-transparent text-center d-flex justify-center py-6 text-caption text-grey"
           :app="false"
+          class="bg-transparent text-center d-flex justify-center py-6 text-caption text-grey"
         >
           2024 © MUMU Admin. All rights reserved.
         </v-footer>
@@ -321,6 +346,23 @@ const pageTitle = computed(() => {
   // Fallback to route name or default
   return t('menu.dashboard');
 });
+
+// Search functionality
+const search = ref(null);
+
+const menuSearchResults = computed(() => {
+  return MENU_ITEMS.map((item) => ({
+    ...item,
+    title: t(item.title),
+  }));
+});
+
+function handleSearchSelect(to: any) {
+  if (to) {
+    router.push(to);
+    search.value = null;
+  }
+}
 
 function isActive(item: any) {
   return route.path === item.to || route.path.startsWith(item.to + '/');

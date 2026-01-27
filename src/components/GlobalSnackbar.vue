@@ -1,21 +1,21 @@
 <template>
   <v-snackbar
     v-model="messageState.show"
-    location="top"
-    :timeout="messageState.timeout"
+    class="mt-4"
     color="surface"
     elevation="4"
-    rounded="xl"
-    class="mt-4"
+    location="top"
     :min-width="320"
+    rounded="xl"
+    :timeout="messageState.timeout"
   >
     <div class="d-flex align-center">
       <!-- Status Icon with Tonal Background -->
       <v-avatar
-        :color="messageState.color"
-        variant="tonal"
-        size="36"
         class="mr-3"
+        :color="messageState.color"
+        size="36"
+        variant="tonal"
       >
         <v-icon :icon="iconMap[messageState.color]" size="20"></v-icon>
       </v-avatar>
@@ -31,12 +31,12 @@
 
       <!-- Close Action -->
       <v-btn
-        icon="mdi-close"
-        variant="text"
-        density="comfortable"
-        size="small"
-        color="medium-emphasis"
         class="ml-2"
+        color="medium-emphasis"
+        density="comfortable"
+        icon="mdi-close"
+        size="small"
+        variant="text"
         @click="messageState.show = false"
       ></v-btn>
     </div>

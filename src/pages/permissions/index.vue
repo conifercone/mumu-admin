@@ -24,9 +24,9 @@
                   prepend-inner-icon="mdi-magnify"
                   rounded="lg"
                   variant="solo-filled"
-                  @keyup.enter="refresh"
-                  @compositionstart="onCompositionStart"
                   @compositionend="isComposing = false"
+                  @compositionstart="onCompositionStart"
+                  @keyup.enter="refresh"
                 ></v-text-field>
 
                 <v-text-field
@@ -41,9 +41,9 @@
                   prepend-inner-icon="mdi-filter-variant"
                   rounded="lg"
                   variant="solo-filled"
-                  @keyup.enter="refresh"
-                  @compositionstart="onCompositionStart"
                   @compositionend="isComposing = false"
+                  @compositionstart="onCompositionStart"
+                  @keyup.enter="refresh"
                 ></v-text-field>
               </v-col>
 
@@ -59,7 +59,7 @@
                   variant="text"
                 >
                   <v-btn class="rounded-lg px-4" height="36" value="flat">
-                    <v-icon start size="18">mdi-view-list</v-icon>
+                    <v-icon size="18" start>mdi-view-list</v-icon>
 
                     <span class="text-button font-weight-bold">{{
                       $t('permission.listView')
@@ -71,7 +71,7 @@
                   </v-btn>
 
                   <v-btn class="rounded-lg px-4" height="36" value="tree">
-                    <v-icon start size="18">mdi-file-tree</v-icon>
+                    <v-icon size="18" start>mdi-file-tree</v-icon>
 
                     <span class="text-button font-weight-bold">{{
                       $t('permission.treeView')
@@ -199,10 +199,14 @@
                 :items="serverItems"
                 :items-length="totalItems"
                 :loading="loading"
-                :select-props="{
+                :items-per-page-props="{
+                  variant: 'outlined',
+                  density: 'compact',
+                  class: 'items-per-page-select',
                   menuProps: {
                     contentClass: 'pagination-select-menu',
-                    offset: 8,
+                    class: 'pagination-select-menu',
+                    offset: 5,
                   },
                 }"
                 @update:options="loadItems"
@@ -249,11 +253,11 @@
                       'locate-highlight': highlightedId === item.id,
                     }"
                     :draggable="viewMode === 'tree'"
-                    @dragstart="onDragStart($event, item)"
-                    @dragover="onDragOver($event, item)"
-                    @dragleave="onDragLeave"
-                    @drop="onDrop($event, item)"
                     @dblclick="onRowDoubleClick(item)"
+                    @dragleave="onDragLeave"
+                    @dragover="onDragOver($event, item)"
+                    @dragstart="onDragStart($event, item)"
+                    @drop="onDrop($event, item)"
                   >
                     <td class="ps-4">
                       <div
@@ -334,10 +338,10 @@
                           <v-btn
                             color="primary"
                             density="compact"
-                            icon
-                            width="32"
                             height="32"
+                            icon
                             variant="text"
+                            width="32"
                             @click="openLinkDialog(item)"
                           >
                             <v-icon size="18">mdi-link-variant-plus</v-icon>
@@ -350,11 +354,11 @@
                             v-if="item.parentId"
                             color="warning"
                             density="compact"
-                            icon
-                            width="32"
                             height="32"
-                            variant="text"
+                            icon
                             :loading="processingRelation.has(item.treeKey)"
+                            variant="text"
+                            width="32"
                             @click="handleUnlink(item)"
                           >
                             <v-icon size="18">mdi-link-variant-off</v-icon>
@@ -492,13 +496,13 @@
                   v-model="form.code"
                   bg-color="grey-lighten-5"
                   class="rounded-lg"
+                  color="primary"
                   density="comfortable"
                   hide-details="auto"
                   :placeholder="$t('permission.codePlaceholder')"
                   required
                   :rules="[(v: string) => !!v || $t('common.required')]"
                   variant="outlined"
-                  color="primary"
                 ></v-text-field>
               </v-col>
 
@@ -512,13 +516,13 @@
                   v-model="form.name"
                   bg-color="grey-lighten-5"
                   class="rounded-lg"
+                  color="primary"
                   density="comfortable"
                   hide-details="auto"
                   :placeholder="$t('permission.namePlaceholder')"
                   required
                   :rules="[(v: string) => !!v || $t('common.required')]"
                   variant="outlined"
-                  color="primary"
                 ></v-text-field>
               </v-col>
 
@@ -532,11 +536,11 @@
                   v-model="form.description"
                   bg-color="grey-lighten-5"
                   class="rounded-lg"
+                  color="primary"
                   density="comfortable"
                   hide-details="auto"
                   rows="3"
                   variant="outlined"
-                  color="primary"
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -592,19 +596,19 @@
           </div>
           <v-autocomplete
             v-model="selectedDescendantId"
-            :items="availablePermissions"
+            clearable
+            color="primary"
+            hide-details
             item-title="name"
             item-value="id"
+            :items="availablePermissions"
             :loading="searching"
             :placeholder="$t('permission.searchPlaceholder')"
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
-            color="primary"
-            hide-details
-            clearable
-            @update:search="onSearchPermissions"
-            @compositionstart="onCompositionStart"
             @compositionend="onCompositionEnd"
+            @compositionstart="onCompositionStart"
+            @update:search="onSearchPermissions"
           >
             <template #item="{ props }">
               <v-list-item v-bind="props"></v-list-item>
@@ -650,8 +654,8 @@ import {
   findDirectPermissions,
   findRootPermissions,
   getPermissions,
-  updatePermission,
   type Permission,
+  updatePermission,
 } from '@/api/permission';
 import { confirm } from '@/utils/confirm';
 import { message } from '@/utils/message';
@@ -1075,11 +1079,9 @@ async function savePermission() {
 
   saving.value = true;
   try {
-    if (isEditing.value) {
-      await updatePermission({ id: editingId.value as number, ...form });
-    } else {
-      await createPermission(form);
-    }
+    await (isEditing.value
+      ? updatePermission({ id: editingId.value as number, ...form })
+      : createPermission(form));
     message.success(t('common.saveSuccess') || 'Saved successfully');
     closeDialog();
     refresh();
@@ -1285,11 +1287,7 @@ async function locateInTree(item: any) {
         // We need to expand all ancestors up to the parent of the target
         for (let i = 0; i < ids.length - 1; i++) {
           const id = ids[i];
-          if (i === 0) {
-            currentKey = `root-${id}`;
-          } else {
-            currentKey = `${currentKey}-${id}`;
-          }
+          currentKey = i === 0 ? `root-${id}` : `${currentKey}-${id}`;
           expandedIds.value.add(currentKey);
         }
       }
@@ -1301,11 +1299,11 @@ async function locateInTree(item: any) {
     }
 
     // 4. Switch mode (triggers watcher -> refresh -> rehydrateTree)
-    if (viewMode.value !== 'tree') {
-      viewMode.value = 'tree';
-    } else {
+    if (viewMode.value === 'tree') {
       // If already in tree mode, manually trigger refresh
       refresh({ preserveState: true });
+    } else {
+      viewMode.value = 'tree';
     }
 
     // 5. Highlight cleanup happens in the existing watch/timeout logic
@@ -1344,7 +1342,7 @@ async function handleDownload() {
         // Handle potentially encoded filename in older format
         try {
           fileName = decodeURIComponent(fileNameMatch[1]);
-        } catch (e) {
+        } catch {
           fileName = fileNameMatch[1];
         }
       }
@@ -1374,9 +1372,9 @@ async function handleDownload() {
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', fileName);
-    document.body.appendChild(link);
+    document.body.append(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
     window.URL.revokeObjectURL(url);
 
     message.success(t('common.downloadSuccess') || 'Download started');
@@ -1573,25 +1571,25 @@ async function handleDownload() {
 
 <style>
 /* Global-level overrides for the specialized pagination menu */
-.pagination-select-menu.v-menu .v-overlay__content {
-  border-radius: 20px !important;
-  border: 1px solid rgba(115, 103, 240, 0.08) !important;
-  overflow: hidden;
-  box-shadow: 0 12px 30px rgba(115, 103, 240, 0.15) !important;
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(10px);
+.pagination-select-menu {
+  border-radius: 16px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+  padding: 8px !important;
+  overflow: hidden !important;
 }
 
+/* Ensure the list inside is transparent so the container background shows */
 .pagination-select-menu .v-list {
-  padding: 8px !important;
+  padding: 0 !important;
   background: transparent !important;
 }
 
 .pagination-select-menu .v-list-item {
-  min-height: 40px !important;
+  border-radius: 8px !important;
   margin-bottom: 4px !important;
-  border-radius: 12px !important;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  min-height: 36px !important;
   padding: 0 12px !important;
 }
 
@@ -1599,24 +1597,15 @@ async function handleDownload() {
   margin-bottom: 0 !important;
 }
 
-.pagination-select-menu .v-list-item:hover {
-  background-color: rgba(115, 103, 240, 0.08) !important;
-  transform: translateX(4px);
-  color: #7367f0 !important;
+.pagination-select-menu .v-list-item-title {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  text-align: center;
 }
 
 .pagination-select-menu .v-list-item--active {
-  background-color: #7367f0 !important;
+  background-color: rgb(var(--v-theme-primary)) !important;
   color: white !important;
-  box-shadow: 0 4px 10px rgba(115, 103, 240, 0.3) !important;
-}
-
-.pagination-select-menu .v-list-item--active .v-list-item-title {
-  font-weight: 700 !important;
-}
-
-.pagination-select-menu .v-list-item-title {
-  font-size: 0.875rem !important;
-  text-align: center;
+  font-weight: 600 !important;
 }
 </style>

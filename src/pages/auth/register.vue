@@ -109,13 +109,13 @@ meta:
             <v-col class="mb-6" cols="12">
               <v-btn
                 block
+                class="font-weight-bold"
                 color="primary"
                 elevation="4"
                 height="48"
                 rounded="lg"
                 size="large"
                 type="submit"
-                class="font-weight-bold"
               >
                 {{ $t('auth.signup') }}
               </v-btn>
