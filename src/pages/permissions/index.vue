@@ -198,7 +198,6 @@
                 item-value="treeKey"
                 :items="serverItems"
                 :items-length="totalItems"
-                :loading="loading"
                 :items-per-page-props="{
                   variant: 'outlined',
                   density: 'compact',
@@ -209,6 +208,7 @@
                     offset: 5,
                   },
                 }"
+                :loading="loading"
                 @update:options="loadItems"
               >
                 <template
@@ -1035,12 +1035,6 @@ function refresh(options?: { preserveState?: boolean }) {
     page.value = 1;
   }
   loadItems(options);
-}
-
-function reset() {
-  filters.code = '';
-  filters.name = '';
-  refresh();
 }
 
 // Dialog Logic
