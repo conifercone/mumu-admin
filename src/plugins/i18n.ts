@@ -376,9 +376,11 @@ const messages = {
   },
 };
 
+const savedLocale = localStorage.getItem('user-locale');
+
 const i18n = createI18n({
   legacy: false, // Vuetify 不支持 vue-i18n legacy 模式
-  locale: 'zhHans',
+  locale: savedLocale || 'zhHans',
   fallbackLocale: 'en',
   messages,
 });

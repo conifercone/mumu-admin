@@ -267,6 +267,9 @@
             </v-autocomplete>
           </div>
 
+          <!-- Language Switcher -->
+          <LanguageSwitcher />
+
           <v-btn
             class="bg-white text-grey-darken-1"
             elevation="0"
@@ -304,6 +307,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
 import { getCurrentUser, logout, type UserResponse } from '@/api/auth';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
 import { MENU_ITEMS } from '@/config/menu';
 import { message } from '@/utils/message';
 
