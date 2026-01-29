@@ -1,0 +1,606 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard Final Version</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#6c2bee',
+              'background-light': '#f6f6f8',
+              'background-dark': '#161022',
+            },
+            fontFamily: {
+              display: ['Manrope', 'sans-serif'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              '2xl': '1rem',
+              '3xl': '1.5rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .active-nav {
+        @apply bg-primary text-white;
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #2d2444;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-[#120d1b] dark:text-white antialiased p-4 h-screen flex gap-4"
+  >
+    <aside
+      class="w-20 lg:w-64 bg-white dark:bg-[#1c162b] rounded-3xl border border-[#e2e8f0] dark:border-white/10 flex flex-col py-6 transition-all duration-300 shadow-sm overflow-hidden"
+    >
+      <div class="px-6 mb-8 flex items-center gap-3">
+        <div
+          class="bg-primary size-10 rounded-xl flex items-center justify-center text-white shrink-0"
+        >
+          <span class="material-symbols-outlined">dashboard_customize</span>
+        </div>
+        <h1
+          class="hidden lg:block text-xl font-extrabold tracking-tight text-primary"
+        >
+          BentoAdmin
+        </h1>
+      </div>
+      <nav class="flex-1 px-4 space-y-2">
+        <div
+          class="group relative flex items-center gap-3 px-3 py-3 rounded-xl active-nav cursor-pointer"
+        >
+          <span class="material-symbols-outlined">grid_view</span>
+          <span class="hidden lg:block font-semibold">Dashboard</span>
+        </div>
+        <div
+          class="group relative flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined">analytics</span>
+          <span class="hidden lg:block font-medium">Analytics</span>
+        </div>
+        <div
+          class="group relative flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined">group</span>
+          <span class="hidden lg:block font-medium">Users</span>
+        </div>
+        <div
+          class="group relative flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+          <span class="hidden lg:block font-medium">Revenue</span>
+        </div>
+        <div
+          class="group relative flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span class="hidden lg:block font-medium">Settings</span>
+        </div>
+      </nav>
+      <div
+        class="px-4 mt-auto border-t border-[#e2e8f0] dark:border-white/10 pt-4"
+      >
+        <button
+          class="w-full flex items-center gap-3 p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all group relative"
+        >
+          <div
+            class="size-10 rounded-full bg-cover bg-center border-2 border-primary/20 shrink-0"
+            data-alt="User profile avatar of Alex Rivera"
+            style="
+              background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD77ZmTvjVrv6SENyhERrca3zGv7Rl8ioiUqatSa96WrNjzNgFqJ0_UPb-WWZ1ARtV43aP2bE4awMdsaNCHIvy7-z46PaynNK3zN_4IXcfgUaCeuyFHofUdBTD6tzq5_L5_WQaYNtCqTGXxwvEHl_qb7KAFyYSr_hGE3FBDu87b4N2cQe_0N5RAxV7hfuDLx-Km2oQ9vBGOsmlMUG0EIPRHGyCdASnBK9sY4CGFbsKlq7wZiHMsSbz-sxevFtmdcbKCljyol582l6hi');
+            "
+          ></div>
+          <div class="text-left hidden lg:block overflow-hidden">
+            <p class="text-sm font-bold leading-none truncate">Alex Rivera</p>
+            <p class="text-xs text-slate-500 mt-1">Admin</p>
+          </div>
+          <span
+            class="material-symbols-outlined ml-auto text-slate-400 group-hover:text-primary hidden lg:block"
+            >more_vert</span
+          >
+        </button>
+        <div
+          class="mt-2 group relative flex items-center gap-3 px-3 py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span class="hidden lg:block font-medium">Logout</span>
+        </div>
+      </div>
+    </aside>
+    <div class="flex-1 flex flex-col gap-4 overflow-hidden">
+      <header
+        class="bg-white dark:bg-[#1c162b] rounded-3xl border border-[#e2e8f0] dark:border-white/10 px-8 py-4 flex items-center justify-between shadow-sm"
+      >
+        <div class="flex items-center gap-4 flex-1">
+          <h2 class="text-xl font-bold tracking-tight">Overview</h2>
+          <div
+            class="hidden md:flex items-center bg-[#f1f1f4] dark:bg-white/5 rounded-2xl px-4 py-2 w-full max-w-md border border-transparent focus-within:border-primary/50 transition-all"
+          >
+            <span class="material-symbols-outlined text-slate-400 text-xl"
+              >search</span
+            >
+            <input
+              class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400"
+              placeholder="Search analytics, users..."
+              type="text"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button
+            class="relative p-2.5 rounded-xl bg-[#f1f1f4] dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+            <span
+              class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-[#1c162b]"
+            ></span>
+          </button>
+          <button
+            class="p-2.5 rounded-xl bg-[#f1f1f4] dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+          >
+            <span class="material-symbols-outlined">mail</span>
+          </button>
+        </div>
+      </header>
+      <main class="flex-1 overflow-y-auto pr-2">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-4">
+          <div class="xl:col-span-3 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                class="bg-white dark:bg-[#1c162b] p-6 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-slate-500 text-sm font-medium"
+                    >Total Users</span
+                  >
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-lg"
+                    >group</span
+                  >
+                </div>
+                <h3 class="text-2xl font-extrabold">24,812</h3>
+                <p
+                  class="text-green-500 text-sm font-bold flex items-center gap-1 mt-2"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_up</span
+                  >
+                  +12%
+                </p>
+              </div>
+              <div
+                class="bg-white dark:bg-[#1c162b] p-6 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-slate-500 text-sm font-medium"
+                    >Monthly Revenue</span
+                  >
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-lg"
+                    >payments</span
+                  >
+                </div>
+                <h3 class="text-2xl font-extrabold">$48,210</h3>
+                <p
+                  class="text-green-500 text-sm font-bold flex items-center gap-1 mt-2"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_up</span
+                  >
+                  +8%
+                </p>
+              </div>
+              <div
+                class="bg-white dark:bg-[#1c162b] p-6 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-slate-500 text-sm font-medium"
+                    >Active Now</span
+                  >
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-lg"
+                    >bolt</span
+                  >
+                </div>
+                <h3 class="text-2xl font-extrabold">1,204</h3>
+                <p
+                  class="text-red-500 text-sm font-bold flex items-center gap-1 mt-2"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_down</span
+                  >
+                  -2%
+                </p>
+              </div>
+              <div
+                class="bg-white dark:bg-[#1c162b] p-6 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-slate-500 text-sm font-medium"
+                    >Conv. Rate</span
+                  >
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-lg"
+                    >ads_click</span
+                  >
+                </div>
+                <h3 class="text-2xl font-extrabold">3.2%</h3>
+                <p
+                  class="text-green-500 text-sm font-bold flex items-center gap-1 mt-2"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >trending_up</span
+                  >
+                  +0.5%
+                </p>
+              </div>
+            </div>
+            <div
+              class="bg-white dark:bg-[#1c162b] p-8 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+            >
+              <div
+                class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+              >
+                <div>
+                  <h3 class="text-lg font-bold">User Growth</h3>
+                  <p class="text-sm text-slate-500">
+                    Monthly overview of new platform users
+                  </p>
+                </div>
+                <div
+                  class="flex bg-[#f1f1f4] dark:bg-white/5 rounded-xl p-1 w-fit"
+                >
+                  <button
+                    class="px-4 py-1.5 text-xs font-bold bg-white dark:bg-white/10 rounded-lg shadow-sm"
+                  >
+                    Monthly
+                  </button>
+                  <button class="px-4 py-1.5 text-xs font-bold text-slate-500">
+                    Weekly
+                  </button>
+                </div>
+              </div>
+              <div class="h-64 w-full">
+                <svg
+                  class="w-full h-full"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 800 200"
+                >
+                  <defs>
+                    <linearGradient
+                      id="gradient"
+                      x1="0%"
+                      x2="0%"
+                      y1="0%"
+                      y2="100%"
+                    >
+                      <stop
+                        offset="0%"
+                        stop-color="#6c2bee"
+                        stop-opacity="0.2"
+                      ></stop>
+                      <stop
+                        offset="100%"
+                        stop-color="#6c2bee"
+                        stop-opacity="0"
+                      ></stop>
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M0 180 Q 50 170, 100 140 T 200 120 T 300 80 T 400 100 T 500 40 T 600 60 T 700 30 T 800 10 L 800 200 L 0 200 Z"
+                    fill="url(#gradient)"
+                  ></path>
+                  <path
+                    d="M0 180 Q 50 170, 100 140 T 200 120 T 300 80 T 400 100 T 500 40 T 600 60 T 700 30 T 800 10"
+                    fill="none"
+                    stroke="#6c2bee"
+                    stroke-linecap="round"
+                    stroke-width="4"
+                  ></path>
+                  <circle cx="100" cy="140" fill="#6c2bee" r="5"></circle>
+                  <circle cx="200" cy="120" fill="#6c2bee" r="5"></circle>
+                  <circle cx="300" cy="80" fill="#6c2bee" r="5"></circle>
+                  <circle cx="500" cy="40" fill="#6c2bee" r="5"></circle>
+                  <circle cx="800" cy="10" fill="#6c2bee" r="5"></circle>
+                </svg>
+                <div
+                  class="flex justify-between mt-4 text-xs font-bold text-slate-400 uppercase tracking-widest px-2"
+                >
+                  <span>Jan</span><span>Feb</span><span>Mar</span
+                  ><span>Apr</span><span>May</span><span>Jun</span
+                  ><span>Jul</span><span>Aug</span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white dark:bg-[#1c162b] rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm overflow-hidden"
+            >
+              <div
+                class="px-8 py-6 border-b border-[#e2e8f0] dark:border-white/10 flex items-center justify-between"
+              >
+                <h3 class="text-lg font-bold">Recent Activity</h3>
+                <button class="text-primary text-sm font-bold hover:underline">
+                  View All
+                </button>
+              </div>
+              <div class="divide-y divide-[#e2e8f0] dark:divide-white/10">
+                <div
+                  class="px-8 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                >
+                  <div class="flex items-center gap-4">
+                    <div
+                      class="size-10 rounded-full bg-slate-200 bg-cover"
+                      data-alt="Avatar of user Sarah J."
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC6VwmXyk1wtLZYtaYbddDGxj5p1z4I2QM-KU7oZ4yWHoK6AZAilIdTVsQxJ_x-7wvCRTvcyxY-dunHY8doKc04HvzXHSGGwTR2isDRqPeg193l7qrne80ZMs4XArr4ku4sCsZA10oBdd9TLwuCiljrxHSR1FA6V1tu42sn1qUUEidVRQa9fPYyuLvAgKdPkCYZAweE9PmHjjmAeFNEHWT0GwHltCrBEhGhjZIHyAaMBiWIT0B5vl0bshDjzhJWZnK_iim-COFLBFdF');
+                      "
+                    ></div>
+                    <div>
+                      <p class="text-sm font-bold">
+                        Sarah Jenkins
+                        <span class="font-normal text-slate-500"
+                          >subscribed to</span
+                        >
+                        Professional Plan
+                      </p>
+                      <p class="text-xs text-slate-400 mt-0.5">2 minutes ago</p>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-slate-300"
+                    >chevron_right</span
+                  >
+                </div>
+                <div
+                  class="px-8 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                >
+                  <div class="flex items-center gap-4">
+                    <div
+                      class="size-10 rounded-full bg-slate-200 bg-cover"
+                      data-alt="Avatar of user Mike Ross"
+                      style="
+                        background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA9V7ZoY4keup_IhjZADdutKytK_8_WALH8qYFiJfutEQSKQY2-a0wVbsWjWSPwdgbzohbMH0Z31PG-jPfHUPd3yTAKvH6eYFpupIub0hGpj-eYQQNu5vEg3OBO9Tcwbuf7-VsONlf1V-u0zPkgTzWhWyx5Kp8mP21OckkfXtFGaOIo8Rg5RZwvZFI0NGifYm6TUv7ztS7MYWUmkggs4Aa8oWC7L72ZSR4oUIgEPCLaXmGdkarFRZdT1PWzqzCSPyeRa4Wwwt5MU-ey');
+                      "
+                    ></div>
+                    <div>
+                      <p class="text-sm font-bold">
+                        Mike Ross
+                        <span class="font-normal text-slate-500"
+                          >uploaded a new</span
+                        >
+                        identity document
+                      </p>
+                      <p class="text-xs text-slate-400 mt-0.5">
+                        14 minutes ago
+                      </p>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-slate-300"
+                    >chevron_right</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div
+              class="bg-white dark:bg-[#1c162b] p-6 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+            >
+              <h3 class="font-bold mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl"
+                  >monitor_heart</span
+                >
+                System Health
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="font-medium">CPU Usage</span>
+                    <span class="font-bold">42%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-primary rounded-full"
+                      style="width: 42%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="font-medium">Memory</span>
+                    <span class="font-bold">68%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-orange-400 rounded-full"
+                      style="width: 68%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="font-medium">Database Load</span>
+                    <span class="font-bold">12%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-green-500 rounded-full"
+                      style="width: 12%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="mt-8 pt-6 border-t border-[#e2e8f0] dark:border-white/10 text-center"
+              >
+                <div
+                  class="inline-flex items-center gap-2 bg-green-50 dark:bg-green-500/10 px-3 py-1.5 rounded-full"
+                >
+                  <div
+                    class="size-2 bg-green-500 rounded-full animate-pulse"
+                  ></div>
+                  <p
+                    class="text-xs font-bold text-green-700 dark:text-green-400"
+                  >
+                    All Systems Operational
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white dark:bg-[#1c162b] p-6 rounded-3xl border border-[#e2e8f0] dark:border-white/10 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-sm">October 2024</h3>
+                <div class="flex gap-1">
+                  <span
+                    class="material-symbols-outlined text-lg cursor-pointer hover:text-primary p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
+                    >chevron_left</span
+                  >
+                  <span
+                    class="material-symbols-outlined text-lg cursor-pointer hover:text-primary p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5"
+                    >chevron_right</span
+                  >
+                </div>
+              </div>
+              <div
+                class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-2 uppercase"
+              >
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
+                ><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="grid grid-cols-7 gap-1 text-center text-xs">
+                <span class="p-2 text-slate-300">29</span>
+                <span class="p-2 text-slate-300">30</span>
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >1</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >2</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >3</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >4</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >5</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors font-bold"
+                  >6</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >7</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >8</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >9</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >10</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >11</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >12</span
+                >
+                <span
+                  class="p-2 bg-primary text-white font-bold rounded-lg shadow-sm"
+                  >13</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >14</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >15</span
+                >
+                <span
+                  class="p-2 hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+                  >16</span
+                >
+              </div>
+              <div class="mt-6">
+                <div
+                  class="bg-primary/5 p-4 rounded-2xl border-l-4 border-primary"
+                >
+                  <p
+                    class="text-[10px] font-bold text-primary uppercase tracking-wider"
+                  >
+                    Upcoming Event
+                  </p>
+                  <p class="text-xs font-bold mt-1">Product Sync v2.0</p>
+                  <p class="text-[10px] text-slate-500 mt-1">
+                    Tomorrow at 10:00 AM
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

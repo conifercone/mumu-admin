@@ -1,0 +1,593 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Unified Permission Management Center</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.symbols.outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#6c2bee',
+              'background-light': '#f8f7ff',
+              'background-dark': '#161022',
+              'bento-border': '#ebe7f3',
+              'bento-bg': '#ffffff',
+              'sidebar-bg': '#ffffff',
+            },
+            fontFamily: {
+              display: ['Manrope'],
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '1rem',
+              '2xl': '1.5rem',
+              full: '9999px',
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      body {
+        font-family: 'Manrope', sans-serif;
+      }
+      .bento-card {
+        @apply bg-white dark:bg-[#1f1631] border border-[#ebe7f3] dark:border-[#2d243d] rounded-2xl shadow-sm;
+      }
+      .sidebar-item {
+        @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-[#664c9a] hover:bg-primary/10 hover:text-primary font-medium;
+      }
+      .sidebar-item.active {
+        @apply bg-primary text-white shadow-lg shadow-primary/20;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d7cfe7;
+        border-radius: 10px;
+      }
+      .profile-popup {
+        display: none;
+      }
+      #profile-trigger:focus-within .profile-popup {
+        display: block;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-[#120d1b] dark:text-white min-h-screen flex overflow-hidden"
+  >
+    <aside class="w-72 h-screen p-6 flex flex-col gap-6">
+      <div class="bento-card h-full flex flex-col p-4">
+        <div
+          class="flex items-center gap-3 px-2 py-4 mb-4 border-b border-bento-border dark:border-[#2d243d]"
+        >
+          <div
+            class="size-10 text-primary flex items-center justify-center bg-primary/10 rounded-xl"
+          >
+            <svg class="size-6" fill="currentColor" viewBox="0 0 48 48">
+              <path
+                clip-rule="evenodd"
+                d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+                fill-rule="evenodd"
+              ></path>
+              <path
+                clip-rule="evenodd"
+                d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+                fill-rule="evenodd"
+              ></path>
+            </svg>
+          </div>
+          <h2
+            class="text-[#120d1b] dark:text-white text-xl font-bold tracking-tight"
+          >
+            AdminPanel
+          </h2>
+        </div>
+        <nav class="flex-1 flex flex-col gap-2 overflow-y-auto">
+          <a class="sidebar-item" href="#">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="sidebar-item" href="#">
+            <span class="material-symbols-outlined">group</span>
+            <span>User Directory</span>
+          </a>
+          <a class="sidebar-item active" href="#">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <span>Permissions</span>
+          </a>
+          <a class="sidebar-item" href="#">
+            <span class="material-symbols-outlined">analytics</span>
+            <span>Audit Logs</span>
+          </a>
+          <div
+            class="mt-6 px-2 mb-2 text-xs font-bold text-[#664c9a] uppercase tracking-widest"
+          >
+            System
+          </div>
+          <a class="sidebar-item" href="#">
+            <span class="material-symbols-outlined">dns</span>
+            <span>Resources</span>
+          </a>
+          <a class="sidebar-item" href="#">
+            <span class="material-symbols-outlined">notifications</span>
+            <span>Notifications</span>
+          </a>
+        </nav>
+        <div
+          class="relative mt-auto pt-4 border-t border-bento-border dark:border-[#2d243d]"
+          id="profile-trigger"
+          tabindex="0"
+        >
+          <div
+            class="flex items-center gap-3 p-2 rounded-xl hover:bg-[#f0ecf9] dark:hover:bg-[#2d243d] cursor-pointer transition-all"
+          >
+            <div
+              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20"
+              style="
+                background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA19u-ZCKDXX4ctPKVtwg_iyh4hF8N2nNns0C8g5VTPSgxg-8mIbHzwovem1Tk-xXhRZetVKuLewdCsP7c5tvytvuNs3USVWLEAMzcw3u1jYlDvclhl72dN9C1Zg40eNUyVhqZYTLCor072OE7nNa1PnINk-bqMdgvpPe-Bm69Yo5pD8d2ro4S3ThXWwejPASEp6ev53YTlOjQvy9d-k_rXwEOB8EJRfIqnzRJJDeRBb6sIbeBC_acubgXPuJVAk0N70xCp1c4Lo9oK');
+              "
+            ></div>
+            <div class="flex-1 min-w-0">
+              <p
+                class="text-sm font-bold text-[#120d1b] dark:text-white truncate"
+              >
+                Alex Morgan
+              </p>
+              <p class="text-xs text-[#664c9a] dark:text-white/50 truncate">
+                Super Admin
+              </p>
+            </div>
+            <span class="material-symbols-outlined text-[#664c9a] text-lg"
+              >unfold_more</span
+            >
+          </div>
+          <div
+            class="profile-popup absolute bottom-full left-0 mb-2 w-full bento-card p-2 shadow-2xl z-50"
+          >
+            <a
+              class="flex items-center gap-2 px-3 py-2 text-sm text-[#664c9a] hover:bg-primary/10 hover:text-primary rounded-lg"
+              href="#"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >person_outline</span
+              >
+              Profile Settings
+            </a>
+            <a
+              class="flex items-center gap-2 px-3 py-2 text-sm text-[#664c9a] hover:bg-primary/10 hover:text-primary rounded-lg"
+              href="#"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >settings</span
+              >
+              System Settings
+            </a>
+            <div class="h-px bg-bento-border dark:bg-[#2d243d] my-1"></div>
+            <a
+              class="flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg"
+              href="#"
+            >
+              <span class="material-symbols-outlined text-[20px]">logout</span>
+              Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <main class="flex-1 h-screen overflow-y-auto p-6 pl-0 flex flex-col gap-6">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1
+            class="text-[#120d1b] dark:text-white text-[32px] font-extrabold leading-tight"
+          >
+            Unified Permission Center
+          </h1>
+          <p class="text-[#664c9a] dark:text-white/50 font-medium">
+            Manage and audit system-wide access controls
+          </p>
+        </div>
+        <button
+          class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20"
+        >
+          <span class="material-symbols-outlined text-[20px]"
+            >add_moderator</span
+          >
+          <span>Create Permission</span>
+        </button>
+      </div>
+      <div class="bento-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3
+            class="text-sm font-bold text-[#664c9a] uppercase tracking-wider flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined text-sm">filter_alt</span>
+            Search Filters
+          </h3>
+          <button class="text-primary text-sm font-bold hover:underline">
+            Clear all filters
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label
+              class="text-[#120d1b] dark:text-white/80 text-sm font-semibold"
+              >Permission Name</label
+            >
+            <div class="relative">
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#664c9a] text-[20px]"
+                >search</span
+              >
+              <input
+                class="w-full rounded-xl border-[#d7cfe7] bg-[#f9f8fc] dark:bg-[#2d243d] dark:border-[#3d344d] h-12 pl-10 pr-4 placeholder:text-[#664c9a]/50 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                placeholder="e.g. Finance Admin"
+              />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label
+              class="text-[#120d1b] dark:text-white/80 text-sm font-semibold"
+              >Permission Code</label
+            >
+            <div class="relative">
+              <span
+                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#664c9a] text-[20px]"
+                >code</span
+              >
+              <input
+                class="w-full rounded-xl border-[#d7cfe7] bg-[#f9f8fc] dark:bg-[#2d243d] dark:border-[#3d344d] h-12 pl-10 pr-4 placeholder:text-[#664c9a]/50 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                placeholder="e.g. auth:api:write"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bento-card flex-1 flex flex-col min-h-0">
+        <div
+          class="p-6 border-b border-bento-border dark:border-[#2d243d] flex flex-wrap items-center justify-between gap-4"
+        >
+          <div class="flex items-center gap-6">
+            <h2 class="font-bold text-lg">Permission Explorer</h2>
+            <div class="flex p-1 bg-[#f0ecf9] dark:bg-[#2d243d] rounded-xl">
+              <button
+                class="flex items-center gap-2 py-2 px-5 bg-white dark:bg-primary rounded-lg shadow-sm text-sm font-bold text-primary dark:text-white transition-all"
+              >
+                <span class="material-symbols-outlined text-[18px]">list</span>
+                List View
+              </button>
+              <button
+                class="flex items-center gap-2 py-2 px-5 text-[#664c9a] dark:text-white/60 hover:text-primary text-sm font-bold transition-all"
+              >
+                <span class="material-symbols-outlined text-[18px]"
+                  >account_tree</span
+                >
+                Tree View
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button
+              class="flex items-center gap-2 px-4 py-2 rounded-xl border border-bento-border dark:border-[#2d243d] hover:bg-primary/5 text-[#664c9a] font-bold text-sm transition-all"
+            >
+              <span class="material-symbols-outlined text-lg"
+                >file_download</span
+              >
+              Export
+            </button>
+            <button
+              class="p-2 px-3 rounded-xl border border-bento-border dark:border-[#2d243d] hover:bg-primary/5 text-[#664c9a] transition-all"
+            >
+              <span class="material-symbols-outlined">settings</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-auto">
+          <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead class="sticky top-0 z-10">
+              <tr
+                class="bg-[#f9f8fc] dark:bg-[#251b3a] text-[#664c9a] dark:text-white/60 text-xs font-bold uppercase tracking-wider"
+              >
+                <th class="px-6 py-4">Permission Name</th>
+                <th class="px-6 py-4">Code</th>
+                <th class="px-6 py-4">Category</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4">Last Updated</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-bento-border dark:divide-[#2d243d]">
+              <tr class="hover:bg-primary/5 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="size-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >person</span
+                      >
+                    </div>
+                    <span class="font-bold text-sm">User Management View</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <code
+                    class="px-2 py-1 bg-[#f0ecf9] dark:bg-[#2d243d] rounded text-primary text-xs font-mono border border-primary/10"
+                    >sys:user:list</code
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="px-3 py-1 bg-gray-100 dark:bg-[#2d243d] rounded-lg text-xs font-semibold"
+                    >Menu Item</span
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700"
+                  >
+                    <span class="size-1.5 bg-green-500 rounded-full"></span>
+                    Active
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-[#664c9a] dark:text-white/50">
+                  Oct 24, 14:20
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div
+                    class="flex justify-end gap-2 opacity-40 group-hover:opacity-100 transition-opacity"
+                  >
+                    <button
+                      class="p-2 rounded-lg text-[#664c9a] hover:bg-primary/10 hover:text-primary transition-all"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >edit</span
+                      >
+                    </button>
+                    <button
+                      class="p-2 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-all"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >delete</span
+                      >
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="hover:bg-primary/5 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="size-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >add_circle</span
+                      >
+                    </div>
+                    <span class="font-bold text-sm">Create New User</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <code
+                    class="px-2 py-1 bg-[#f0ecf9] dark:bg-[#2d243d] rounded text-primary text-xs font-mono border border-primary/10"
+                    >sys:user:add</code
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="px-3 py-1 bg-gray-100 dark:bg-[#2d243d] rounded-lg text-xs font-semibold"
+                    >Action Button</span
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700"
+                  >
+                    <span class="size-1.5 bg-green-500 rounded-full"></span>
+                    Active
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-[#664c9a] dark:text-white/50">
+                  Oct 24, 15:05
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div
+                    class="flex justify-end gap-2 opacity-40 group-hover:opacity-100 transition-opacity"
+                  >
+                    <button
+                      class="p-2 rounded-lg text-[#664c9a] hover:bg-primary/10 hover:text-primary transition-all"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >edit</span
+                      >
+                    </button>
+                    <button
+                      class="p-2 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-all"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >delete</span
+                      >
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="hover:bg-primary/5 transition-colors group">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="size-9 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >api</span
+                      >
+                    </div>
+                    <span class="font-bold text-sm">Delete User API</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <code
+                    class="px-2 py-1 bg-[#f0ecf9] dark:bg-[#2d243d] rounded text-primary text-xs font-mono border border-primary/10"
+                    >sys:user:delete</code
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="px-3 py-1 bg-gray-100 dark:bg-[#2d243d] rounded-lg text-xs font-semibold"
+                    >API Interface</span
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600"
+                  >
+                    <span class="size-1.5 bg-gray-400 rounded-full"></span>
+                    Disabled
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-[#664c9a] dark:text-white/50">
+                  Nov 02, 09:12
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div
+                    class="flex justify-end gap-2 opacity-40 group-hover:opacity-100 transition-opacity"
+                  >
+                    <button
+                      class="p-2 rounded-lg text-[#664c9a] hover:bg-primary/10 hover:text-primary transition-all"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >edit</span
+                      >
+                    </button>
+                    <button
+                      class="p-2 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-all"
+                    >
+                      <span class="material-symbols-outlined text-[20px]"
+                        >delete</span
+                      >
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="p-4 bg-[#f9f8fc] dark:bg-[#1f1631] border-t border-bento-border dark:border-[#2d243d] flex items-center justify-between rounded-b-2xl"
+        >
+          <p class="text-sm text-[#664c9a] dark:text-white/50 font-medium">
+            Showing
+            <span class="text-[#120d1b] dark:text-white font-bold">1 - 3</span>
+            of
+            <span class="text-[#120d1b] dark:text-white font-bold">124</span>
+            results
+          </p>
+          <div class="flex items-center gap-1">
+            <button
+              class="size-10 flex items-center justify-center rounded-xl border border-bento-border dark:border-[#2d243d] hover:bg-white transition-all disabled:opacity-30"
+              disabled=""
+            >
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button
+              class="size-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold shadow-md shadow-primary/20"
+            >
+              1
+            </button>
+            <button
+              class="size-10 flex items-center justify-center rounded-xl hover:bg-primary/10 text-[#664c9a] font-bold"
+            >
+              2
+            </button>
+            <button
+              class="size-10 flex items-center justify-center rounded-xl hover:bg-primary/10 text-[#664c9a] font-bold"
+            >
+              3
+            </button>
+            <button
+              class="size-10 flex items-center justify-center rounded-xl border border-bento-border dark:border-[#2d243d] hover:bg-white transition-all"
+            >
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6">
+        <div class="bento-card p-6 flex items-center gap-4">
+          <div
+            class="size-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary"
+          >
+            <span class="material-symbols-outlined text-[32px]">key</span>
+          </div>
+          <div>
+            <p
+              class="text-[#664c9a] dark:text-white/50 text-xs font-bold uppercase tracking-widest mb-1"
+            >
+              Total Entitlements
+            </p>
+            <p class="text-3xl font-extrabold">124</p>
+          </div>
+        </div>
+        <div
+          class="bento-card p-6 flex items-center gap-4 border-l-4 border-l-green-400"
+        >
+          <div
+            class="size-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-[32px]"
+              >verified_user</span
+            >
+          </div>
+          <div>
+            <p
+              class="text-[#664c9a] dark:text-white/50 text-xs font-bold uppercase tracking-widest mb-1"
+            >
+              Active Rules
+            </p>
+            <p class="text-3xl font-extrabold">118</p>
+          </div>
+        </div>
+        <div
+          class="bento-card p-6 flex items-center gap-4 border-l-4 border-l-orange-400"
+        >
+          <div
+            class="size-14 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-[32px]"
+              >shield_lock</span
+            >
+          </div>
+          <div>
+            <p
+              class="text-[#664c9a] dark:text-white/50 text-xs font-bold uppercase tracking-widest mb-1"
+            >
+              Restricted Nodes
+            </p>
+            <p class="text-3xl font-extrabold">6</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
