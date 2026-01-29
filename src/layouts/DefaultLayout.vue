@@ -244,6 +244,7 @@
               :menu-props="{
                 contentClass: 'rounded-xl elevation-10 mt-2',
                 offset: 5,
+                maxHeight: 300,
               }"
               :placeholder="$t('common.search')"
               prepend-inner-icon="mdi-magnify"
@@ -254,11 +255,11 @@
               <template #item="{ props, item }">
                 <v-list-item
                   v-bind="props"
-                  class="ma-2 rounded-lg"
+                  class="ma-2 rounded-lg search-result-item"
                   :prepend-icon="item.raw.icon"
                   :title="undefined"
                 >
-                  <v-list-item-title class="font-weight-semibold text-body-2">
+                  <v-list-item-title class="text-body-2 text-grey-darken-3">
                     {{ item.raw.title }}
                   </v-list-item-title>
                 </v-list-item>
@@ -363,9 +364,9 @@ const allMenuItems = computed(() => {
 const menuSearchResults = computed(() => {
   if (!searchQuery.value) return [];
   const query = searchQuery.value.toLowerCase();
-  return allMenuItems.value.filter((item) =>
-    item.title.toLowerCase().includes(query),
-  );
+  return allMenuItems.value
+    .filter((item) => item.title.toLowerCase().includes(query))
+    .slice(0, 20);
 });
 
 function handleSearchSelect(to: any) {
@@ -432,6 +433,16 @@ async function handleLogout() {
 .hover-scale:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.search-result-item :deep(.v-list-item__prepend) .v-icon {
+  color: #a8aaae !important;
+  opacity: 0.8;
+}
+
+.search-result-item:hover :deep(.v-list-item__prepend) .v-icon {
+  color: rgb(var(--v-theme-primary)) !important;
+  opacity: 1;
 }
 
 /* Custom Scrollbar */
