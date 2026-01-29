@@ -229,8 +229,10 @@
           <div class="d-none d-sm-block" style="width: 240px">
             <v-autocomplete
               v-model="search"
+              v-model:search="searchQuery"
               bg-color="white"
               clearable
+              :custom-filter="() => true"
               density="compact"
               flat
               hide-details
@@ -349,18 +351,28 @@ const pageTitle = computed(() => {
 
 // Search functionality
 const search = ref(null);
+const searchQuery = ref('');
 
-const menuSearchResults = computed(() => {
+const allMenuItems = computed(() => {
   return MENU_ITEMS.map((item) => ({
     ...item,
     title: t(item.title),
   }));
 });
 
+const menuSearchResults = computed(() => {
+  if (!searchQuery.value) return [];
+  const query = searchQuery.value.toLowerCase();
+  return allMenuItems.value.filter((item) =>
+    item.title.toLowerCase().includes(query),
+  );
+});
+
 function handleSearchSelect(to: any) {
   if (to) {
     router.push(to);
     search.value = null;
+    searchQuery.value = '';
   }
 }
 
