@@ -4,7 +4,11 @@ import { en, zhHans } from 'vuetify/locale';
 const messages = {
   en: {
     common: {
+      showing: 'Showing {from} - {to} of {total} results',
+      total: 'Total {total} items',
       search: 'Search',
+      searchFilters: 'SEARCH FILTERS',
+      clearAllFilters: 'Clear all filters',
       create: 'Create',
       edit: 'Edit',
       delete: 'Delete',
@@ -85,6 +89,7 @@ const messages = {
       name: 'Permission Name',
       description: 'Description',
       list: 'Permission List',
+      explorer: 'Permission Explorer',
       manageDescription: 'Manage system access controls',
       codePlaceholder: 'e.g. USER_VIEW',
       namePlaceholder: 'e.g. View Users',
@@ -180,7 +185,11 @@ const messages = {
   },
   zhHans: {
     common: {
+      showing: '显示第 {from} - {to} 条，共 {total} 条',
+      total: '共 {total} 条',
       search: '查询',
+      searchFilters: '搜索筛选',
+      clearAllFilters: '清除所有筛选',
       create: '创建',
       edit: '编辑',
       delete: '删除',
@@ -261,6 +270,7 @@ const messages = {
       name: '权限名称',
       description: '描述',
       list: '权限列表',
+      explorer: '权限浏览',
       manageDescription: '管理系统访问权限',
       codePlaceholder: '例如：USER_VIEW',
       namePlaceholder: '例如：查看用户',

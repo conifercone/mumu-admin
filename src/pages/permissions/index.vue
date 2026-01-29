@@ -3,97 +3,131 @@
     <v-row class="fill-height" dense>
       <v-col cols="12">
         <div class="d-flex flex-column h-100 gap-4">
-          <!-- 1. Action & Filter Bar -->
-          <v-card class="rounded-xl pa-4" elevation="0" flat>
-            <v-row align="center" class="gy-4">
-              <!-- Search Group -->
-              <v-col
-                class="d-flex flex-wrap align-center gap-4"
-                cols="12"
-                md="auto"
+          <!-- 1. Search Filters Card -->
+          <v-card class="rounded-xl pa-5" elevation="0" flat>
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="d-flex align-center gap-2">
+                <v-icon color="primary" size="small">mdi-filter-variant</v-icon>
+                <span
+                  class="text-caption font-weight-bold text-grey-darken-1 letter-spacing-1"
+                  >{{ $t('common.searchFilters') }}</span
+                >
+              </div>
+              <v-btn
+                class="text-none font-weight-bold"
+                color="primary"
+                density="compact"
+                variant="text"
+                @click="clearFilters"
               >
-                <v-text-field
-                  v-model="filters.code"
-                  bg-color="grey-lighten-5"
-                  class="search-field"
-                  density="comfortable"
-                  flat
-                  hide-details
-                  :label="$t('permission.code')"
-                  min-width="220"
-                  prepend-inner-icon="mdi-magnify"
-                  rounded="lg"
-                  variant="solo-filled"
-                  @compositionend="isComposing = false"
-                  @compositionstart="onCompositionStart"
-                  @keyup.enter="refresh"
-                ></v-text-field>
+                {{ $t('common.clearAllFilters') }}
+              </v-btn>
+            </div>
 
+            <v-row>
+              <v-col cols="12" md="6">
+                <div
+                  class="text-subtitle-2 font-weight-bold text-grey-darken-3 mb-2"
+                >
+                  {{ $t('permission.name') }}
+                </div>
                 <v-text-field
                   v-model="filters.name"
                   bg-color="grey-lighten-5"
-                  class="search-field"
+                  class="search-input custom-rounded-xl"
+                  color="primary"
                   density="comfortable"
-                  flat
                   hide-details
-                  :label="$t('permission.name')"
-                  min-width="280"
-                  prepend-inner-icon="mdi-filter-variant"
-                  rounded="lg"
-                  variant="solo-filled"
+                  :placeholder="$t('permission.namePlaceholder')"
+                  prepend-inner-icon="mdi-magnify"
+                  variant="outlined"
                   @compositionend="isComposing = false"
                   @compositionstart="onCompositionStart"
                   @keyup.enter="refresh"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" md="6">
+                <div
+                  class="text-subtitle-2 font-weight-bold text-grey-darken-3 mb-2"
+                >
+                  {{ $t('permission.code') }}
+                </div>
+                <v-text-field
+                  v-model="filters.code"
+                  bg-color="grey-lighten-5"
+                  class="search-input custom-rounded-xl"
+                  color="primary"
+                  density="comfortable"
+                  hide-details
+                  :placeholder="$t('permission.codePlaceholder')"
+                  prepend-inner-icon="mdi-code-tags"
+                  variant="outlined"
+                  @compositionend="isComposing = false"
+                  @compositionstart="onCompositionStart"
+                  @keyup.enter="refresh"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card>
 
-              <!-- View Mode Toggle -->
+          <!-- 2. Permission Explorer (Main Data Table) -->
+          <v-card
+            class="flex-grow-1 rounded-xl overflow-hidden d-flex flex-column"
+            elevation="0"
+            flat
+          >
+            <div
+              class="px-6 py-4 border-b d-flex align-center justify-space-between flex-wrap gap-4"
+            >
+              <div class="d-flex align-center gap-4">
+                <h3 class="text-h6 font-weight-bold text-grey-darken-3">
+                  {{ $t('permission.explorer') }}
+                </h3>
 
-              <v-col class="d-flex align-center" cols="auto">
+                <!-- View Mode Toggle -->
                 <v-btn-toggle
                   v-model="viewMode"
-                  class="view-mode-toggle rounded-lg bg-grey-lighten-5 pa-1"
+                  class="view-mode-toggle rounded-lg bg-grey-lighten-5 pa-1 border-0"
                   color="primary"
                   density="compact"
                   mandatory
                   variant="text"
                 >
-                  <v-btn class="rounded-lg px-4" height="36" value="flat">
+                  <v-btn class="rounded-lg px-4" height="32" value="flat">
                     <v-icon size="18" start>mdi-view-list</v-icon>
-
                     <span class="text-button font-weight-bold">{{
                       $t('permission.listView')
                     }}</span>
-
-                    <v-tooltip activator="parent" location="top">{{
-                      $t('permission.flatMode')
-                    }}</v-tooltip>
                   </v-btn>
 
-                  <v-btn class="rounded-lg px-4" height="36" value="tree">
+                  <v-btn class="rounded-lg px-4" height="32" value="tree">
                     <v-icon size="18" start>mdi-file-tree</v-icon>
-
                     <span class="text-button font-weight-bold">{{
                       $t('permission.treeView')
                     }}</span>
-
-                    <v-tooltip activator="parent" location="top">{{
-                      $t('permission.treeMode')
-                    }}</v-tooltip>
                   </v-btn>
                 </v-btn-toggle>
-              </v-col>
+              </div>
 
-              <!-- Tree Quick Actions (Expand/Collapse All) -->
+              <div class="d-flex align-center gap-3">
+                <v-btn
+                  class="text-none font-weight-bold px-6 me-1"
+                  color="primary"
+                  elevation="0"
+                  height="40"
+                  prepend-icon="mdi-plus"
+                  rounded="lg"
+                  variant="flat"
+                  @click="openDialog"
+                >
+                  {{ $t('common.create') }}
+                </v-btn>
 
-              <v-col
-                v-if="viewMode === 'tree'"
-                class="d-flex align-center"
-                cols="auto"
-              >
+                <!-- Tree Quick Actions -->
                 <div
-                  class="bg-grey-lighten-5 rounded-lg pa-1 d-flex gap-1"
-                  style="height: 44px"
+                  v-if="viewMode === 'tree'"
+                  class="bg-grey-lighten-5 rounded-lg pa-1 d-flex gap-1 me-2"
+                  style="height: 40px; align-items: center"
                 >
                   <v-btn
                     class="rounded-lg"
@@ -104,7 +138,6 @@
                     @click="expandAll"
                   >
                     <v-icon size="20">mdi-unfold-more-horizontal</v-icon>
-
                     <v-tooltip activator="parent" location="top">{{
                       $t('permission.expandAll')
                     }}</v-tooltip>
@@ -119,63 +152,24 @@
                     @click="collapseAll"
                   >
                     <v-icon size="20">mdi-unfold-less-horizontal</v-icon>
-
                     <v-tooltip activator="parent" location="top">{{
                       $t('permission.collapseAll')
                     }}</v-tooltip>
                   </v-btn>
                 </div>
-              </v-col>
 
-              <v-spacer class="d-none d-md-flex"></v-spacer>
-
-              <!-- Actions Group -->
-              <v-col class="d-flex align-center gap-3" cols="12" sm="auto">
                 <v-btn
-                  class="text-none font-weight-bold px-5 flex-grow-1 flex-sm-grow-0"
-                  color="primary"
-                  elevation="0"
-                  height="44"
+                  class="text-none font-weight-bold px-4"
+                  color="grey-darken-1"
+                  height="40"
                   :loading="downloading"
                   prepend-icon="mdi-tray-arrow-down"
                   rounded="lg"
-                  variant="tonal"
+                  variant="outlined"
                   @click="handleDownload"
                 >
                   {{ $t('common.download') }}
                 </v-btn>
-                <v-btn
-                  class="text-none font-weight-bold px-6 flex-grow-1 flex-sm-grow-0"
-                  color="primary"
-                  elevation="0"
-                  height="44"
-                  prepend-icon="mdi-plus"
-                  rounded="lg"
-                  variant="flat"
-                  @click="openDialog"
-                >
-                  {{ $t('common.create') }}
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
-
-          <!-- 2. Main Data Table -->
-          <v-card
-            class="flex-grow-1 rounded-xl overflow-hidden d-flex flex-column"
-            elevation="0"
-            flat
-          >
-            <div class="px-6 py-4 border-b">
-              <div class="d-flex align-center justify-space-between">
-                <div>
-                  <h3 class="text-h6 font-weight-bold text-grey-darken-3">
-                    {{ $t('permission.list') }}
-                  </h3>
-                  <div class="text-caption text-grey">
-                    {{ $t('permission.description') }}
-                  </div>
-                </div>
                 <v-btn
                   color="grey"
                   density="comfortable"
@@ -198,19 +192,34 @@
                 item-value="treeKey"
                 :items="serverItems"
                 :items-length="totalItems"
-                :items-per-page-props="{
-                  variant: 'outlined',
-                  density: 'compact',
-                  class: 'items-per-page-select',
-                  menuProps: {
-                    contentClass: 'pagination-select-menu',
-                    class: 'pagination-select-menu',
-                    offset: 5,
-                  },
-                }"
                 :loading="loading"
                 @update:options="loadItems"
               >
+                <template #bottom>
+                  <div
+                    class="d-flex align-center justify-space-between pa-4 border-t"
+                  >
+                    <div class="text-subtitle-2 text-grey-darken-1 ps-2">
+                      {{
+                        $t('common.showing', {
+                          from: paginationFrom,
+                          to: paginationTo,
+                          total: totalItems,
+                        })
+                      }}
+                    </div>
+                    <v-pagination
+                      v-model="page"
+                      class="custom-pagination"
+                      density="comfortable"
+                      :length="pageCount"
+                      size="small"
+                      total-visible="5"
+                      variant="text"
+                    ></v-pagination>
+                  </div>
+                </template>
+
                 <template
                   #headers="{ columns, isSorted, getSortIcon, toggleSort }"
                 >
@@ -666,6 +675,15 @@ const viewMode = ref<'flat' | 'tree'>('flat');
 const itemsPerPage = ref(10);
 const page = ref(1);
 const totalItems = ref(0);
+const pageCount = computed(() => {
+  return Math.ceil(totalItems.value / itemsPerPage.value) || 1;
+});
+const paginationFrom = computed(() =>
+  totalItems.value === 0 ? 0 : (page.value - 1) * itemsPerPage.value + 1,
+);
+const paginationTo = computed(() =>
+  Math.min(page.value * itemsPerPage.value, totalItems.value),
+);
 const loading = ref(false);
 const saving = ref(false);
 const downloading = ref(false);
@@ -758,6 +776,12 @@ const filters = reactive({
   code: '',
   name: '',
 });
+
+function clearFilters() {
+  filters.code = '';
+  filters.name = '';
+  refresh();
+}
 
 // Dialog State
 const dialog = ref(false);
@@ -1432,15 +1456,6 @@ async function handleDownload() {
   gap: 16px;
 }
 
-.search-field {
-  transition: all 0.3s ease;
-}
-
-.search-field :deep(.v-field--focused) {
-  background-color: white !important;
-  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.1) !important;
-}
-
 .view-mode-toggle {
   height: 44px !important;
   display: flex;
@@ -1521,85 +1536,95 @@ async function handleDownload() {
   box-shadow: none;
 }
 
-/* Pagination Dropdown Styling */
-:deep(.v-data-table-footer .v-select) {
-  width: 100px;
-  margin-left: 8px;
-  margin-right: 8px;
+/* Enhanced Search Input UI */
+.custom-rounded-xl :deep(.v-field__outline) {
+  --v-field-border-opacity: 0.1 !important;
 }
 
-:deep(.v-data-table-footer .v-field) {
-  border-radius: 8px !important;
-  background-color: rgb(var(--v-theme-background)) !important;
-  box-shadow: none !important;
-  min-height: 32px;
-  padding-top: 0;
-  padding-bottom: 0;
-  display: flex;
+.custom-rounded-xl :deep(.v-field) {
+  border-radius: 16px !important;
+}
+
+.custom-rounded-xl :deep(.v-field--focused .v-field__outline) {
+  --v-field-border-opacity: 0.3 !important;
+}
+
+/* Custom Pagination Styling */
+.custom-pagination :deep(.v-pagination__list) {
+  justify-content: flex-end;
   align-items: center;
 }
 
-:deep(.v-data-table-footer .v-field__input) {
-  min-height: 32px;
-  padding-top: 0;
-  padding-bottom: 0;
-  display: flex;
-  align-items: center;
+.custom-pagination :deep(.v-pagination__item),
+.custom-pagination :deep(.v-pagination__prev),
+.custom-pagination :deep(.v-pagination__next) {
+  margin: 0 4px;
 }
 
-:deep(.v-data-table-footer .v-field__outline) {
-  display: none !important;
-}
-
-:deep(.v-data-table-footer .v-select__selection-text) {
-  font-size: 0.875rem;
+/* Common button styles */
+.custom-pagination :deep(.v-btn) {
+  border-radius: 8px !important; /* Match system rounded-lg */
   font-weight: 600;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Numbers - Inactive */
+.custom-pagination :deep(.v-pagination__item .v-btn) {
+  color: rgb(var(--v-theme-grey-darken-1));
+  background-color: transparent;
+}
+
+/* Numbers - Hover */
+.custom-pagination
+  :deep(.v-pagination__item:not(.v-pagination__item--is-active) .v-btn:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.1);
   color: rgb(var(--v-theme-primary));
 }
 
-:deep(.v-data-table-footer .v-field__append-inner) {
-  padding-top: 0;
-  align-items: center;
-}
-</style>
-
-<style>
-/* Global-level overrides for the specialized pagination menu */
-.pagination-select-menu {
-  border-radius: 16px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-  background-color: rgb(var(--v-theme-surface)) !important;
-  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
-  padding: 8px !important;
-  overflow: hidden !important;
-}
-
-/* Ensure the list inside is transparent so the container background shows */
-.pagination-select-menu .v-list {
-  padding: 0 !important;
-  background: transparent !important;
-}
-
-.pagination-select-menu .v-list-item {
-  border-radius: 8px !important;
-  margin-bottom: 4px !important;
-  min-height: 36px !important;
-  padding: 0 12px !important;
-}
-
-.pagination-select-menu .v-list-item:last-child {
-  margin-bottom: 0 !important;
-}
-
-.pagination-select-menu .v-list-item-title {
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  text-align: center;
-}
-
-.pagination-select-menu .v-list-item--active {
-  background-color: rgb(var(--v-theme-primary)) !important;
+/* Numbers - Active */
+.custom-pagination :deep(.v-pagination__item--is-active .v-btn) {
+  background: linear-gradient(135deg, #655bd3 0%, #4a40a8 100%) !important;
   color: white !important;
-  font-weight: 600 !important;
+  box-shadow: 0 4px 14px 0 rgba(101, 91, 211, 0.5) !important;
+  transform: translateY(-2px);
+  opacity: 1 !important;
+  border: none !important;
+}
+
+/* Prev/Next Buttons */
+.custom-pagination :deep(.v-pagination__prev .v-btn),
+.custom-pagination :deep(.v-pagination__next .v-btn) {
+  background-color: rgb(var(--v-theme-background)) !important;
+  color: rgb(var(--v-theme-grey-darken-1));
+}
+
+/* Prev/Next - Hover */
+.custom-pagination :deep(.v-pagination__prev .v-btn:hover),
+.custom-pagination :deep(.v-pagination__next .v-btn:hover) {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: white;
+  box-shadow: 0 4px 12px 0 rgba(var(--v-theme-primary), 0.35);
+  transform: translateY(-1px);
+}
+
+/* Prev/Next - Disabled */
+.custom-pagination :deep(.v-pagination__prev .v-btn--disabled),
+.custom-pagination :deep(.v-pagination__next .v-btn--disabled) {
+  opacity: 0.4;
+  background-color: rgba(var(--v-theme-grey-lighten-4), 0.5) !important;
+  color: rgb(var(--v-theme-grey-lighten-1));
+  box-shadow: none !important;
+  transform: none;
+}
+
+.custom-pagination :deep(.v-pagination__prev .v-btn .v-icon),
+.custom-pagination :deep(.v-pagination__next .v-btn .v-icon) {
+  font-size: 18px;
 }
 </style>
