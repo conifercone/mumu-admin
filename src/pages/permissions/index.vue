@@ -722,6 +722,7 @@ import {
   findDirectPermissions,
   findRootPermissions,
   getPermissions,
+  movePermission,
   type Permission,
   updatePermission,
 } from '@/api/permission';
@@ -1453,19 +1454,11 @@ async function handleDropLink() {
 async function handleDropMove() {
   moving.value = true;
   try {
-    // 1. Link to new parent
-    await addPermissionDescendant({
-      ancestorId: dropTarget.value.id,
-      descendantId: dropSource.value.id,
-    });
+    const originalAncestorId = dropSource.value.parentId || 0;
+    const targetAncestorId = dropTarget.value.id;
+    const descendantId = dropSource.value.id;
 
-    // 2. Unlink from old parent (if exists)
-    if (dropSource.value.parentId) {
-      await deletePermissionPath(
-        dropSource.value.parentId,
-        dropSource.value.id,
-      );
-    }
+    await movePermission(originalAncestorId, targetAncestorId, descendantId);
 
     message.success(t('permission.moveSuccess'));
     dropDialog.value = false;

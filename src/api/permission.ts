@@ -104,6 +104,19 @@ export function addPermissionDescendant(data: {
 }
 
 /**
+ * Move a permission from one ancestor to another
+ */
+export function movePermission(
+  originalAncestorId: number,
+  targetAncestorId: number,
+  descendantId: number,
+) {
+  return http.put(
+    `${ServicePrefix.IAM}/permission/move/${originalAncestorId}/${targetAncestorId}/${descendantId}`,
+  );
+}
+
+/**
  * Find all ancestor path strings for a descendant
  */
 export function findAllAncestorPathStrings(descendantId: number) {
