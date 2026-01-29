@@ -118,6 +118,12 @@ const messages = {
       selectChild: 'Select permission to add as child of [{name}]',
       searchPlaceholder: 'Search permission name',
       confirmAdd: 'Confirm Add',
+      dropActionTitle: 'Permission Action',
+      dropActionContent:
+        'How do you want to handle dragging [{sourceName}] to [{targetName}]?',
+      actionLink: 'Link (Copy)',
+      actionMove: 'Move',
+      moveSuccess: 'Permission moved successfully',
     },
     user: {
       personalSettings: 'Personal Settings',
@@ -297,6 +303,12 @@ const messages = {
       selectChild: '选择要添加为 [{name}] 子项的权限',
       searchPlaceholder: '搜索权限名称',
       confirmAdd: '确认添加',
+      dropActionTitle: '权限操作',
+      dropActionContent:
+        '您想要如何处理将 [{sourceName}] 拖拽到 [{targetName}]？',
+      actionLink: '关联 (复制)',
+      actionMove: '移动',
+      moveSuccess: '权限移动成功',
     },
     user: {
       personalSettings: '个人设置',

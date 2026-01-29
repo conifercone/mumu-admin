@@ -647,6 +647,65 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Drop Action Dialog -->
+    <v-dialog v-model="dropDialog" max-width="500px" persistent>
+      <v-card class="rounded-xl overflow-hidden">
+        <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
+          <span class="text-h6 font-weight-bold text-grey-darken-3">{{
+            $t('permission.dropActionTitle')
+          }}</span>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey-lighten-1"
+            density="compact"
+            icon="mdi-close"
+            variant="text"
+            @click="dropDialog = false"
+          ></v-btn>
+        </v-card-title>
+
+        <v-card-text class="pa-6">
+          <div class="text-body-1 text-grey-darken-1 mb-4">
+            {{
+              $t('permission.dropActionContent', {
+                sourceName: dropSource?.name,
+                targetName: dropTarget?.name,
+              })
+            }}
+          </div>
+        </v-card-text>
+
+        <v-card-actions class="px-6 pb-6 pt-2">
+          <v-spacer></v-spacer>
+          <v-btn
+            class="text-none rounded-pill px-6"
+            variant="text"
+            @click="dropDialog = false"
+          >
+            {{ $t('common.cancel') }}
+          </v-btn>
+          <v-btn
+            class="text-none rounded-pill px-6 ms-2"
+            color="primary"
+            :loading="linking"
+            variant="tonal"
+            @click="handleDropLink"
+          >
+            {{ $t('permission.actionLink') }}
+          </v-btn>
+          <v-btn
+            class="text-none rounded-pill px-6 ms-2"
+            color="primary"
+            :loading="moving"
+            variant="flat"
+            @click="handleDropMove"
+          >
+            {{ $t('permission.actionMove') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -696,6 +755,10 @@ const expandedMeta = ref<Map<string, { current: number; total: number }>>(
 // Drag and Drop state
 const draggedItem = ref<any>(null);
 const dropTargetId = ref<number | null>(null);
+const dropDialog = ref(false);
+const dropSource = ref<any>(null);
+const dropTarget = ref<any>(null);
+const moving = ref(false);
 
 // Track loading state for specific rows (children)
 const loadingChildren = ref<Set<string>>(new Set());
@@ -1227,28 +1290,52 @@ async function onDrop(event: DragEvent, targetItem: any) {
 
   if (!sourceItem || sourceItem.id === targetId) return;
 
-  const confirmed = await confirm({
-    title: t('permission.linkTitle'),
-    content: t('permission.linkConfirm', {
-      sourceName: sourceItem.name,
-      targetName: targetItem.name,
-    }),
-    confirmText: t('permission.linkConfirmBtn'),
-    color: 'primary',
-    icon: 'mdi-link-variant',
-  });
+  dropSource.value = sourceItem;
+  dropTarget.value = targetItem;
+  dropDialog.value = true;
+}
 
-  if (!confirmed) return;
-
+async function handleDropLink() {
+  linking.value = true;
   try {
     await addPermissionDescendant({
-      ancestorId: targetId,
-      descendantId: sourceItem.id,
+      ancestorId: dropTarget.value.id,
+      descendantId: dropSource.value.id,
     });
     message.success(t('permission.linkSuccess'));
+    dropDialog.value = false;
     refresh({ preserveState: true });
   } catch (error) {
-    console.error('Failed to add descendant', error);
+    console.error('Failed to link', error);
+  } finally {
+    linking.value = false;
+  }
+}
+
+async function handleDropMove() {
+  moving.value = true;
+  try {
+    // 1. Link to new parent
+    await addPermissionDescendant({
+      ancestorId: dropTarget.value.id,
+      descendantId: dropSource.value.id,
+    });
+
+    // 2. Unlink from old parent (if exists)
+    if (dropSource.value.parentId) {
+      await deletePermissionPath(
+        dropSource.value.parentId,
+        dropSource.value.id,
+      );
+    }
+
+    message.success(t('permission.moveSuccess'));
+    dropDialog.value = false;
+    refresh({ preserveState: true });
+  } catch (error) {
+    console.error('Failed to move', error);
+  } finally {
+    moving.value = false;
   }
 }
 
