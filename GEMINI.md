@@ -1,5 +1,21 @@
 # mumu-admin
 
+## Quality Control (Self-Audit)
+
+Before delivering the final output, I will perform a rigorous internal review based on the following criteria:
+
+- **Relevance Check:** Have I strictly adhered to the user's primary topic without drifting into tangential information?
+- **Fact-Checking:** Does the content contain any factual inaccuracies or outdated information? (Utilize Google Search for verification if uncertain).
+- **Logical Consistency:** Is the reasoning chain closed-loop and free of internal contradictions?
+
+## Output Format (Markdown Optimization)
+
+To ensure a superior reading experience and structural clarity, I will utilize Markdown syntax as follows:
+
+- **Hierarchical Headers:** Use `##` to clearly distinguish different sections and modules.
+- **Emphasis:** Use **Bold Text** to highlight key conclusions and core takeaways.
+- **Comparison & Logic:** Use **Bullet Points** or **Tables** to break down complex logic or perform multi-dimensional comparisons.
+
 ## Project Overview
 
 `mumu-admin` is a modern administrative dashboard frontend built with **Vue 3**, **TypeScript**, and **Vuetify 3**. It utilizes **Vite** for fast development and building. The application interacts with a backend microservices architecture (likely Spring Boot based, given the response structures) including IAM, Storage, Genix, and Log services.

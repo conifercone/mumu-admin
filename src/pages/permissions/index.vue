@@ -957,48 +957,115 @@ async function loadItems(options?: { preserveState?: boolean }) {
         ? new Set(expandedIds.value)
         : null;
 
-      serverItems.value = roots;
-      totalItems.value = roots.length;
-
       if (options?.preserveState && oldExpanded) {
-        // Clear current set so toggleExpand can re-add them correctly
-        expandedIds.value.clear();
-        // Re-expand previously expanded nodes that still exist
-        await rehydrateTree(oldExpanded);
+        // Offscreen Rehydration: Build the full list in memory first
+        // to prevent UI "collapse" flicker during refresh
+        const offscreenList = [...roots];
+        await rehydrateListOffscreen(offscreenList, oldExpanded);
+
+        // Atomic Update
+        serverItems.value = offscreenList;
+        // expandedIds are already tracked in rehydrateListOffscreen via recursion checks
+        // but we ensure the set matches the reality of what we loaded
       } else {
         // Full reset
+        serverItems.value = roots;
         expandedIds.value.clear();
         expandedMeta.value.clear();
       }
+      totalItems.value = roots.length;
     }
   } catch (error) {
     console.error('Failed to load permissions', error);
-    serverItems.value = [];
-    totalItems.value = 0;
+    if (!options?.preserveState) {
+      serverItems.value = [];
+      totalItems.value = 0;
+    }
   } finally {
     loading.value = false;
   }
 }
 
 /**
- * Recursively re-expand nodes from a saved state set
+ * Offscreen Rehydration: Re-expands nodes on a temporary list
  */
-async function rehydrateTree(oldExpanded: Set<string>) {
-  // We need to re-expand level by level to ensure serverItems is populated
+async function rehydrateListOffscreen(list: any[], oldExpanded: Set<string>) {
   let currentLevel = 0;
   let expandedInThisRound = true;
 
+  // We limit depth to avoid infinite loops, though logic shouldn't allow it
   while (expandedInThisRound && currentLevel < 10) {
     expandedInThisRound = false;
-    // Find items at current level that need expansion
-    const targets = serverItems.value.filter(
+
+    // Find targets in the current list state that need expansion
+    // Note: We must search the *current* list because it grows as we splice children in
+    const targets = list.filter(
       (item) => item.level === currentLevel && oldExpanded.has(item.treeKey),
     );
 
-    for (const target of targets) {
-      await toggleExpand(target);
-      expandedInThisRound = true;
-    }
+    // Process all targets at this level in parallel for speed
+    await Promise.all(
+      targets.map(async (item) => {
+        try {
+          const pageSize = 5;
+          const res = await findDirectPermissions({
+            ancestorId: item.id,
+            current: 1,
+            pageSize,
+          });
+          const data = res as any;
+          const pageData = data.content ? data : data.data || {};
+          const total = Number(pageData.totalElements) || 0;
+          const children = (pageData.content || []).map((child: any) => ({
+            ...child,
+            level: item.level + 1,
+            parentId: item.id,
+            treeKey: `${item.treeKey}-${child.id}`,
+            isLoadMore: false,
+          }));
+
+          const index = list.findIndex((i) => i.treeKey === item.treeKey);
+          if (index !== -1) {
+            // Insert children into the offscreen list
+            // Note: Since we are in a Promise.all, we need to be careful about array mutations if strictly sequential indices mattered,
+            // but since we filter by level/key reference, replacing effectively works.
+            // However, Promise.all concurrent splice on the SAME array is dangerous.
+            // WE MUST DO THIS SEQUENTIALLY or strictly managed.
+            // Let's revert Promise.all to sequential for safety on array mutation.
+            return { item, children, total, index };
+          }
+        } catch {
+          console.error('Failed to rehydrate node offscreen', item.treeKey);
+        }
+        return null;
+      }),
+    ).then((results) => {
+      // Apply mutations sequentially to avoid index drift issues
+      // We need to re-find index because previous splices shift indices
+      for (const res of results) {
+        if (!res) continue;
+        const { item, children, total } = res;
+        const currentIndex = list.findIndex((i) => i.treeKey === item.treeKey);
+
+        if (currentIndex !== -1) {
+          list.splice(currentIndex + 1, 0, ...children);
+          expandedMeta.value.set(item.treeKey, { current: 1, total });
+
+          if (total > children.length) {
+            list.splice(currentIndex + 1 + children.length, 0, {
+              id: `load-more-${item.id}`,
+              treeKey: `load-more-${item.treeKey}`,
+              parentId: item.id,
+              parentTreeKey: item.treeKey,
+              level: item.level + 1,
+              isLoadMore: true,
+            });
+          }
+          expandedInThisRound = true;
+        }
+      }
+    });
+
     currentLevel++;
   }
 }
@@ -1153,6 +1220,8 @@ watch(viewMode, async (newVal, oldVal) => {
       serverItems.value = flatCache.value.items;
       totalItems.value = flatCache.value.total;
       page.value = flatCache.value.page;
+      // SWR: Revalidate in background to ensure consistency
+      loadItems({ preserveState: true });
     } else {
       page.value = 1;
       await loadItems({ preserveState: true });
@@ -1164,6 +1233,8 @@ watch(viewMode, async (newVal, oldVal) => {
       totalItems.value = treeCache.value.total;
       expandedIds.value = new Set(treeCache.value.expandedIds);
       expandedMeta.value = new Map(treeCache.value.expandedMeta);
+      // SWR: Revalidate in background to ensure consistency
+      loadItems({ preserveState: true });
     } else {
       page.value = 1;
       await loadItems({ preserveState: true });
