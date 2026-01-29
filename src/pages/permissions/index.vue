@@ -760,6 +760,26 @@ const dropSource = ref<any>(null);
 const dropTarget = ref<any>(null);
 const moving = ref(false);
 
+// View Caching
+const flatCache = ref<{
+  items: any[];
+  total: number;
+  page: number;
+  filters: { code: string; name: string };
+} | null>(null);
+
+const treeCache = ref<{
+  items: any[];
+  total: number;
+  expandedIds: Set<string>;
+  expandedMeta: Map<string, any>;
+} | null>(null);
+
+function invalidateCaches() {
+  flatCache.value = null;
+  treeCache.value = null;
+}
+
 // Track loading state for specific rows (children)
 const loadingChildren = ref<Set<string>>(new Set());
 const loadingMore = ref<Set<string>>(new Set());
@@ -827,6 +847,7 @@ async function confirmLink() {
     });
     message.success(t('permission.childAddedSuccess'));
     linkDialog.value = false;
+    invalidateCaches();
     refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to link descendant', error);
@@ -1103,9 +1124,51 @@ async function loadMoreChildren(parentItem: any) {
     loadingMore.value.delete(parentItem.parentTreeKey);
   }
 }
-watch(viewMode, () => {
-  page.value = 1;
-  refresh({ preserveState: true });
+watch(viewMode, async (newVal, oldVal) => {
+  // 1. Save state for oldVal
+  if (oldVal === 'flat') {
+    flatCache.value = {
+      items: serverItems.value,
+      total: totalItems.value,
+      page: page.value,
+      filters: { ...filters },
+    };
+  } else if (oldVal === 'tree') {
+    treeCache.value = {
+      items: serverItems.value,
+      total: totalItems.value,
+      expandedIds: new Set(expandedIds.value),
+      expandedMeta: new Map(expandedMeta.value),
+    };
+  }
+
+  // 2. Restore or Fetch for newVal
+  if (newVal === 'flat') {
+    // Check if cache exists and filters match
+    if (
+      flatCache.value &&
+      flatCache.value.filters.code === filters.code &&
+      flatCache.value.filters.name === filters.name
+    ) {
+      serverItems.value = flatCache.value.items;
+      totalItems.value = flatCache.value.total;
+      page.value = flatCache.value.page;
+    } else {
+      page.value = 1;
+      await loadItems({ preserveState: true });
+    }
+  } else {
+    // Tree
+    if (treeCache.value) {
+      serverItems.value = treeCache.value.items;
+      totalItems.value = treeCache.value.total;
+      expandedIds.value = new Set(treeCache.value.expandedIds);
+      expandedMeta.value = new Map(treeCache.value.expandedMeta);
+    } else {
+      page.value = 1;
+      await loadItems({ preserveState: true });
+    }
+  }
 });
 
 watch(
@@ -1165,6 +1228,7 @@ async function savePermission() {
       : createPermission(form));
     message.success(t('common.saveSuccess') || 'Saved successfully');
     closeDialog();
+    invalidateCaches();
     refresh();
   } catch (error) {
     console.error('Failed to save permission', error);
@@ -1191,6 +1255,7 @@ async function handleDelete(id: number) {
     message.success(
       t('common.deleteSuccess') || 'Permission deleted successfully',
     );
+    invalidateCaches();
     refresh();
   } catch (error) {
     console.error('Failed to delete permission', error);
@@ -1215,6 +1280,7 @@ async function handleUnlink(item: any) {
   try {
     await deletePermissionPath(item.parentId, item.id);
     message.success(t('permission.unlinkSuccess'));
+    invalidateCaches();
     refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to unlink permission', error);
@@ -1304,6 +1370,7 @@ async function handleDropLink() {
     });
     message.success(t('permission.linkSuccess'));
     dropDialog.value = false;
+    invalidateCaches();
     refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to link', error);
@@ -1331,6 +1398,7 @@ async function handleDropMove() {
 
     message.success(t('permission.moveSuccess'));
     dropDialog.value = false;
+    invalidateCaches();
     refresh({ preserveState: true });
   } catch (error) {
     console.error('Failed to move', error);
@@ -1408,6 +1476,7 @@ async function locateInTree(item: any) {
       // If already in tree mode, manually trigger refresh
       refresh({ preserveState: true });
     } else {
+      treeCache.value = null;
       viewMode.value = 'tree';
     }
 
