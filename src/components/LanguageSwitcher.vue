@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
-        class="bg-white text-grey-darken-1"
+        class="bg-surface text-secondary"
         elevation="0"
         icon
         rounded="lg"

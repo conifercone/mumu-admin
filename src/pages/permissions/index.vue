@@ -9,7 +9,7 @@
               <div class="d-flex align-center gap-2">
                 <v-icon color="primary" size="small">mdi-filter-variant</v-icon>
                 <span
-                  class="text-caption font-weight-bold text-grey-darken-1 letter-spacing-1"
+                  class="text-caption font-weight-bold text-secondary letter-spacing-1"
                   >{{ $t('common.searchFilters') }}</span
                 >
               </div>
@@ -26,9 +26,7 @@
 
             <v-row>
               <v-col cols="12" md="6">
-                <div
-                  class="text-subtitle-2 font-weight-bold text-grey-darken-3 mb-2"
-                >
+                <div class="text-subtitle-2 font-weight-bold text-primary mb-2">
                   {{ $t('permission.name') }}
                 </div>
                 <v-text-field
@@ -47,9 +45,7 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
-                <div
-                  class="text-subtitle-2 font-weight-bold text-grey-darken-3 mb-2"
-                >
+                <div class="text-subtitle-2 font-weight-bold text-primary mb-2">
                   {{ $t('permission.code') }}
                 </div>
                 <v-text-field
@@ -80,7 +76,7 @@
               class="px-6 py-4 border-b d-flex align-center justify-space-between flex-wrap gap-4"
             >
               <div class="d-flex align-center gap-4">
-                <h3 class="text-h6 font-weight-bold text-grey-darken-3">
+                <h3 class="text-h6 font-weight-bold text-primary">
                   {{ $t('permission.explorer') }}
                 </h3>
 
@@ -131,7 +127,7 @@
                 >
                   <v-btn
                     class="rounded-lg"
-                    color="grey-darken-1"
+                    color="secondary"
                     density="comfortable"
                     icon
                     variant="text"
@@ -145,7 +141,7 @@
 
                   <v-btn
                     class="rounded-lg"
-                    color="grey-darken-1"
+                    color="secondary"
                     density="comfortable"
                     icon
                     variant="text"
@@ -199,7 +195,7 @@
                   <div
                     class="d-flex align-center justify-space-between pa-4 border-t"
                   >
-                    <div class="text-subtitle-2 text-grey-darken-1 ps-2">
+                    <div class="text-subtitle-2 text-secondary ps-2">
                       {{
                         $t('common.showing', {
                           from: paginationFrom,
@@ -229,7 +225,7 @@
                       :key="column.key || column.title"
                     >
                       <th
-                        class="text-uppercase text-caption font-weight-bold text-grey-darken-1 border-0 py-3"
+                        class="text-uppercase text-caption font-weight-bold text-secondary border-0 py-3"
                         :class="{
                           'text-start': column.align === 'start',
                           'text-end': column.align === 'end',
@@ -291,7 +287,7 @@
                             :class="{
                               'rotate-90': expandedIds.has(item.treeKey),
                             }"
-                            color="grey-darken-1"
+                            color="secondary"
                             density="compact"
                             :icon="
                               loadingChildren.has(item.treeKey)
@@ -322,15 +318,13 @@
                       </div>
                     </td>
                     <td>
-                      <span
-                        class="text-body-2 font-weight-bold text-grey-darken-3"
-                      >
+                      <span class="text-body-2 font-weight-bold text-primary">
                         {{ item.name }}
                       </span>
                     </td>
                     <td>
                       <div
-                        class="text-truncate text-grey-darken-1"
+                        class="text-truncate text-secondary"
                         style="max-width: 250px"
                       >
                         {{ item.description || '-' }}
@@ -402,7 +396,7 @@
 
                           <v-btn
                             class="me-1"
-                            color="grey-darken-1"
+                            color="secondary"
                             density="compact"
                             icon
                             size="small"
@@ -478,8 +472,8 @@
       transition="dialog-bottom-transition"
     >
       <v-card class="rounded-xl overflow-hidden" elevation="10">
-        <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-grey-darken-3">{{
+        <v-card-title class="px-6 py-5 bg-surface d-flex align-center border-b">
+          <span class="text-h6 font-weight-bold text-primary">{{
             dialogTitle
           }}</span>
           <v-spacer></v-spacer>
@@ -496,9 +490,7 @@
           <v-form ref="formRef" @submit.prevent="savePermission">
             <v-row dense>
               <v-col cols="12">
-                <div
-                  class="text-caption font-weight-bold text-grey-darken-1 mb-1"
-                >
+                <div class="text-caption font-weight-bold text-secondary mb-1">
                   {{ $t('permission.code') }}
                 </div>
                 <v-text-field
@@ -516,9 +508,7 @@
               </v-col>
 
               <v-col class="mt-4" cols="12">
-                <div
-                  class="text-caption font-weight-bold text-grey-darken-1 mb-1"
-                >
+                <div class="text-caption font-weight-bold text-secondary mb-1">
                   {{ $t('permission.name') }}
                 </div>
                 <v-text-field
@@ -536,9 +526,7 @@
               </v-col>
 
               <v-col class="mt-4" cols="12">
-                <div
-                  class="text-caption font-weight-bold text-grey-darken-1 mb-1"
-                >
+                <div class="text-caption font-weight-bold text-secondary mb-1">
                   {{ $t('permission.description') }}
                 </div>
                 <v-textarea
@@ -585,8 +573,8 @@
     <!-- Link Descendant Dialog -->
     <v-dialog v-model="linkDialog" max-width="400px" persistent>
       <v-card class="rounded-xl overflow-hidden">
-        <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-grey-darken-3">{{
+        <v-card-title class="px-6 py-5 bg-surface d-flex align-center border-b">
+          <span class="text-h6 font-weight-bold text-primary">{{
             $t('permission.addChild')
           }}</span>
           <v-spacer></v-spacer>
@@ -600,7 +588,7 @@
         </v-card-title>
 
         <v-card-text class="pa-6">
-          <div class="text-caption font-weight-bold text-grey-darken-1 mb-2">
+          <div class="text-caption font-weight-bold text-secondary mb-2">
             {{ $t('permission.selectChild', { name: linkParent?.name }) }}
           </div>
           <v-autocomplete
@@ -651,8 +639,8 @@
     <!-- Drop Action Dialog -->
     <v-dialog v-model="dropDialog" max-width="500px" persistent>
       <v-card class="rounded-xl overflow-hidden">
-        <v-card-title class="px-6 py-5 bg-white d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-grey-darken-3">{{
+        <v-card-title class="px-6 py-5 bg-surface d-flex align-center border-b">
+          <span class="text-h6 font-weight-bold text-primary">{{
             $t('permission.dropActionTitle')
           }}</span>
           <v-spacer></v-spacer>
@@ -666,7 +654,7 @@
         </v-card-title>
 
         <v-card-text class="pa-6">
-          <div class="text-body-1 text-grey-darken-1 mb-4">
+          <div class="text-body-1 text-secondary mb-4">
             {{
               $t('permission.dropActionContent', {
                 sourceName: dropSource?.name,
