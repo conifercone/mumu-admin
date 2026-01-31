@@ -5,7 +5,7 @@
       v-model="drawer"
       class="sidebar-container my-4 ms-4 rounded-xl border-0 transition-all"
       :class="rail ? 'px-1' : ''"
-      color="white"
+      color="surface"
       elevation="0"
       floating
       :mobile-breakpoint="0"
@@ -68,7 +68,7 @@
             v-for="(item, i) in MENU_ITEMS"
             :key="i"
             active-class="bg-primary text-white"
-            class="mb-2 transition-swing rounded-lg text-grey-darken-2"
+            class="mb-2 transition-swing rounded-lg text-primary"
             :class="rail ? 'px-2' : ''"
             :to="item.to"
             :value="item"
@@ -77,10 +77,7 @@
               class="d-flex align-center"
               :class="rail ? 'justify-center w-100' : ''"
             >
-              <v-icon
-                :color="isActive(item) ? 'white' : 'grey-darken-1'"
-                size="24"
-              >
+              <v-icon :color="isActive(item) ? 'white' : 'secondary'" size="24">
                 {{ item.icon }}
               </v-icon>
 
@@ -217,7 +214,7 @@
 
           <!-- Dynamic Page Title -->
           <div>
-            <h2 class="text-h5 font-weight-bold text-grey-darken-3">
+            <h2 class="text-h5 font-weight-bold text-primary">
               {{ pageTitle }}
             </h2>
           </div>
@@ -230,7 +227,7 @@
             <v-autocomplete
               v-model="search"
               v-model:search="searchQuery"
-              bg-color="white"
+              bg-color="surface"
               clearable
               :custom-filter="() => true"
               density="compact"
@@ -259,7 +256,7 @@
                   :prepend-icon="item.raw.icon"
                   :title="undefined"
                 >
-                  <v-list-item-title class="text-body-2 text-grey-darken-3">
+                  <v-list-item-title class="text-body-2 text-primary">
                     {{ item.raw.title }}
                   </v-list-item-title>
                 </v-list-item>
@@ -270,8 +267,11 @@
           <!-- Language Switcher -->
           <LanguageSwitcher />
 
+          <!-- Theme Switcher -->
+          <ThemeSwitcher />
+
           <v-btn
-            class="bg-white text-grey-darken-1"
+            class="bg-surface text-secondary"
             elevation="0"
             icon
             rounded="lg"
@@ -308,6 +308,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useDisplay } from 'vuetify';
 import { getCurrentUser, logout, type UserResponse } from '@/api/auth';
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
+import ThemeSwitcher from '@/components/ThemeSwitcher.vue';
 import { MENU_ITEMS } from '@/config/menu';
 import { message } from '@/utils/message';
 
@@ -440,7 +441,7 @@ async function handleLogout() {
 }
 
 .search-result-item :deep(.v-list-item__prepend) .v-icon {
-  color: #a8aaae !important;
+  color: rgb(var(--v-theme-secondary)) !important;
   opacity: 0.8;
 }
 
