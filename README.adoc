@@ -1,0 +1,99 @@
+= mumu-admin
+:toc: macro
+:toc-title: 目录
+:toclevels: 3
+:icons: font
+
+`mumu-admin` 是一个基于 **Vue 3**, **TypeScript**, 和 **Vuetify 3** 构建的现代管理后台前端框架。它采用 **Vite** 作为构建工具，并遵循 **Bento Light** 设计风格，旨在提供优雅、流畅且高效的管理界面。
+
+toc::[]
+
+== 🚀 技术栈
+
+* **核心框架:** Vue 3 (Composition API)
+* **UI 组件库:** Vuetify 3
+* **构建工具:** Vite 7
+* **语言:** TypeScript
+* **路由:** `vue-router` + `unplugin-vue-router` (基于文件的路由)
+* **状态管理/数据请求:** Axios (深度自定义拦截器)
+* **国际化:** `vue-i18n`
+* **代码规范:** ESLint, Prettier, Husky
+
+== ✨ 核心特性
+
+* **Bento Light 设计:** 采用圆角、网格化布局和柔和的色彩体系，提供高级的视觉体验。
+* **文件化路由:** 自动扫描 `src/pages/` 目录生成路由配置，极大减少手动配置。
+* **安全性:** 所有后台请求均通过 HMAC-SHA256 签名校验（X-Signature），保障数据传输安全。
+* **响应式布局:** 适配多端设备，支持 "Rail" 模式浮动侧边栏。
+* **双语支持:** 完备的 i18n 集成，方便快速扩展多语言。
+
+== 📂 项目结构
+
+[source,text]
+----
+src/
+├── api/             # API 接口定义
+├── config/          # 全局配置 (如菜单结构)
+├── layouts/         # 页面布局 (Blank, Default)
+├── pages/           # 页面组件 (基于文件系统自动生成路由)
+├── plugins/         # Vue 插件配置 (Vuetify, i18n 等)
+├── router/          # 路由手动配置与拦截
+├── styles/          # 全局样式与变量
+├── types/           # TypeScript 类型定义
+└── utils/           # 工具类 (HTTP 客户端、常量等)
+----
+
+== 🛠️ 开发与构建
+
+### 安装依赖
+
+[source,bash]
+----
+pnpm install
+----
+
+### 启动开发服务器
+
+[source,bash]
+----
+pnpm dev
+----
+
+默认运行在 `http://localhost:5173`。
+
+### 编译与打包
+
+[source,bash]
+----
+pnpm build
+----
+
+### 类型检查与 Lint
+
+[source,bash]
+----
+# 执行类型检查
+pnpm type-check
+
+# 执行 Lint 检查并自动修复
+pnpm lint
+----
+
+== 📡 API 交互与签名
+
+项目使用位于 `src/utils/http.ts` 的自定义 Axios 实例。为了确保签名（X-Signature）一致性：
+
+1. **禁止直接使用** 原生 `axios` 或 `fetch`。
+2. **签名逻辑:** 自动在请求头注入 `X-Timestamp`, `X-Request-ID`, `X-Signature`。
+3. **中文处理:** 在计算签名时，会对查询参数进行 `decodeURIComponent` 处理，以匹配后端验证逻辑。
+
+== 🎨 设计系统：Bento Light
+
+* **主色调:** `#7367F0` (Electric Violet)
+* **背景色:** `#F4F5FA` (Light Grey-Blue)
+* **表面色:** `#FFFFFF` (White)
+* **视觉语言:** 圆角 (`rounded-xl`), 无投影 (`elevation-0`), 浮动卡片化设计。
+
+== 📄 开源协议
+
+MIT License
