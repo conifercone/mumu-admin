@@ -130,7 +130,9 @@ http.interceptors.request.use(
 
       const searchParams = new URLSearchParams(params);
 
-      const queryString = decodeURIComponent(searchParams.toString());
+      const queryString = decodeURIComponent(
+        searchParams.toString().replace(/\+/g, '%20'),
+      );
 
       if (queryString) {
         signaturePath +=
