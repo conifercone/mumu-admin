@@ -7,12 +7,12 @@ export interface MenuItem {
 export const MENU_ITEMS: MenuItem[] = [
   {
     title: 'menu.dashboard',
-    icon: 'mdi-view-dashboard-outline',
+    icon: 'mdi-view-grid-outline',
     to: '/',
   },
   {
     title: 'menu.permissions',
-    icon: 'mdi-shield-lock-outline',
+    icon: 'mdi-shield-account-outline',
     to: '/permissions',
   },
 ];
