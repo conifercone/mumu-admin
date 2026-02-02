@@ -37,7 +37,9 @@
             transform: rail ? 'translateX(-10px)' : 'translateX(0)',
           }"
         >
-          <div class="text-h6 font-weight-bold text-primary text-no-wrap">
+          <div
+            class="text-h6 font-weight-bold text-content-primary text-no-wrap"
+          >
             MUMU
           </div>
           <div
@@ -68,32 +70,37 @@
             v-for="(item, i) in MENU_ITEMS"
             :key="i"
             active-class="bg-primary text-white"
-            class="mb-2 transition-swing rounded-lg text-primary"
+            class="mb-2 transition-swing rounded-lg text-content-secondary"
             :class="rail ? 'px-2' : ''"
             :to="item.to"
             :value="item"
           >
-            <div
-              class="d-flex align-center"
-              :class="rail ? 'justify-center w-100' : ''"
-            >
-              <v-icon :color="isActive(item) ? 'white' : 'secondary'" size="24">
-                {{ item.icon }}
-              </v-icon>
+            <template #default>
+              <div
+                class="d-flex align-center"
+                :class="rail ? 'justify-center w-100' : ''"
+              >
+                <v-icon class="sidebar-icon" size="24">
+                  {{ item.icon }}
+                </v-icon>
 
-              <span v-if="!rail" class="font-weight-medium ms-3 text-truncate">
-                {{ $t(item.title) }}
-              </span>
-            </div>
+                <span
+                  v-if="!rail"
+                  class="font-weight-medium ms-3 text-truncate"
+                >
+                  {{ $t(item.title) }}
+                </span>
 
-            <v-tooltip
-              v-if="rail"
-              activator="parent"
-              location="end"
-              offset="10"
-            >
-              {{ $t(item.title) }}
-            </v-tooltip>
+                <v-tooltip
+                  v-if="rail"
+                  activator="parent"
+                  location="end"
+                  offset="10"
+                >
+                  {{ $t(item.title) }}
+                </v-tooltip>
+              </div>
+            </template>
           </v-list-item>
         </v-list>
       </div>
@@ -214,7 +221,7 @@
 
           <!-- Dynamic Page Title -->
           <div>
-            <h2 class="text-h5 font-weight-bold text-primary">
+            <h2 class="text-h5 font-weight-bold text-content-primary">
               {{ pageTitle }}
             </h2>
           </div>
@@ -256,7 +263,7 @@
                   :prepend-icon="item.raw.icon"
                   :title="undefined"
                 >
-                  <v-list-item-title class="text-body-2 text-primary">
+                  <v-list-item-title class="text-body-2 text-content-primary">
                     {{ item.raw.title }}
                   </v-list-item-title>
                 </v-list-item>
@@ -271,7 +278,7 @@
           <ThemeSwitcher />
 
           <v-btn
-            class="bg-surface text-secondary"
+            class="bg-surface text-content-secondary"
             elevation="0"
             icon
             rounded="lg"
@@ -382,10 +389,6 @@ function handleSearchSelect(to: any) {
   }
 }
 
-function isActive(item: any) {
-  return route.path === item.to || route.path.startsWith(item.to + '/');
-}
-
 async function fetchUserInfo() {
   try {
     const res = await getCurrentUser();
@@ -441,7 +444,7 @@ async function handleLogout() {
 }
 
 .search-result-item :deep(.v-list-item__prepend) .v-icon {
-  color: rgb(var(--v-theme-secondary)) !important;
+  color: rgb(var(--v-theme-content-secondary)) !important;
   opacity: 0.8;
 }
 
@@ -464,5 +467,14 @@ async function handleLogout() {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-icon {
+  color: rgb(var(--v-theme-content-secondary));
+  transition: color 0.2s ease;
+}
+
+:deep(.v-list-item--active) .sidebar-icon {
+  color: white !important;
 }
 </style>

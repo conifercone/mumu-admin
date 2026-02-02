@@ -9,7 +9,7 @@
               <div class="d-flex align-center gap-2">
                 <v-icon color="primary" size="small">mdi-filter-variant</v-icon>
                 <span
-                  class="text-caption font-weight-bold text-secondary letter-spacing-1"
+                  class="text-caption font-weight-bold text-content-secondary letter-spacing-1"
                   >{{ $t('common.searchFilters') }}</span
                 >
               </div>
@@ -26,7 +26,9 @@
 
             <v-row>
               <v-col cols="12" md="6">
-                <div class="text-subtitle-2 font-weight-bold text-primary mb-2">
+                <div
+                  class="text-subtitle-2 font-weight-bold text-content-primary mb-2"
+                >
                   {{ $t('permission.name') }}
                 </div>
                 <v-text-field
@@ -45,7 +47,9 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
-                <div class="text-subtitle-2 font-weight-bold text-primary mb-2">
+                <div
+                  class="text-subtitle-2 font-weight-bold text-content-primary mb-2"
+                >
                   {{ $t('permission.code') }}
                 </div>
                 <v-text-field
@@ -76,7 +80,7 @@
               class="px-6 py-4 border-b d-flex align-center justify-space-between flex-wrap gap-4"
             >
               <div class="d-flex align-center gap-4">
-                <h3 class="text-h6 font-weight-bold text-primary">
+                <h3 class="text-h6 font-weight-bold text-content-primary">
                   {{ $t('permission.explorer') }}
                 </h3>
 
@@ -195,7 +199,7 @@
                   <div
                     class="d-flex align-center justify-space-between pa-4 border-t"
                   >
-                    <div class="text-subtitle-2 text-secondary ps-2">
+                    <div class="text-subtitle-2 text-content-secondary ps-2">
                       {{
                         $t('common.showing', {
                           from: paginationFrom,
@@ -225,7 +229,7 @@
                       :key="column.key || column.title"
                     >
                       <th
-                        class="text-uppercase text-caption font-weight-bold text-secondary border-0 py-3"
+                        class="text-uppercase text-caption font-weight-bold text-content-secondary border-0 py-3"
                         :class="{
                           'text-start': column.align === 'start',
                           'text-end': column.align === 'end',
@@ -318,13 +322,15 @@
                       </div>
                     </td>
                     <td>
-                      <span class="text-body-2 font-weight-bold text-primary">
+                      <span
+                        class="text-body-2 font-weight-bold text-content-primary"
+                      >
                         {{ item.name }}
                       </span>
                     </td>
                     <td>
                       <div
-                        class="text-truncate text-secondary"
+                        class="text-truncate text-content-secondary"
                         style="max-width: 250px"
                       >
                         {{ item.description || '-' }}
@@ -473,7 +479,7 @@
     >
       <v-card class="rounded-xl overflow-hidden" elevation="10">
         <v-card-title class="px-6 py-5 bg-surface d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-primary">{{
+          <span class="text-h6 font-weight-bold text-content-primary">{{
             dialogTitle
           }}</span>
           <v-spacer></v-spacer>
@@ -490,7 +496,9 @@
           <v-form ref="formRef" @submit.prevent="savePermission">
             <v-row dense>
               <v-col cols="12">
-                <div class="text-caption font-weight-bold text-secondary mb-1">
+                <div
+                  class="text-caption font-weight-bold text-content-secondary mb-1"
+                >
                   {{ $t('permission.code') }}
                 </div>
                 <v-text-field
@@ -508,7 +516,9 @@
               </v-col>
 
               <v-col class="mt-4" cols="12">
-                <div class="text-caption font-weight-bold text-secondary mb-1">
+                <div
+                  class="text-caption font-weight-bold text-content-secondary mb-1"
+                >
                   {{ $t('permission.name') }}
                 </div>
                 <v-text-field
@@ -526,7 +536,9 @@
               </v-col>
 
               <v-col class="mt-4" cols="12">
-                <div class="text-caption font-weight-bold text-secondary mb-1">
+                <div
+                  class="text-caption font-weight-bold text-content-secondary mb-1"
+                >
                   {{ $t('permission.description') }}
                 </div>
                 <v-textarea
@@ -574,7 +586,7 @@
     <v-dialog v-model="linkDialog" max-width="400px" persistent>
       <v-card class="rounded-xl overflow-hidden">
         <v-card-title class="px-6 py-5 bg-surface d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-primary">{{
+          <span class="text-h6 font-weight-bold text-content-primary">{{
             $t('permission.addChild')
           }}</span>
           <v-spacer></v-spacer>
@@ -588,7 +600,9 @@
         </v-card-title>
 
         <v-card-text class="pa-6">
-          <div class="text-caption font-weight-bold text-secondary mb-2">
+          <div
+            class="text-caption font-weight-bold text-content-secondary mb-2"
+          >
             {{ $t('permission.selectChild', { name: linkParent?.name }) }}
           </div>
           <v-autocomplete
@@ -640,7 +654,7 @@
     <v-dialog v-model="dropDialog" max-width="500px" persistent>
       <v-card class="rounded-xl overflow-hidden">
         <v-card-title class="px-6 py-5 bg-surface d-flex align-center border-b">
-          <span class="text-h6 font-weight-bold text-primary">{{
+          <span class="text-h6 font-weight-bold text-content-primary">{{
             $t('permission.dropActionTitle')
           }}</span>
           <v-spacer></v-spacer>
@@ -654,7 +668,7 @@
         </v-card-title>
 
         <v-card-text class="pa-6">
-          <div class="text-body-1 text-secondary mb-4">
+          <div class="text-body-1 text-content-secondary mb-4">
             {{
               $t('permission.dropActionContent', {
                 sourceName: dropSource?.name,
