@@ -13,6 +13,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@fontsource/noto-sans-sc": "^5.2.9",
     "@fontsource/roboto": "5.2.7",
     "@mdi/font": "7.4.47",
     "axios": "^1.13.2",
